@@ -5,9 +5,9 @@
 //  Created by Joseph Heck on 3/21/23.
 //
 
+import Automerge
 import SwiftUI
 import UniformTypeIdentifiers
-import Automerge
 
 extension UTType {
     static var automerge: UTType {
@@ -20,7 +20,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
     var doc: AMDoc
 
     static var readableContentTypes: [UTType] { [.automerge] }
-    
+
     init() {
         doc = AMDoc()
     }
@@ -30,7 +30,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         else {
             throw CocoaError(.fileReadCorruptFile)
         }
-        
+
         doc = try! Document(Array(data))
 //        if case let .Object(id, .Map) = try! doc.get(obj: ObjId.ROOT, key: "items")! {
 //            //itemsObjId = id
@@ -38,15 +38,14 @@ class AMTravelNotesDocument: ReferenceFileDocument {
 //            fatalError("no items")
 //        }
     }
-    
-    func snapshot(contentType: UTType) throws -> AMDoc {
+
+    func snapshot(contentType _: UTType) throws -> AMDoc {
         doc // Make a copy.
     }
-    
-    func fileWrapper(snapshot: AMDoc, configuration: WriteConfiguration) throws -> FileWrapper {
+
+    func fileWrapper(snapshot: AMDoc, configuration _: WriteConfiguration) throws -> FileWrapper {
         let data = Data(snapshot.save())
         let fileWrapper = FileWrapper(regularFileWithContents: data)
         return fileWrapper
     }
-    
 }

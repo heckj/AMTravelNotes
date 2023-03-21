@@ -12,7 +12,7 @@ struct ContentView: View {
 
     var body: some View {
         Text("Placeholder")
-        //TextEditor(text: $document.text)
+        // TextEditor(text: $document.text)
     }
 }
 
