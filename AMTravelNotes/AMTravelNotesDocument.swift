@@ -45,7 +45,8 @@ class AMTravelNotesDocument: ReferenceFileDocument {
 
     func fileWrapper(snapshot: AMDoc, configuration _: WriteConfiguration) throws -> FileWrapper {
         let data = snapshot.save()
-        //                  ^^^^ Actor-isolated instance method 'save()' can not be referenced from a non-isolated context
+        //                  ^^^^ Actor-isolated instance method 'save()' can not be referenced from a non-isolated
+        //                  context
         //   when we attempt to use ProtectedAutomergeDocument as AMDoc (wrap the class in an Actor)
         //   It doesn't look like there's an "async" friendly version of ReferenceFileDocument that allows for
         //   non-synchronous calls that the protocol requires.
