@@ -10,8 +10,10 @@ import SwiftUI
 @main
 struct AMTravelNotesApp: App {
     var body: some Scene {
-        DocumentGroup(newDocument: AMTravelNotesDocument()) { file in
-            ContentView(document: file.$document)
+        DocumentGroup {
+            AMTravelNotesDocument()
+        } editor: { file in
+            ContentView(document: file.document)
         }
     }
 }

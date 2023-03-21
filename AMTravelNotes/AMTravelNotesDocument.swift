@@ -7,33 +7,46 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import Automerge
 
 extension UTType {
-    static var exampleText: UTType {
-        UTType(importedAs: "com.example.plain-text")
+    static var automerge: UTType {
+        UTType(exportedAs: "com.github.automerge.localfirst")
     }
 }
 
-struct AMTravelNotesDocument: FileDocument {
-    var text: String
+class AMTravelNotesDocument: ReferenceFileDocument {
+    typealias AMDoc = Automerge.Document
+    var doc: AMDoc
 
-    init(text: String = "Hello, world!") {
-        self.text = text
+    static var readableContentTypes: [UTType] { [.automerge] }
+    
+    init() {
+        doc = AMDoc()
     }
 
-    static var readableContentTypes: [UTType] { [.exampleText] }
-
-    init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents,
-              let string = String(data: data, encoding: .utf8)
+    required init(configuration: ReadConfiguration) throws {
+        guard let data = configuration.file.regularFileContents
         else {
             throw CocoaError(.fileReadCorruptFile)
         }
-        text = string
+        
+        doc = try! Document(Array(data))
+//        if case let .Object(id, .Map) = try! doc.get(obj: ObjId.ROOT, key: "items")! {
+//            //itemsObjId = id
+//        } else {
+//            fatalError("no items")
+//        }
     }
     
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        let data = text.data(using: .utf8)!
-        return .init(regularFileWithContents: data)
+    func snapshot(contentType: UTType) throws -> AMDoc {
+        doc // Make a copy.
     }
+    
+    func fileWrapper(snapshot: AMDoc, configuration: WriteConfiguration) throws -> FileWrapper {
+        let data = Data(snapshot.save())
+        let fileWrapper = FileWrapper(regularFileWithContents: data)
+        return fileWrapper
+    }
+    
 }

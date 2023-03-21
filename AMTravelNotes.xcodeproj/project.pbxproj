@@ -15,6 +15,7 @@
 		1AF0BD8A29CA62150039EB8B /* AMTravelNotesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD8929CA62150039EB8B /* AMTravelNotesTests.swift */; };
 		1AF0BD9429CA62150039EB8B /* AMTravelNotesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD9329CA62150039EB8B /* AMTravelNotesUITests.swift */; };
 		1AF0BD9629CA62150039EB8B /* AMTravelNotesUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD9529CA62150039EB8B /* AMTravelNotesUITestsLaunchTests.swift */; };
+		1AF0BDA429CA62720039EB8B /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1AF0BDA329CA62720039EB8B /* Automerge */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AF0BDA429CA62720039EB8B /* Automerge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +152,9 @@
 			dependencies = (
 			);
 			name = AMTravelNotes;
+			packageProductDependencies = (
+				1AF0BDA329CA62720039EB8B /* Automerge */,
+			);
 			productName = AMTravelNotes;
 			productReference = 1AF0BD7129CA62140039EB8B /* AMTravelNotes.app */;
 			productType = "com.apple.product-type.application";
@@ -222,6 +227,9 @@
 				Base,
 			);
 			mainGroup = 1AF0BD6829CA62140039EB8B;
+			packageReferences = (
+				1AF0BDA229CA62720039EB8B /* XCRemoteSwiftPackageReference "automerge-swifter" */,
+			);
 			productRefGroup = 1AF0BD7229CA62140039EB8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -624,6 +632,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1AF0BDA229CA62720039EB8B /* XCRemoteSwiftPackageReference "automerge-swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/automerge/automerge-swifter";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1AF0BDA329CA62720039EB8B /* Automerge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AF0BDA229CA62720039EB8B /* XCRemoteSwiftPackageReference "automerge-swifter" */;
+			productName = Automerge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1AF0BD6929CA62140039EB8B /* Project object */;
 }

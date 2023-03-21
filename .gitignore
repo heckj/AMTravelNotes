@@ -1,0 +1,12 @@
+
+# SwiftPM gibblets
+.build
+build/
+
+# Xcode gibblets
+swiftpm/
+xcuserdata
+DerivedData/
+
+# Finder giblets
+.DS_Store
