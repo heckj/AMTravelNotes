@@ -31,7 +31,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
             throw CocoaError(.fileReadCorruptFile)
         }
 
-        doc = try! Document(Array(data))
+        doc = try! AMDoc(data)
 //        if case let .Object(id, .Map) = try! doc.get(obj: ObjId.ROOT, key: "items")! {
 //            //itemsObjId = id
 //        } else {
@@ -44,7 +44,11 @@ class AMTravelNotesDocument: ReferenceFileDocument {
     }
 
     func fileWrapper(snapshot: AMDoc, configuration _: WriteConfiguration) throws -> FileWrapper {
-        let data = Data(snapshot.save())
+        let data = snapshot.save()
+        //                  ^^^^ Actor-isolated instance method 'save()' can not be referenced from a non-isolated context
+        //   when we attempt to use ProtectedAutomergeDocument as AMDoc (wrap the class in an Actor)
+        //   It doesn't look like there's an "async" friendly version of ReferenceFileDocument that allows for
+        //   non-synchronous calls that the protocol requires.
         let fileWrapper = FileWrapper(regularFileWithContents: data)
         return fileWrapper
     }
