@@ -18,6 +18,28 @@ enum LoadItemError: Error {
     case invalid(String)
 }
 
+// mixing the Automerge doc & Observable object with an explicit marker for a
+// directly usable publisher to participate in send()
+protocol ObservableAutomergeDocumentBound: ObservableObject, HasDoc {
+    var objectWillChange: ObservableObjectPublisher { get }
+    var doc: Document { get }
+}
+
+// @AmList("myList") -> something that acts like a collection, but is bound to Document
+// @AmObject("myOtherObject") -> something that acts like an object/map, but is bound to Document
+
+class TravelNotesModel: Identifiable, ObservableAutomergeDocumentBound {
+    var doc: Document
+    
+    @AmScalarProp("id") var id: String
+    @AmScalarProp("done") var done: Bool
+    @AmText("notes") var notes: String
+    
+    init(doc: Document, id: String, done: Bool) {
+        self.doc = doc
+    }
+}
+
 class TodoItem: Identifiable, ObservableObject, HasDoc, HasObj {
     var obj: ObjId
     var doc: Document

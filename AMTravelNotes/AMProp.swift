@@ -17,7 +17,6 @@ import struct SwiftUI.Binding
 
 typealias AMValue = Automerge.Value
 
-
 protocol HasDoc {
     var doc: Document { get }
 }
