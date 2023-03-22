@@ -11,63 +11,12 @@ import class Automerge.Document
 import struct Automerge.ObjId
 import enum Automerge.ScalarValue
 import enum Automerge.Value
+import protocol Automerge.ScalarValueRepresentable
 import Combine
 import struct SwiftUI.Binding
 
 typealias AMValue = Automerge.Value
 
-protocol FromAmValue {
-    associatedtype ConvertError: Error
-    static func fromAmValue(_ val: AMValue) -> Result<Self, ConvertError>
-}
-
-protocol ToAmValue {
-    func toAmValue() -> ScalarValue
-}
-
-enum BadBool: Error {
-    case notbool
-}
-
-extension Bool: FromAmValue {
-    typealias ConvertError = BadBool
-    static func fromAmValue(_ val: AMValue) -> Result<Self, BadBool> {
-        switch val {
-        case let .Scalar(.Boolean(b)):
-            return .success(b)
-        default:
-            return .failure(BadBool.notbool)
-        }
-    }
-}
-
-extension Bool: ToAmValue {
-    func toAmValue() -> ScalarValue {
-        .Boolean(self)
-    }
-}
-
-enum BadString: Error {
-    case notstring
-}
-
-extension String: FromAmValue {
-    typealias ConvertError = BadString
-    static func fromAmValue(_ val: AMValue) -> Result<String, BadString> {
-        switch val {
-        case let .Scalar(.String(s)):
-            return .success(s)
-        default:
-            return .failure(BadString.notstring)
-        }
-    }
-}
-
-extension String: ToAmValue {
-    func toAmValue() -> ScalarValue {
-        .String(self)
-    }
-}
 
 protocol HasDoc {
     var doc: Document { get }
@@ -78,7 +27,8 @@ protocol HasObj {
 }
 
 @propertyWrapper
-struct AmScalarProp<Value: FromAmValue & ToAmValue> {
+struct AmScalarProp<Value: ScalarValueRepresentable> {
+    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
     var key: String
 
     init(_ key: String) {
@@ -95,7 +45,7 @@ struct AmScalarProp<Value: FromAmValue & ToAmValue> {
             let obj = instance.obj
             let key = instance[keyPath: storageKeyPath].key
             let amval = try! doc.get(obj: obj, key: key)!
-            if case let .success(v) = Value.fromAmValue(amval) {
+            if case let .success(v) = Value.fromValue(amval) {
                 return v
             } else {
                 fatalError("description not text")
@@ -110,7 +60,7 @@ struct AmScalarProp<Value: FromAmValue & ToAmValue> {
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
             let obj = instance.obj
-            try! doc.put(obj: obj, key: key, value: newValue.toAmValue())
+            try! doc.put(obj: obj, key: key, value: newValue.toScalarValue())
         }
     }
 
@@ -145,7 +95,7 @@ struct AmScalarProp<Value: FromAmValue & ToAmValue> {
     }
 }
 
-func scalarPropBinding<V: FromAmValue & ToAmValue, O: ObservableObject>(
+func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableObject>(
     doc: Document,
     objId: ObjId,
     key: String,
@@ -154,7 +104,7 @@ func scalarPropBinding<V: FromAmValue & ToAmValue, O: ObservableObject>(
     Binding(
         get: {
             let amval = try! doc.get(obj: objId, key: key)!
-            if case let .success(v) = V.fromAmValue(amval) {
+            if case let .success(v) = V.fromValue(amval) {
                 return v
             } else {
                 fatalError("description not text")
@@ -165,7 +115,7 @@ func scalarPropBinding<V: FromAmValue & ToAmValue, O: ObservableObject>(
             // This assumption is definitely not safe to make in
             // production code, but it's fine for this demo purpose:
             (publisher as! ObservableObjectPublisher).send()
-            try! doc.put(obj: objId, key: key, value: newValue.toAmValue())
+            try! doc.put(obj: objId, key: key, value: newValue.toScalarValue())
         }
     )
 }
@@ -244,6 +194,8 @@ struct AmText {
         set {}
     }
 
+    // Constrains the property wrapper from being used with value types
+    // Forces the usage of subscripted access
     @available(*, unavailable)
     var wrappedValue: String {
         fatalError("not available")
