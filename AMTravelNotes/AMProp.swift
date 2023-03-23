@@ -34,7 +34,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         self.key = key
     }
 
-    static subscript<T: ObservableObject & HasDoc & HasObj>(
+    static subscript<T: ObservableAutomergeDocumentBound>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, Value>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -51,10 +51,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
             }
         }
         set {
-            let publisher = instance.objectWillChange
-            // This assumption is definitely not safe to make in
-            // production code, but it's fine for this demo purpose:
-            (publisher as! ObservableObjectPublisher).send()
+            instance.objectWillChange.send()
 
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
@@ -63,7 +60,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         }
     }
 
-    static subscript<T: HasDoc & HasObj & ObservableObject>(
+    static subscript<T: ObservableAutomergeDocumentBound>(
         _enclosingInstance instance: T,
         projected _: KeyPath<T, Binding<Value>>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -94,7 +91,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
     }
 }
 
-func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableObject>(
+func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeDocumentBound>(
     doc: Document,
     objId: ObjId,
     key: String,
@@ -110,16 +107,13 @@ func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableObject>(
             }
         },
         set: { newValue in
-            let publisher = observer.objectWillChange
-            // This assumption is definitely not safe to make in
-            // production code, but it's fine for this demo purpose:
-            (publisher as! ObservableObjectPublisher).send()
+            observer.objectWillChange.send()
             try! doc.put(obj: objId, key: key, value: newValue.toScalarValue())
         }
     )
 }
 
-func textBinding<O: ObservableObject>(doc: Document, objId: ObjId, key: String, observer: O) -> Binding<String> {
+func textBinding<O: ObservableAutomergeDocumentBound>(doc: Document, objId: ObjId, key: String, observer: O) -> Binding<String> {
     Binding(
         get: { () -> String in
             if case let .Object(id, .Text) = try! doc.get(obj: objId, key: key)! {
@@ -129,10 +123,7 @@ func textBinding<O: ObservableObject>(doc: Document, objId: ObjId, key: String, 
             }
         },
         set: { (newValue: String) in
-            let publisher = observer.objectWillChange
-            // This assumption is definitely not safe to make in
-            // production code, but it's fine for this demo purpose:
-            (publisher as! ObservableObjectPublisher).send()
+            observer.objectWillChange.send()
             try! updateText(doc: doc, objId: objId, key: key, newText: newValue)
         }
     )
@@ -146,7 +137,7 @@ struct AmText {
         self.key = key
     }
 
-    static subscript<T: ObservableObject & HasDoc & HasObj>(
+    static subscript<T: ObservableAutomergeDocumentBound>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, String>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -162,10 +153,7 @@ struct AmText {
             }
         }
         set {
-            let publisher = instance.objectWillChange
-            // This assumption is definitely not safe to make in
-            // production code, but it's fine for this demo purpose:
-            (publisher as! ObservableObjectPublisher).send()
+            instance.objectWillChange.send()
 
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
@@ -174,7 +162,7 @@ struct AmText {
         }
     }
 
-    static subscript<T: HasDoc & HasObj & ObservableObject>(
+    static subscript<T: ObservableAutomergeDocumentBound>(
         _enclosingInstance instance: T,
         projected _: KeyPath<T, Binding<String>>,
         storage storageKeyPath: KeyPath<T, Self>
