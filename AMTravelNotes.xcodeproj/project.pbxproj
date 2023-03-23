@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A274A2F29CA7D0A00EE016B /* QueueProtectedAutomergeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A274A2E29CA7D0A00EE016B /* QueueProtectedAutomergeDocument.swift */; };
+		1A84640029CCDA620050B817 /* AutomergeExplorationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */; };
 		1AC4EBAE29CA6F6F00814B1E /* AMProp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */; };
 		1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */; };
 		1AC4EBB229CA704E00814B1E /* ActorProtectedAutomergeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBB129CA704E00814B1E /* ActorProtectedAutomergeDocument.swift */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		1A274A2E29CA7D0A00EE016B /* QueueProtectedAutomergeDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueProtectedAutomergeDocument.swift; sourceTree = "<group>"; };
+		1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeExplorationTests.swift; sourceTree = "<group>"; };
 		1AC4EBAC29CA6EB400814B1E /* automerge-swifter */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "automerge-swifter"; path = "../automerge-swifter"; sourceTree = "<group>"; };
 		1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMProp.swift; sourceTree = "<group>"; };
 		1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoCode.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				1AF0BD8929CA62150039EB8B /* AMTravelNotesTests.swift */,
+				1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */,
 			);
 			path = AMTravelNotesTests;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AF0BD8A29CA62150039EB8B /* AMTravelNotesTests.swift in Sources */,
+				1A84640029CCDA620050B817 /* AutomergeExplorationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

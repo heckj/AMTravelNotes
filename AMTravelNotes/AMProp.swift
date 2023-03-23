@@ -6,14 +6,14 @@
 //
 
 import Foundation
+import Combine
+import struct SwiftUI.Binding
 
 import class Automerge.Document
 import struct Automerge.ObjId
 import enum Automerge.ScalarValue
 import protocol Automerge.ScalarValueRepresentable
 import enum Automerge.Value
-import Combine
-import struct SwiftUI.Binding
 
 typealias AMValue = Automerge.Value
 
@@ -24,6 +24,29 @@ protocol HasDoc {
 protocol HasObj {
     var obj: ObjId { get }
 }
+
+// mixing the Automerge doc & Observable object with an explicit marker for a
+// directly usable publisher to participate in send()
+protocol ObservableAutomergeDocumentBound: ObservableObject, HasDoc, HasObj {
+    var objectWillChange: ObservableObjectPublisher { get }
+    // ^^ this is really about more easily participating in ObservableObject notifications
+    var doc: Document { get }
+}
+
+// @AmList("myList") -> something that acts like a collection, but is bound to Document
+// @AmObject("myOtherObject") -> something that acts like an object/map, but is bound to Document
+// @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
+
+// Path examples:
+// . -> Root
+// .done -> property 'done' on Root
+// .pages -> property 'pages' on Root
+// .pages.2 -> 3rd element in the list object that's at 'pages' on Root
+// .pages.2.title -> title property of Map object in the 3rd list item under 'pages' on Root
+
+// When creating a new schema from a path - we'll need to have a sense of what type of Value is getting splatted into
+// place
+// I don't think Automerge needs it, but we'll want it for a type declaration within the Swift side of things.
 
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {
