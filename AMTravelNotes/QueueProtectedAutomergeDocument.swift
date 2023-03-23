@@ -5,8 +5,8 @@
 //  Created by Joseph Heck on 3/21/23.
 //
 
-import Foundation
 import Automerge
+import Foundation
 
 class QueueProtectedAutomergeDocument {
     private var doc: Automerge.Document
@@ -28,4 +28,3 @@ class QueueProtectedAutomergeDocument {
         }
     }
 }
-

@@ -28,7 +28,6 @@ protocol ObservableAutomergeDocumentBound: ObservableObject, HasDoc, HasObj {
 // @AmList("myList") -> something that acts like a collection, but is bound to Document
 // @AmObject("myOtherObject") -> something that acts like an object/map, but is bound to Document
 
-
 // Path examples:
 // . -> Root
 // .done -> property 'done' on Root
@@ -36,21 +35,22 @@ protocol ObservableAutomergeDocumentBound: ObservableObject, HasDoc, HasObj {
 // .pages.2 -> 3rd element in the list object that's at 'pages' on Root
 // .pages.2.title -> title property of Map object in the 3rd list item under 'pages' on Root
 
-// When creating a new schema from a path - we'll need to have a sense of what type of Value is getting splatted into place
+// When creating a new schema from a path - we'll need to have a sense of what type of Value is getting splatted into
+// place
 // I don't think Automerge needs it, but we'll want it for a type declaration within the Swift side of things.
 
 class AutomergeBoundList<T>: ObservableAutomergeDocumentBound, Sequence {
     typealias Element = T
-    
+
     internal var doc: Document
     internal var obj: ObjId
-    
+
     init(doc: Document, obj: ObjId) {
         precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
         self.doc = doc
         self.obj = obj
     }
-    
+
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmListIterator<T> {
         AmListIterator()
@@ -58,7 +58,7 @@ class AutomergeBoundList<T>: ObservableAutomergeDocumentBound, Sequence {
 
     struct AmListIterator<Element>: IteratorProtocol {
         mutating func next() -> Element? {
-            return nil
+            nil
         }
     }
 }
@@ -66,7 +66,7 @@ class AutomergeBoundList<T>: ObservableAutomergeDocumentBound, Sequence {
 class AutomergeBoundObject: ObservableAutomergeDocumentBound {
     internal var doc: Document
     internal var obj: ObjId
-    
+
     // alternate initializer that accepts a path into the Automerge document
     init(doc: Document, obj: ObjId = ObjId.ROOT) {
         self.doc = doc
@@ -78,8 +78,8 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
     @AmScalarProp("id") var id: String
     @AmScalarProp("done") var done: Bool
     @AmText("notes") var notes: String
-    
-    init(doc: Document, id: String, done: Bool) {
+
+    init(doc: Document, id _: String, done _: Bool) {
         super.init(doc: doc)
     }
 }

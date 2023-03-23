@@ -10,8 +10,8 @@ import Foundation
 import class Automerge.Document
 import struct Automerge.ObjId
 import enum Automerge.ScalarValue
-import enum Automerge.Value
 import protocol Automerge.ScalarValueRepresentable
+import enum Automerge.Value
 import Combine
 import struct SwiftUI.Binding
 
@@ -113,7 +113,12 @@ func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeDocume
     )
 }
 
-func textBinding<O: ObservableAutomergeDocumentBound>(doc: Document, objId: ObjId, key: String, observer: O) -> Binding<String> {
+func textBinding<O: ObservableAutomergeDocumentBound>(
+    doc: Document,
+    objId: ObjId,
+    key: String,
+    observer: O
+) -> Binding<String> {
     Binding(
         get: { () -> String in
             if case let .Object(id, .Text) = try! doc.get(obj: objId, key: key)! {
