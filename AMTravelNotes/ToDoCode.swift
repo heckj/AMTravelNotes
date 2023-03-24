@@ -9,6 +9,7 @@ import class Automerge.Document
 import struct Automerge.ObjId
 import enum Automerge.ObjType
 import enum Automerge.ScalarValue
+import enum Automerge.Value
 import Combine
 import Foundation
 import SwiftUI
@@ -18,9 +19,7 @@ enum LoadItemError: Error {
     case invalid(String)
 }
 
-class AutomergeBoundList<T>: ObservableAutomergeDocumentBound, Sequence {
-    typealias Element = T
-
+class AutomergeList: ObservableAutomergeBoundObject, Sequence {
     internal var doc: Document
     internal var obj: ObjId
 
@@ -31,18 +30,37 @@ class AutomergeBoundList<T>: ObservableAutomergeDocumentBound, Sequence {
     }
 
     /// Returns an iterator over the elements of this sequence.
-    func makeIterator() -> AmListIterator<T> {
-        AmListIterator()
+    func makeIterator() -> AmListIterator<Value> {
+        AmListIterator(doc: self.doc, objId: self.obj)
     }
 
     struct AmListIterator<Element>: IteratorProtocol {
+        private let doc: Document
+        private let objId: ObjId
+        private var cursorIndex: UInt64
+        private let length: UInt64
+        
+        init(doc: Document, objId: ObjId) {
+            self.doc = doc
+            self.objId = objId
+            self.cursorIndex = 0
+            self.length = doc.length(obj: objId)
+        }
+        
         mutating func next() -> Element? {
-            nil
+            if cursorIndex >= length {
+                return nil
+            }
+            self.cursorIndex+=1
+            if let result = try! doc.get(obj: objId, index: cursorIndex) as? Element {
+                return result
+            }
+            return nil
         }
     }
 }
 
-class AutomergeBoundObject: ObservableAutomergeDocumentBound {
+class AutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
     internal var obj: ObjId
 
@@ -63,7 +81,7 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
     }
 }
 
-class TodoItem: Identifiable, ObservableAutomergeDocumentBound {
+class TodoItem: Identifiable, ObservableAutomergeBoundObject {
     var obj: ObjId
     var doc: Document
     var subscriber: AnyCancellable?
@@ -78,7 +96,7 @@ class TodoItem: Identifiable, ObservableAutomergeDocumentBound {
     }
 }
 
-class TodoItems: ObservableAutomergeDocumentBound {
+class TodoItems: ObservableAutomergeBoundObject {
     var name: String
     var doc: Document
     internal var obj: ObjId {

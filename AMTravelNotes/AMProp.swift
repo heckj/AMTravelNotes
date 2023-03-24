@@ -27,70 +27,52 @@ protocol HasObj {
 
 // mixing the Automerge doc & Observable object with an explicit marker for a
 // directly usable publisher to participate in send()
-protocol ObservableAutomergeDocumentBound: ObservableObject, HasDoc, HasObj {
+protocol ObservableAutomergeBoundObject: ObservableObject, HasDoc, HasObj {
     var objectWillChange: ObservableObjectPublisher { get }
     // ^^ this is really about more easily participating in ObservableObject notifications
-    var doc: Document { get }
 }
 
-class AutomergeObject: ObservableAutomergeDocumentBound {
+@dynamicMemberLookup
+class DynamicAutomergeObject: ObservableAutomergeBoundObject {
     var objectWillChange: ObservableObjectPublisher
     var doc: Document
     var obj: ObjId
     
-//    public func subPath(path: String) -> ObjId {
-//        // take existing ObjId and look up the path down to the next ObjId
-//    }
-    
     init(doc: Document, obj: ObjId) {
+        // There should be some safety check here - verifying that what we're binding
+        // really is a Map object in Automerge.
         self.objectWillChange = ObservableObjectPublisher()
         self.doc = doc
         self.obj = obj
     }
     
-//    init(doc: Document, path: String) {
-//        // look up path from root to create ObjId for this object
-//    }
-    //var subObject = AutomergeObject(doc: self.doc, obj: <#T##ObjId#>)
+    init?(doc: Document, path: String) throws {
+        self.objectWillChange = ObservableObjectPublisher()
+        self.doc = doc
+        if let objId = try doc.lookupPath(path: path) {
+            self.obj = objId
+        } else {
+            return nil
+        }
+    }
+    
+    subscript(dynamicMember member: String) -> Value? {
+        do {
+            return try doc.get(obj: self.obj, key: member)
+        } catch {
+            // yes, we're really swallowing any underlying errors.
+            return nil
+        }
+    }
 }
-// class base - has doc: Document, and obj: ObjId to link to the schema
-// then @AmProp with keys to the keys in that object
-// init with a path - look up the ObjId, creating if needed
 
-
-//
 // @AmList("myList") -> something that acts like a collection, but is bound to Document
 // @AmObject("myOtherObject") -> something that acts like an object, but is bound to Document
 //   -- Supports different types annotated as objects within the map (AMProp currently)
 //   - - can the wrapper initialize in the doc and objId?
 
 // @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
-
 // @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
-
-// Based on the current type of object, you can
-//
-// get(obj: ObjId, key: String) -> Value? to look for map keys
-// get(obj: ObjId, index: UInt64) -> Value? to look for list indices
-//
-// You can also walk the list of all values:
-// values(obj: ObjId) -> [Value] - works for both map and list, but doesn't provide keys with it
-// mapEntries(obj:OnjId) -> [(String, Value)]
-// and there's good ole length(obj: ObjId) -> UInt64 for sizing of iteration
-//
-// separate AmObject(doc: Document, obj: ObjId) declaration?
-// so AmProp uses a "local referenced keypath" vs a global reference?
-
-// Path examples:
-// . -> Root
-// .done -> property 'done' on Root
-// .pages -> property 'pages' on Root
-// .pages.2 -> 3rd element in the list object that's at 'pages' on Root
-// .pages.2.title -> title property of Map object in the 3rd list item under 'pages' on Root
-
-// When creating a new schema from a path - we'll need to have a sense of what type of Value is getting splatted into
-// place
-// I don't think Automerge needs it, but we'll want it for a type declaration within the Swift side of things.
 
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {
@@ -101,7 +83,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         self.key = key
     }
 
-    static subscript<T: ObservableAutomergeDocumentBound>(
+    static subscript<T: ObservableAutomergeBoundObject>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, Value>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -127,7 +109,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         }
     }
 
-    static subscript<T: ObservableAutomergeDocumentBound>(
+    static subscript<T: ObservableAutomergeBoundObject>(
         _enclosingInstance instance: T,
         projected _: KeyPath<T, Binding<Value>>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -158,7 +140,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
     }
 }
 
-func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeDocumentBound>(
+func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeBoundObject>(
     doc: Document,
     objId: ObjId,
     key: String,
@@ -180,7 +162,7 @@ func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeDocume
     )
 }
 
-func textBinding<O: ObservableAutomergeDocumentBound>(
+func textBinding<O: ObservableAutomergeBoundObject>(
     doc: Document,
     objId: ObjId,
     key: String,
@@ -209,7 +191,7 @@ struct AmText {
         self.key = key
     }
 
-    static subscript<T: ObservableAutomergeDocumentBound>(
+    static subscript<T: ObservableAutomergeBoundObject>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, String>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -234,7 +216,7 @@ struct AmText {
         }
     }
 
-    static subscript<T: ObservableAutomergeDocumentBound>(
+    static subscript<T: ObservableAutomergeBoundObject>(
         _enclosingInstance instance: T,
         projected _: KeyPath<T, Binding<String>>,
         storage storageKeyPath: KeyPath<T, Self>

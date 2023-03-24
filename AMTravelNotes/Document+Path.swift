@@ -80,3 +80,16 @@ extension Document {
         }
     }
 }
+
+extension Sequence where Element == Automerge.PathElement {
+    func stringPath() -> String {
+        return self.map { pathElement in
+            switch pathElement.prop {
+            case let .Index(idx):
+                return String(idx)
+            case let .Key(key):
+                return key
+            }
+        }.joined(separator: ".")
+    }
+}

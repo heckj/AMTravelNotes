@@ -65,6 +65,49 @@ final class AutomergeExplorationTests: XCTestCase {
         XCTAssertNil(DocumentCache.objId["a"])
     }
     
+    func testPathElementListToPath() throws {
+        let doc = Document()
+        let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
+        let nestedMap = try! doc.insertObject(obj: list, index: 0, ty: .Map)
+        let deeplyNestedText = try! doc.putObject(obj: nestedMap, key: "notes", ty: .Text)
+        let pathToList = try! doc.path(obj: nestedMap)
+        XCTAssertEqual(
+            pathToList,
+            [
+                PathElement(
+                    obj: ObjId.ROOT,
+                    prop: .Key("list")
+                ),
+                PathElement(
+                    obj: list,
+                    prop: .Index(0)
+                ),
+            ]
+        )
+        XCTAssertEqual(pathToList.stringPath(), "list.0")
+        
+        let pathToText = try! doc.path(obj: deeplyNestedText)
+        //print("textPath: \(pathToText)")
+        XCTAssertEqual(
+            pathToText,
+            [
+                PathElement(
+                    obj: ObjId.ROOT,
+                    prop: .Key("list")
+                ),
+                PathElement(
+                    obj: list,
+                    prop: .Index(0)
+                ),
+                PathElement(
+                    obj: nestedMap,
+                    prop: .Key("notes")
+                ),
+            ]
+        )
+        XCTAssertEqual(pathToText.stringPath(), "list.0.notes")
+    }
+    
     func testExample() throws {
         let doc = Document()
         let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
@@ -103,5 +146,17 @@ final class AutomergeExplorationTests: XCTestCase {
                 ),
             ]
         )
+    }
+    
+    func testBeyondIndex() throws {
+        let doc = Document()
+        let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
+        //let nestedMap = try! doc.insertObject(obj: list, index: 0, ty: .Map)
+
+        // intentionally beyond end of list
+        XCTAssertNoThrow(try doc.get(obj: list, index: 32))
+        let experiment: Value? = try doc.get(obj: list, index: 32)
+        XCTAssertNil(experiment)
+        //print(String(describing: experiment))
     }
 }
