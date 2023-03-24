@@ -33,9 +33,53 @@ protocol ObservableAutomergeDocumentBound: ObservableObject, HasDoc, HasObj {
     var doc: Document { get }
 }
 
+class AutomergeObject: ObservableAutomergeDocumentBound {
+    var objectWillChange: ObservableObjectPublisher
+    var doc: Document
+    var obj: ObjId
+    
+//    public func subPath(path: String) -> ObjId {
+//        // take existing ObjId and look up the path down to the next ObjId
+//    }
+    
+    init(doc: Document, obj: ObjId) {
+        self.objectWillChange = ObservableObjectPublisher()
+        self.doc = doc
+        self.obj = obj
+    }
+    
+//    init(doc: Document, path: String) {
+//        // look up path from root to create ObjId for this object
+//    }
+    //var subObject = AutomergeObject(doc: self.doc, obj: <#T##ObjId#>)
+}
+// class base - has doc: Document, and obj: ObjId to link to the schema
+// then @AmProp with keys to the keys in that object
+// init with a path - look up the ObjId, creating if needed
+
+
+//
 // @AmList("myList") -> something that acts like a collection, but is bound to Document
-// @AmObject("myOtherObject") -> something that acts like an object/map, but is bound to Document
+// @AmObject("myOtherObject") -> something that acts like an object, but is bound to Document
+//   -- Supports different types annotated as objects within the map (AMProp currently)
+//   - - can the wrapper initialize in the doc and objId?
+
+// @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
+
 // @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
+
+// Based on the current type of object, you can
+//
+// get(obj: ObjId, key: String) -> Value? to look for map keys
+// get(obj: ObjId, index: UInt64) -> Value? to look for list indices
+//
+// You can also walk the list of all values:
+// values(obj: ObjId) -> [Value] - works for both map and list, but doesn't provide keys with it
+// mapEntries(obj:OnjId) -> [(String, Value)]
+// and there's good ole length(obj: ObjId) -> UInt64 for sizing of iteration
+//
+// separate AmObject(doc: Document, obj: ObjId) declaration?
+// so AmProp uses a "local referenced keypath" vs a global reference?
 
 // Path examples:
 // . -> Root

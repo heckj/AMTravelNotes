@@ -7,6 +7,7 @@
 
 import XCTest
 import Automerge
+@testable import AMTravelNotes
 
 final class AutomergeExplorationTests: XCTestCase {
 
@@ -15,6 +16,53 @@ final class AutomergeExplorationTests: XCTestCase {
         let path = try! doc.path(obj: ObjId.ROOT)
         //print("\(path)")
         XCTAssertEqual(path, [])
+    }
+    
+    func testPath() throws {
+        XCTAssertNotNil(DocumentCache.objId)
+        XCTAssertEqual(DocumentCache.objId.count, 0)
+        
+        let doc = Document()
+        let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
+        let nestedMap = try! doc.insertObject(obj: list, index: 0, ty: .Map)
+        let deeplyNestedText = try! doc.putObject(obj: nestedMap, key: "notes", ty: .Text)
+
+        XCTAssertEqual(DocumentCache.objId.count, 0)
+        
+        let result = try XCTUnwrap(doc.lookupPath(path: ""))
+        XCTAssertEqual(result, ObjId.ROOT)
+        
+        XCTAssertEqual(ObjId.ROOT, try XCTUnwrap(doc.lookupPath(path: "")))
+        XCTAssertEqual(ObjId.ROOT, try XCTUnwrap(doc.lookupPath(path: ".")))
+        XCTAssertNil(try doc.lookupPath(path: "a"))
+        XCTAssertNil(try doc.lookupPath(path: "a."))
+        XCTAssertEqual(try doc.lookupPath(path: "list"), list)
+        XCTAssertNil(try doc.lookupPath(path: "list.1"))
+        
+        // The top level object isn't a list - so an index lookup should fail with an error
+        XCTAssertThrowsError(try doc.lookupPath(path: "1.a"))
+
+        // XCTAssertEqual(ObjId.ROOT, try XCTUnwrap(doc.lookupPath(path: "1.a")))
+        // threw error "DocError(inner: AutomergeUniffi.DocError.WrongObjectType(message: "WrongObjectType"))"
+        XCTAssertEqual(try doc.lookupPath(path: "list.0"), nestedMap)
+        XCTAssertEqual(try doc.lookupPath(path: "list.0"), nestedMap)
+        XCTAssertEqual(try doc.lookupPath(path: "list.0.notes"), deeplyNestedText)
+        
+        print("Cache: \(DocumentCache.objId)")
+        /*
+         Cache: [
+         ".list.0.notes": (ObjId(1010867819f53d3748a498ecc9742ebf28de0003, Automerge.ObjType.Text),
+         ".list": (ObjId(1010867819f53d3748a498ecc9742ebf28de0001, Automerge.ObjType.List),
+         ".list.0": (ObjId(1010867819f53d3748a498ecc9742ebf28de0002, Automerge.ObjType.Map)
+         ]
+         */
+        
+        // verifying cache lookups
+        
+        XCTAssertEqual(DocumentCache.objId.count, 3)
+        XCTAssertNotNil(DocumentCache.objId[".list"])
+        XCTAssertNil(DocumentCache.objId["list"])
+        XCTAssertNil(DocumentCache.objId["a"])
     }
     
     func testExample() throws {

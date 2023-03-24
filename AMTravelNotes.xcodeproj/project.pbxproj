@@ -12,6 +12,7 @@
 		1AC4EBAE29CA6F6F00814B1E /* AMProp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */; };
 		1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */; };
 		1AC4EBB229CA704E00814B1E /* ActorProtectedAutomergeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBB129CA704E00814B1E /* ActorProtectedAutomergeDocument.swift */; };
+		1AEFDE9629CE0FF5004657E0 /* Document+Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFDE9529CE0FF5004657E0 /* Document+Path.swift */; };
 		1AF0BD7529CA62140039EB8B /* AMTravelNotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD7429CA62140039EB8B /* AMTravelNotesApp.swift */; };
 		1AF0BD7729CA62140039EB8B /* AMTravelNotesDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD7629CA62140039EB8B /* AMTravelNotesDocument.swift */; };
 		1AF0BD7929CA62140039EB8B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD7829CA62140039EB8B /* ContentView.swift */; };
@@ -47,6 +48,7 @@
 		1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMProp.swift; sourceTree = "<group>"; };
 		1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoCode.swift; sourceTree = "<group>"; };
 		1AC4EBB129CA704E00814B1E /* ActorProtectedAutomergeDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActorProtectedAutomergeDocument.swift; sourceTree = "<group>"; };
+		1AEFDE9529CE0FF5004657E0 /* Document+Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Document+Path.swift"; sourceTree = "<group>"; };
 		1AF0BD7129CA62140039EB8B /* AMTravelNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AMTravelNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AF0BD7429CA62140039EB8B /* AMTravelNotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesApp.swift; sourceTree = "<group>"; };
 		1AF0BD7629CA62140039EB8B /* AMTravelNotesDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesDocument.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				1AC4EBB129CA704E00814B1E /* ActorProtectedAutomergeDocument.swift */,
 				1A274A2E29CA7D0A00EE016B /* QueueProtectedAutomergeDocument.swift */,
 				1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */,
+				1AEFDE9529CE0FF5004657E0 /* Document+Path.swift */,
 				1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */,
 				1AF0BD7829CA62140039EB8B /* ContentView.swift */,
 				1AF0BD7A29CA62150039EB8B /* Assets.xcassets */,
@@ -294,6 +297,7 @@
 				1A274A2F29CA7D0A00EE016B /* QueueProtectedAutomergeDocument.swift in Sources */,
 				1AF0BD7529CA62140039EB8B /* AMTravelNotesApp.swift in Sources */,
 				1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */,
+				1AEFDE9629CE0FF5004657E0 /* Document+Path.swift in Sources */,
 				1AC4EBAE29CA6F6F00814B1E /* AMProp.swift in Sources */,
 				1AF0BD7929CA62140039EB8B /* ContentView.swift in Sources */,
 			);
