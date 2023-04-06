@@ -1,19 +1,11 @@
-//
-//  DynamicAutomergeTypes.swift
-//  AMTravelNotes
-//
-//  Created by Joseph Heck on 4/6/23.
-//
-
 import Foundation
 import Combine
 
 import class Automerge.Document
 import struct Automerge.ObjId
 
-class AutomergeList: ObservableAutomergeBoundObject, Sequence, Collection {
+class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
         
-    //typealias Index = UInt64
     internal var doc: Document
     internal var obj: ObjId
 
@@ -22,6 +14,10 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, Collection {
         self.doc = doc
         self.obj = obj
         // It's be nice if, given an ObjId, we could verify this is a List, and not a Map
+        //
+        // Might be possible through
+        // https://docs.rs/automerge/latest/automerge/trait.ReadDoc.html#tymethod.object_type
+        // exposed up through the UniFFI layer...
     }
 
     // MARK: Sequence Conformance
@@ -62,8 +58,9 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, Collection {
         }
     }
 
-    // MARK: Collection Conformance
+    // MARK: RandomAccessCollection Conformance
 
+    //typealias Index = UInt64 // inferred
     typealias Iterator = AmListIterator<Element>
 
     var startIndex: UInt64 {
@@ -76,6 +73,10 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, Collection {
 
     var endIndex: UInt64 {
         return self.doc.length(obj: self.obj)
+    }
+    
+    func index(before i: UInt64) -> UInt64 {
+        return i-1
     }
     
     subscript(position: UInt64) -> AutomergeRepresentable? {

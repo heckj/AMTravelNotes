@@ -44,45 +44,47 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
 // @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
 // @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
 
-@propertyWrapper
-struct AmList<AmListType: ObservableAutomergeBoundObject> {
-    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
-    var key: String
-
-    init(_ key: String) {
-        self.key = key
-    }
-
-    static subscript<T: ObservableAutomergeBoundObject>(
-        _enclosingInstance instance: T,
-        wrapped _: KeyPath<T, AmListType>,
-        storage storageKeyPath: KeyPath<T, Self>
-    ) -> AmListType {
-        get {
-            let doc = instance.doc
-            let obj = instance.obj
-            let key = instance[keyPath: storageKeyPath].key // parameter provided by user to map into Automerge Doc
-            let amval = try! doc.get(obj: obj, key: key)!
-            if case let .Object(objId, .List) = amval {
-                return AutomergeList(doc: doc, obj: objId) as! AmListType
-            } else {
-                fatalError("object referenced at \(key) wasn't a List")
-            }
-        }
-        set {
-            instance.objectWillChange.send()
-
-            let doc = instance.doc
-            let key = instance[keyPath: storageKeyPath].key
-            let obj = instance.obj
-            let theNewObjectIdForThisList = try! doc.putObject(obj: obj, key: key, ty: .List)
-            print(newValue) // has the object that was "set" into this place - copy in?
-//            for listItem in newValue {
-//                // crap - AmListType isn't declaring object vs. scalar...
-//            }
-        }
-    }
+//@propertyWrapper
+//struct AmList<AmListType: ObservableAutomergeBoundObject> {
+//    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
+//    var key: String
 //
+//    init(_ key: String) {
+//        self.key = key
+//    }
+//
+//    static subscript<T: ObservableAutomergeBoundObject>(
+//        _enclosingInstance instance: T,
+//        wrapped _: KeyPath<T, AmListType>,
+//        storage storageKeyPath: KeyPath<T, Self>
+//    ) -> AmListType {
+//        get {
+//            let doc = instance.doc
+//            let obj = instance.obj
+//            let key = instance[keyPath: storageKeyPath].key // parameter provided by user to map into Automerge Doc
+//            let amval = try! doc.get(obj: obj, key: key)!
+//            if case let .Object(objId, .List) = amval {
+//                return AutomergeList(doc: doc, obj: objId) as! AmListType
+//            } else {
+//                fatalError("object referenced at \(key) wasn't a List")
+//            }
+//        }
+//        set {
+//            instance.objectWillChange.send()
+//
+//            let doc = instance.doc
+//            let key = instance[keyPath: storageKeyPath].key
+//            let obj = instance.obj
+//            let theNewObjectIdForThisList = try! doc.putObject(obj: obj, key: key, ty: .List)
+//            print(newValue) // has the object that was "set" into this place - copy in?
+////            for listItem in newValue {
+////                // crap - AmListType isn't declaring object vs. scalar...
+////            }
+//        }
+//    }
+
+
+
 //    static subscript<T: ObservableAutomergeBoundObject>(
 //        _enclosingInstance instance: T,
 //        projected _: KeyPath<T, Binding<AmListType>>,
@@ -103,16 +105,16 @@ struct AmList<AmListType: ObservableAutomergeBoundObject> {
 //        set {}
 //    }
 
-    @available(*, unavailable)
-    var wrappedValue: Value {
-        fatalError("not available")
-    }
-
-    @available(*, unavailable)
-    var projectedValue: Binding<Value> {
-        fatalError("not available")
-    }
-}
+//    @available(*, unavailable)
+//    var wrappedValue: Value {
+//        fatalError("not available")
+//    }
+//
+//    @available(*, unavailable)
+//    var projectedValue: Binding<Value> {
+//        fatalError("not available")
+//    }
+//}
 
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {
