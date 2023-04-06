@@ -11,7 +11,9 @@ import Combine
 import class Automerge.Document
 import struct Automerge.ObjId
 
-class AutomergeList: ObservableAutomergeBoundObject, Sequence {
+class AutomergeList: ObservableAutomergeBoundObject, Sequence, Collection {
+        
+    //typealias Index = UInt64
     internal var doc: Document
     internal var obj: ObjId
 
@@ -22,7 +24,9 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence {
         // It's be nice if, given an ObjId, we could verify this is a List, and not a Map
     }
 
-    typealias Element = AutomergeRepresentable
+    // MARK: Sequence Conformance
+
+    typealias Element = AutomergeRepresentable?
     
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmListIterator<Element> {
@@ -57,6 +61,36 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence {
             return nil
         }
     }
+
+    // MARK: Collection Conformance
+
+    typealias Iterator = AmListIterator<Element>
+
+    var startIndex: UInt64 {
+        return 0
+    }
+    
+    func index(after i: UInt64) -> UInt64 {
+        return i+1
+    }
+
+    var endIndex: UInt64 {
+        return self.doc.length(obj: self.obj)
+    }
+    
+    subscript(position: UInt64) -> AutomergeRepresentable? {
+        get {
+            do {
+                if let amvalue = try self.doc.get(obj: self.obj, index: position) {
+                    return try amvalue.dynamicType
+                }
+            }catch {
+                // swallow errors to return nil
+            }
+            return nil
+        }
+    }
+
 }
 
 // class AutomergeMap: ObservableAutomergeBoundObject, Sequence
