@@ -66,6 +66,79 @@ class DynamicAutomergeObject: ObservableAutomergeBoundObject {
     }
 }
 
+class AutomergeList: ObservableAutomergeBoundObject, Sequence {
+    internal var doc: Document
+    internal var obj: ObjId
+
+    init(doc: Document, obj: ObjId) {
+        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+        self.doc = doc
+        self.obj = obj
+        // It's be nice if, given an ObjId, we could verify this is a List, and not a Map
+    }
+
+    typealias Element = AutomergeRepresentable
+    
+    /// Returns an iterator over the elements of this sequence.
+    func makeIterator() -> AmListIterator<Element> {
+        AmListIterator(doc: self.doc, objId: self.obj)
+    }
+
+    struct AmListIterator<Element>: IteratorProtocol {
+        private let doc: Document
+        private let objId: ObjId
+        private var cursorIndex: UInt64
+        private let length: UInt64
+        
+        init(doc: Document, objId: ObjId) {
+            self.doc = doc
+            self.objId = objId
+            self.cursorIndex = 0
+            self.length = doc.length(obj: objId)
+        }
+        
+        mutating func next() -> Element? {
+            if cursorIndex >= length {
+                return nil
+            }
+            self.cursorIndex+=1
+            if let result = try! doc.get(obj: objId, index: cursorIndex) {
+                do {
+                    if case try result.dynamicType = AutomergeRepresentable.null {
+                        return nil
+                    } else {
+                        return try result.dynamicType as? Element
+                    }
+                } catch {
+                    return nil
+                }
+            }
+            return nil
+        }
+    }
+}
+
+class AutomergeBoundObject: ObservableAutomergeBoundObject {
+    internal var doc: Document
+    internal var obj: ObjId
+
+    // alternate initializer that accepts a path into the Automerge document
+    init(doc: Document, obj: ObjId = ObjId.ROOT) {
+        self.doc = doc
+        self.obj = obj
+    }
+}
+
+class TravelNotesModel: AutomergeBoundObject, Identifiable {
+    @AmScalarProp("id") var id: String
+    @AmScalarProp("done") var done: Bool
+    @AmText("notes") var notes: String
+
+    init(doc: Document, id _: String, done _: Bool) {
+        super.init(doc: doc)
+    }
+}
+
 // @AmList("myList") -> something that acts like a collection, but is bound to Document
 // @AmObject("myOtherObject") -> something that acts like an object, but is bound to Document
 //   -- Supports different types annotated as objects within the map (AMProp currently)
@@ -73,6 +146,81 @@ class DynamicAutomergeObject: ObservableAutomergeBoundObject {
 
 // @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
 // @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
+
+
+//protocol ObservableAutomergeBoundList: ObservableAutomergeBoundObject, Sequence where Sequence.Element == Automerge.Value {
+//
+//}
+
+@propertyWrapper
+struct AmList<AmListType: ObservableAutomergeBoundObject> {
+    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
+    var key: String
+
+    init(_ key: String) {
+        self.key = key
+    }
+
+    static subscript<T: ObservableAutomergeBoundObject>(
+        _enclosingInstance instance: T,
+        wrapped _: KeyPath<T, AmListType>,
+        storage storageKeyPath: KeyPath<T, Self>
+    ) -> AmListType {
+        get {
+            let doc = instance.doc
+            let obj = instance.obj
+            let key = instance[keyPath: storageKeyPath].key // parameter provided by user to map into Automerge Doc
+            let amval = try! doc.get(obj: obj, key: key)!
+            if case let .Object(objId, .List) = amval {
+                return AutomergeList(doc: doc, obj: objId) as! AmListType
+            } else {
+                fatalError("object referenced at \(key) wasn't a List")
+            }
+        }
+        set {
+            instance.objectWillChange.send()
+
+            let doc = instance.doc
+            let key = instance[keyPath: storageKeyPath].key
+            let obj = instance.obj
+            let theNewObjectIdForThisList = try! doc.putObject(obj: obj, key: key, ty: .List)
+            print(newValue) // has the object that was "set" into this place - copy in?
+//            for listItem in newValue {
+//                // crap - AmListType isn't declaring object vs. scalar...
+//            }
+        }
+    }
+//
+//    static subscript<T: ObservableAutomergeBoundObject>(
+//        _enclosingInstance instance: T,
+//        projected _: KeyPath<T, Binding<AmListType>>,
+//        storage storageKeyPath: KeyPath<T, Self>
+//    ) -> Binding<AmListType> {
+//        get {
+//            let doc = instance.doc
+//            let key = instance[keyPath: storageKeyPath].key
+//            let obj = instance.obj
+//            let binding: Binding<Value> = scalarPropBinding(doc: doc, objId: obj, key: key, observer: instance)
+//            return binding
+//        }
+//        @available(
+//            *,
+//            unavailable,
+//            message: "@Concatenating projected value is readonly"
+//        )
+//        set {}
+//    }
+
+    @available(*, unavailable)
+    var wrappedValue: Value {
+        fatalError("not available")
+    }
+
+    @available(*, unavailable)
+    var projectedValue: Binding<Value> {
+        fatalError("not available")
+    }
+}
 
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {
