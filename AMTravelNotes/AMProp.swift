@@ -4,7 +4,6 @@
 //
 //  Created by Alex Good on 22/02/2023.
 //
-
 import Foundation
 import Combine
 import struct SwiftUI.Binding
@@ -15,119 +14,11 @@ import enum Automerge.ScalarValue
 import protocol Automerge.ScalarValueRepresentable
 import enum Automerge.Value
 
-typealias AMValue = Automerge.Value
-
-protocol HasDoc {
-    var doc: Document { get }
-}
-
-protocol HasObj {
-    var obj: ObjId { get }
-}
-
-// mixing the Automerge doc & Observable object with an explicit marker for a
-// directly usable publisher to participate in send()
-protocol ObservableAutomergeBoundObject: ObservableObject, HasDoc, HasObj {
-    var objectWillChange: ObservableObjectPublisher { get }
-    // ^^ this is really about more easily participating in ObservableObject notifications
-}
-
-@dynamicMemberLookup
-class DynamicAutomergeObject: ObservableAutomergeBoundObject {
-    var objectWillChange: ObservableObjectPublisher
-    var doc: Document
-    var obj: ObjId
-    
-    init(doc: Document, obj: ObjId) {
-        // There should be some safety check here - verifying that what we're binding
-        // really is a Map object in Automerge.
-        self.objectWillChange = ObservableObjectPublisher()
-        self.doc = doc
-        self.obj = obj
-    }
-    
-    init?(doc: Document, path: String) throws {
-        self.objectWillChange = ObservableObjectPublisher()
-        self.doc = doc
-        if let objId = try doc.lookupPath(path: path) {
-            self.obj = objId
-        } else {
-            return nil
-        }
-    }
-    
-    subscript(dynamicMember member: String) -> Value? {
-        do {
-            return try doc.get(obj: self.obj, key: member)
-        } catch {
-            // yes, we're really swallowing any underlying errors.
-            return nil
-        }
-    }
-}
-
-class AutomergeList: ObservableAutomergeBoundObject, Sequence {
-    internal var doc: Document
-    internal var obj: ObjId
-
-    init(doc: Document, obj: ObjId) {
-        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
-        self.doc = doc
-        self.obj = obj
-        // It's be nice if, given an ObjId, we could verify this is a List, and not a Map
-    }
-
-    typealias Element = AutomergeRepresentable
-    
-    /// Returns an iterator over the elements of this sequence.
-    func makeIterator() -> AmListIterator<Element> {
-        AmListIterator(doc: self.doc, objId: self.obj)
-    }
-
-    struct AmListIterator<Element>: IteratorProtocol {
-        private let doc: Document
-        private let objId: ObjId
-        private var cursorIndex: UInt64
-        private let length: UInt64
-        
-        init(doc: Document, objId: ObjId) {
-            self.doc = doc
-            self.objId = objId
-            self.cursorIndex = 0
-            self.length = doc.length(obj: objId)
-        }
-        
-        mutating func next() -> Element? {
-            if cursorIndex >= length {
-                return nil
-            }
-            self.cursorIndex+=1
-            if let result = try! doc.get(obj: objId, index: cursorIndex) {
-                do {
-                    if case try result.dynamicType = AutomergeRepresentable.null {
-                        return nil
-                    } else {
-                        return try result.dynamicType as? Element
-                    }
-                } catch {
-                    return nil
-                }
-            }
-            return nil
-        }
-    }
-}
-
-class AutomergeBoundObject: ObservableAutomergeBoundObject {
-    internal var doc: Document
-    internal var obj: ObjId
-
-    // alternate initializer that accepts a path into the Automerge document
-    init(doc: Document, obj: ObjId = ObjId.ROOT) {
-        self.doc = doc
-        self.obj = obj
-    }
-}
+/*
+ ==============================================================================
+ Property Wrappers
+ ==============================================================================
+ */
 
 class TravelNotesModel: AutomergeBoundObject, Identifiable {
     @AmScalarProp("id") var id: String
@@ -139,6 +30,12 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
     }
 }
 
+/*
+ ==============================================================================
+ Property Wrappers
+ ==============================================================================
+ */
+
 // @AmList("myList") -> something that acts like a collection, but is bound to Document
 // @AmObject("myOtherObject") -> something that acts like an object, but is bound to Document
 //   -- Supports different types annotated as objects within the map (AMProp currently)
@@ -146,11 +43,6 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
 
 // @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
 // @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
-
-
-//protocol ObservableAutomergeBoundList: ObservableAutomergeBoundObject, Sequence where Sequence.Element == Automerge.Value {
-//
-//}
 
 @propertyWrapper
 struct AmList<AmListType: ObservableAutomergeBoundObject> {

@@ -14,7 +14,7 @@ public enum AutomergeRepresentable: Equatable, Hashable {
     case double
     case counter
     case timestamp
-    case null
+    // case null // this is better expressed as a full Optional<AutomergeRepresentable> type
 }
 
 enum AutomergeRepresentableError: Error {
@@ -22,7 +22,7 @@ enum AutomergeRepresentableError: Error {
 }
 
 extension Automerge.Value {
-    var dynamicType: AutomergeRepresentable {
+    var dynamicType: AutomergeRepresentable? {
         get throws {
             switch self {
             case let .Object(_, objectType):
@@ -55,7 +55,7 @@ extension Automerge.Value {
                 case let .Unknown(typeCode: typeCode, data: data):
                     throw AutomergeRepresentableError.unknownScalarType(typeCode, data)
                 case .Null:
-                    return .null
+                    return nil
                 }
             }
         }
