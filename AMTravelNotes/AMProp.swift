@@ -4,8 +4,8 @@
 //
 //  Created by Alex Good on 22/02/2023.
 //
-import Foundation
 import Combine
+import Foundation
 import struct SwiftUI.Binding
 
 import class Automerge.Document
@@ -24,6 +24,10 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
     @AmScalarProp("id") var id: String
     @AmScalarProp("done") var done: Bool
     @AmText("notes") var notes: String
+
+    // @AmList("list") var myList: AMList<Int>()
+    // @AmMap("map") var myMap: AMMap<String, FOO>()
+    // @AmObject("myObject") var anInstance: AMObject()
 
     init(doc: Document, id _: String, done _: Bool) {
         super.init(doc: doc)
@@ -44,8 +48,8 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
 // @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
 // @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
 
-//@propertyWrapper
-//struct AmList<AmListType: ObservableAutomergeBoundObject> {
+// @propertyWrapper
+// struct AmList<AmListType: ObservableAutomergeBoundObject> {
 //    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
 //    var key: String
 //
@@ -83,8 +87,6 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
 //        }
 //    }
 
-
-
 //    static subscript<T: ObservableAutomergeBoundObject>(
 //        _enclosingInstance instance: T,
 //        projected _: KeyPath<T, Binding<AmListType>>,
@@ -114,7 +116,7 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
 //    var projectedValue: Binding<Value> {
 //        fatalError("not available")
 //    }
-//}
+// }
 
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {

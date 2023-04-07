@@ -1,5 +1,5 @@
-import Foundation
 import Automerge
+import Foundation
 
 /// A type that represents all the potential options that can be represented in the schema supported by Automerge.
 public enum AutomergeRepresentable: Equatable, Hashable {
@@ -38,19 +38,19 @@ extension Automerge.Value {
                 switch scalarValue {
                 case .Bytes:
                     return .bytes
-                case .String(_):
+                case .String:
                     return .string
-                case .Uint(_):
+                case .Uint:
                     return .uint
-                case .Int(_):
+                case .Int:
                     return .int
-                case .F64(_):
+                case .F64:
                     return .double
-                case .Counter(_):
+                case .Counter:
                     return .counter
-                case .Timestamp(_):
+                case .Timestamp:
                     return .timestamp
-                case .Boolean(_):
+                case .Boolean:
                     return .bool
                 case let .Unknown(typeCode: typeCode, data: data):
                     throw AutomergeRepresentableError.unknownScalarType(typeCode, data)
@@ -61,4 +61,3 @@ extension Automerge.Value {
         }
     }
 }
-

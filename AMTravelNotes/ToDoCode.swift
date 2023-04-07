@@ -38,8 +38,9 @@ class TodoItems: ObservableAutomergeBoundObject {
     var name: String
     var doc: Document
     internal var obj: ObjId {
-        return itemsObjId
+        itemsObjId
     }
+
     private var itemsObjId: ObjId
 
     init(name: String, initDoc: Document) {

@@ -5,8 +5,8 @@
 //  Created by Joseph Heck on 3/24/23.
 //
 
-import Foundation
 import Automerge
+import Foundation
 
 class DocumentCache {
     static var objId: [String: (ObjId, ObjType)] = [:]
@@ -17,14 +17,13 @@ enum PathParseError: Error {
 }
 
 extension Document {
-    
     public func lookupPath(path: String) throws -> ObjId? {
         if path.first == "." {
             if let cacheResult = DocumentCache.objId[path] {
                 return cacheResult.0
             }
         } else {
-            if let cacheResult = DocumentCache.objId["."+path] {
+            if let cacheResult = DocumentCache.objId["." + path] {
                 return cacheResult.0
             }
         }
@@ -35,25 +34,26 @@ extension Document {
         }
         return try lookupSubPath(bits, basePath: "", from: ObjId.ROOT)
     }
-    
+
     private func lookupSubPath(_ pathList: [String], basePath: String, from obj: ObjId) throws -> ObjId? {
         guard let pathPiece = pathList.first,
-              let firstChar: Character = pathPiece.first else {
+              let firstChar: Character = pathPiece.first
+        else {
             return obj
         }
         let remainingPathPieces = Array(pathList[1...])
-        
+
         if firstChar.isNumber,
-           let parsedIndexValue = UInt64(pathPiece) {
-            
+           let parsedIndexValue = UInt64(pathPiece)
+        {
             // ?? We probably need to verify we're not requesting beyond end of index here - need to check in tests
-            if let value = try self.get(obj: obj, index: parsedIndexValue) {
+            if let value = try get(obj: obj, index: parsedIndexValue) {
                 switch value {
-                case .Object(let objId, let objType):
+                case let .Object(objId, objType):
                     let extendedPath: String = [basePath, pathPiece].joined(separator: ".")
                     DocumentCache.objId[extendedPath] = (objId, objType)
                     return try lookupSubPath(remainingPathPieces, basePath: extendedPath, from: objId)
-                case .Scalar(_):
+                case .Scalar:
                     return nil
                 }
             } else {
@@ -61,15 +61,16 @@ extension Document {
                 return nil
             }
         } else if firstChar.isASCII,
-                  firstChar.isLetter {
-            if let value = try self.get(obj: obj, key: String(pathPiece)) {
+                  firstChar.isLetter
+        {
+            if let value = try get(obj: obj, key: String(pathPiece)) {
                 switch value {
-                case .Object(let objId, let objType):
+                case let .Object(objId, objType):
                     let extendedPath: String = [basePath, pathPiece].joined(separator: ".")
                     DocumentCache.objId[extendedPath] = (objId, objType)
-                  return try lookupSubPath(remainingPathPieces, basePath: extendedPath, from: objId)
-                case .Scalar(_):
-                  return nil
+                    return try lookupSubPath(remainingPathPieces, basePath: extendedPath, from: objId)
+                case .Scalar:
+                    return nil
                 }
             } else {
                 // path is a valid request, there's just nothing there
@@ -83,7 +84,7 @@ extension Document {
 
 extension Sequence where Element == Automerge.PathElement {
     func stringPath() -> String {
-        return self.map { pathElement in
+        map { pathElement in
             switch pathElement.prop {
             case let .Index(idx):
                 return String(idx)

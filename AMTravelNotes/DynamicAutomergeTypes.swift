@@ -1,11 +1,10 @@
-import Foundation
 import Combine
+import Foundation
 
 import class Automerge.Document
 import struct Automerge.ObjId
 
 class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
-        
     internal var doc: Document
     internal var obj: ObjId
 
@@ -28,11 +27,11 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessColle
             return nil
         }
     }
-    
+
     // MARK: Sequence Conformance
 
     typealias Element = AutomergeRepresentable?
-    
+
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmListIterator<Element> {
         AmListIterator(doc: self.doc, objId: self.obj)
@@ -43,19 +42,19 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessColle
         private let objId: ObjId
         private var cursorIndex: UInt64
         private let length: UInt64
-        
+
         init(doc: Document, objId: ObjId) {
             self.doc = doc
             self.objId = objId
             self.cursorIndex = 0
             self.length = doc.length(obj: objId)
         }
-        
+
         mutating func next() -> Element? {
             if cursorIndex >= length {
                 return nil
             }
-            self.cursorIndex+=1
+            self.cursorIndex += 1
             if let result = try! doc.get(obj: objId, index: cursorIndex) {
                 do {
                     return try result.dynamicType as? Element
@@ -69,41 +68,38 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessColle
 
     // MARK: RandomAccessCollection Conformance
 
-    //typealias Index = UInt64 // inferred
+    // typealias Index = UInt64 // inferred
     typealias Iterator = AmListIterator<Element>
 
     var startIndex: UInt64 {
-        return 0
+        0
     }
-    
+
     func index(after i: UInt64) -> UInt64 {
-        return i+1
+        i + 1
     }
 
     func index(before i: UInt64) -> UInt64 {
-        return i-1
+        i - 1
     }
-    
+
     var endIndex: UInt64 {
-        return self.doc.length(obj: self.obj)
+        self.doc.length(obj: self.obj)
     }
-    
+
     subscript(position: UInt64) -> AutomergeRepresentable? {
-        get {
-            do {
-                if let amvalue = try self.doc.get(obj: self.obj, index: position) {
-                    return try amvalue.dynamicType
-                }
-            }catch {
-                // swallow errors to return nil
+        do {
+            if let amvalue = try self.doc.get(obj: self.obj, index: position) {
+                return try amvalue.dynamicType
             }
-            return nil
+        } catch {
+            // swallow errors to return nil
         }
+        return nil
     }
 }
 
 class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
-    
     internal var doc: Document
     internal var obj: ObjId
     private var _keys: [String]
@@ -129,12 +125,12 @@ class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
             return nil
         }
     }
-    
+
     // MARK: Sequence Conformance
 
-    //public typealias Element = (key: Key, value: Value)
-    typealias Element = (String,AutomergeRepresentable?)
-    
+    // public typealias Element = (key: Key, value: Value)
+    typealias Element = (String, AutomergeRepresentable?)
+
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmMapIterator<Element> {
         AmMapIterator(doc: self.doc, objId: self.obj)
@@ -146,7 +142,7 @@ class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
         private var cursorIndex: UInt64
         private let keys: [String]
         private let length: UInt64
-        
+
         init(doc: Document, objId: ObjId) {
             self.doc = doc
             self.objId = objId
@@ -154,12 +150,12 @@ class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
             self.length = doc.length(obj: objId)
             self.keys = doc.keys(obj: objId)
         }
-        
+
         mutating func next() -> Element? {
             if cursorIndex >= length {
                 return nil
             }
-            self.cursorIndex+=1
+            self.cursorIndex += 1
             let currentKey = keys[Int(cursorIndex)]
             if let result = try! doc.get(obj: objId, key: currentKey) {
                 do {
@@ -172,39 +168,35 @@ class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
             return nil
         }
     }
-    
-    // MARK: Collection Conformance
-    
-    // I'm probably doing this ALL wrong...
 
-    typealias Index = Int // inferred
+    // MARK: Collection Conformance
+
+    // typealias Index = Int // inferred
     typealias Iterator = AmMapIterator<Element>
 
     var startIndex: Int {
-        return 0
+        0
     }
-    
+
     var endIndex: Int {
-        return _keys.count
+        _keys.count
     }
-    
+
     func index(after i: Int) -> Int {
-        return i+1
+        i + 1
     }
 
     subscript(position: Int) -> (String, AutomergeRepresentable?) {
-        get {
-            let currentKey = self._keys[position]
-            if let result = try! doc.get(obj: self.obj, key: currentKey) {
-                do {
-                    let amrep = try result.dynamicType
-                    return (currentKey, amrep)
-                } catch {
-                    // yes, we're really swallowing any underlying errors.
-                }
+        let currentKey = self._keys[position]
+        if let result = try! doc.get(obj: self.obj, key: currentKey) {
+            do {
+                let amrep = try result.dynamicType
+                return (currentKey, amrep)
+            } catch {
+                // yes, we're really swallowing any underlying errors.
             }
-            return (currentKey, nil)
         }
+        return (currentKey, nil)
     }
 }
 
@@ -218,7 +210,7 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
         self.doc = doc
         self.obj = obj
     }
-    
+
     // dynamic lookup for accessing internals "like a map"?
     init?(doc: Document, path: String) throws {
         self.doc = doc
@@ -228,7 +220,7 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
             return nil
         }
     }
-    
+
     subscript(dynamicMember member: String) -> AutomergeRepresentable? {
         do {
             if let amValue = try doc.get(obj: self.obj, key: member) {
@@ -248,7 +240,6 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
  ==============================================================================
  */
 
-
 // This is a variant on AutomergeBoundObject that adds a publisher with the idea
 // of getting notified when sync's happen and the underlying elements change, but nothing is yet
 // wired up for that.
@@ -257,7 +248,7 @@ class DynamicAutomergeObject: ObservableAutomergeBoundObject {
     var objectWillChange: ObservableObjectPublisher
     var doc: Document
     var obj: ObjId
-    
+
     init(doc: Document, obj: ObjId) {
         // There should be some safety check here - verifying that what we're binding
         // really is a Map object in Automerge.
@@ -265,7 +256,7 @@ class DynamicAutomergeObject: ObservableAutomergeBoundObject {
         self.doc = doc
         self.obj = obj
     }
-    
+
     init?(doc: Document, path: String) throws {
         self.objectWillChange = ObservableObjectPublisher()
         self.doc = doc
@@ -275,7 +266,7 @@ class DynamicAutomergeObject: ObservableAutomergeBoundObject {
             return nil
         }
     }
-    
+
     subscript(dynamicMember member: String) -> AutomergeRepresentable? {
         do {
             if let valueType = try doc.get(obj: self.obj, key: member) {
