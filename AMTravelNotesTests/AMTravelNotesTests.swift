@@ -5,30 +5,51 @@
 //  Created by Joseph Heck on 3/21/23.
 //
 
+@testable import AMTravelNotes
+import Automerge
 import XCTest
 
 final class AMTravelNotesTests: XCTestCase {
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+    func testCheckMirror() throws {
+        // Establish Document
+        let doc = Document()
+        let text = try! doc.putObject(obj: ObjId.ROOT, key: "notes", ty: .Text)
+        try doc.put(obj: ObjId.ROOT, key: "id", value: .String("1234"))
+        try doc.put(obj: ObjId.ROOT, key: "done", value: .Boolean(false))
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+        // Add some text
+        try! doc.spliceText(obj: text, start: 0, delete: 0, value: "hello world!")
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions
-        // afterwards.
-    }
+        let boundClass = TravelNotesModel(doc: doc, id: "1234", done: false)
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+        let mirror = Mirror(reflecting: boundClass)
+
+        for a_child in mirror.children {
+            print("Child: \(a_child)")
+            let _ = a_child.label // optional string
+            let _ = a_child.value // Any
+
+            let submirror = Mirror(reflecting: a_child)
+            print("    child static type: \(submirror.subjectType)")
+            for grandkid in submirror.children {
+                print("    grandkid: \(grandkid)")
+            }
+
+//    Child: (label: Optional("_id"), value: AMTravelNotes.AmScalarProp<Swift.String>(key: "id"))
+//        child static type: (label: Optional<String>, value: Any)
+//        grandkid: (label: Optional("label"), value: Optional("_id"))
+//        grandkid: (label: Optional("value"), value: AMTravelNotes.AmScalarProp<Swift.String>(key: "id"))
+//    Child: (label: Optional("_done"), value: AMTravelNotes.AmScalarProp<Swift.Bool>(key: "done"))
+//        child static type: (label: Optional<String>, value: Any)
+//        grandkid: (label: Optional("label"), value: Optional("_done"))
+//        grandkid: (label: Optional("value"), value: AMTravelNotes.AmScalarProp<Swift.Bool>(key: "done"))
+//    Child: (label: Optional("_notes"), value: AMTravelNotes.AmText(key: "notes"))
+//        child static type: (label: Optional<String>, value: Any)
+//        grandkid: (label: Optional("label"), value: Optional("_notes"))
+//        grandkid: (label: Optional("value"), value: AMTravelNotes.AmText(key: "notes"))
         }
+        print("displayStyle: \(String(describing: mirror.displayStyle.debugDescription))")
+        print("subjectType: \(mirror.subjectType)") // Type of the object being mirrored - TravelNotesModel
+        print("superclassMirror: \(String(describing: mirror.superclassMirror))")
     }
 }

@@ -25,9 +25,13 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
     @AmScalarProp("done") var done: Bool
     @AmText("notes") var notes: String
 
+    var computedProperty: Bool {
+        done
+    }
+
     // @AmList("list") var myList: AMList<Int>()
     // @AmMap("map") var myMap: AMMap<String, FOO>()
-    // @AmObject("myObject") var anInstance: AMObject()
+    // @AmObject("myObject") var anInstance: AMObject() // non-dynamic version of AutomergeBoundObject
 
     init(doc: Document, id _: String, done _: Bool) {
         super.init(doc: doc)
