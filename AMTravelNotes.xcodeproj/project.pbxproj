@@ -12,6 +12,7 @@
 		1A3D1E2D29DF76BF00EA1C4F /* AutomergeProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */; };
 		1A3D1E2F29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */; };
 		1A84640029CCDA620050B817 /* AutomergeExplorationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */; };
+		1A8A234C29E49185001B17CC /* GenericAutomergeCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A234B29E49185001B17CC /* GenericAutomergeCollections.swift */; };
 		1AC4EBAE29CA6F6F00814B1E /* AMProp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */; };
 		1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */; };
 		1AC4EBB229CA704E00814B1E /* ActorProtectedAutomergeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBB129CA704E00814B1E /* ActorProtectedAutomergeDocument.swift */; };
@@ -50,6 +51,7 @@
 		1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeProtocols.swift; sourceTree = "<group>"; };
 		1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicAutomergeTypes.swift; sourceTree = "<group>"; };
 		1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeExplorationTests.swift; sourceTree = "<group>"; };
+		1A8A234B29E49185001B17CC /* GenericAutomergeCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericAutomergeCollections.swift; sourceTree = "<group>"; };
 		1AC4EBAC29CA6EB400814B1E /* automerge-swifter */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "automerge-swifter"; path = "../automerge-swifter"; sourceTree = "<group>"; };
 		1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMProp.swift; sourceTree = "<group>"; };
 		1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoCode.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */,
 				1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */,
 				1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */,
+				1A8A234B29E49185001B17CC /* GenericAutomergeCollections.swift */,
 				1A1257E229D3A36C00A197F7 /* AutomergeRepresentable.swift */,
 				1AEFDE9529CE0FF5004657E0 /* Document+Path.swift */,
 				1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */,
@@ -302,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AC4EBB229CA704E00814B1E /* ActorProtectedAutomergeDocument.swift in Sources */,
+				1A8A234C29E49185001B17CC /* GenericAutomergeCollections.swift in Sources */,
 				1AF0BD7729CA62140039EB8B /* AMTravelNotesDocument.swift in Sources */,
 				1A274A2F29CA7D0A00EE016B /* QueueProtectedAutomergeDocument.swift in Sources */,
 				1A3D1E2D29DF76BF00EA1C4F /* AutomergeProtocols.swift in Sources */,

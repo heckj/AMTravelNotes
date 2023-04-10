@@ -4,7 +4,7 @@ import Foundation
 import class Automerge.Document
 import struct Automerge.ObjId
 
-class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
+class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
     internal var doc: Document
     internal var obj: ObjId
 
@@ -99,7 +99,7 @@ class AutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessColle
     }
 }
 
-class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
+class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
     internal var doc: Document
     internal var obj: ObjId
     private var _keys: [String]
@@ -201,7 +201,7 @@ class AutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
 }
 
 @dynamicMemberLookup
-class AutomergeBoundObject: ObservableAutomergeBoundObject {
+class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
     internal var obj: ObjId
 
