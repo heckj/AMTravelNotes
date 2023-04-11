@@ -3,21 +3,49 @@ import Foundation
 
 import class Automerge.Document
 import struct Automerge.ObjId
+import protocol Automerge.ScalarValueRepresentable
+import enum Automerge.Value
 
-class AutomergeList<T>: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
+class AutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
     internal var obj: ObjId
 
-    init(doc: Document, obj: ObjId) {
-        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+    init(doc: Document, obj: ObjId = ObjId.ROOT) {
+        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
         self.doc = doc
         self.obj = obj
     }
 
     init?(doc: Document, path: String) throws {
         self.doc = doc
-        if let objId = try doc.lookupPath(path: path) {
+        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
             self.obj = objId
+        } else {
+            return nil
+        }
+    }
+}
+
+class AutomergeList<T: ScalarValueRepresentable>: ObservableAutomergeBoundObject, Sequence {
+    internal var doc: Document
+    internal var obj: ObjId
+    private var length: UInt64
+
+    init(doc: Document, obj: ObjId) {
+        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+        precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
+        self.doc = doc
+        self.obj = obj
+        self.length = doc.length(obj: obj)
+        // TODO: add validation of schema - that all list entries are convertible to type `T`
+    }
+
+    init?(doc: Document, path: String) throws {
+        self.doc = doc
+        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .List {
+            self.obj = objId
+            self.length = doc.length(obj: obj)
+            // TODO: add validation of schema - that all list entries are convertible to type `T`
         } else {
             return nil
         }
@@ -58,10 +86,13 @@ class AutomergeList<T>: ObservableAutomergeBoundObject, Sequence, RandomAccessCo
             return nil
         }
     }
+}
 
-    // MARK: RandomAccessCollection Conformance
+// MARK: AutomergeList<T> RandomAccessCollection Conformance
 
-    // typealias Index = UInt64 // inferred
+extension AutomergeList: RandomAccessCollection {
+    // TODO: implement MutableAccessCollection
+    typealias Index = UInt64 // inferred
     typealias Iterator = AmListIterator<T>
 
     var startIndex: UInt64 {
@@ -77,16 +108,17 @@ class AutomergeList<T>: ObservableAutomergeBoundObject, Sequence, RandomAccessCo
     }
 
     var endIndex: UInt64 {
-        self.doc.length(obj: self.obj)
+        length
     }
 
     subscript(position: UInt64) -> T {
         do {
-            if let amvalue = try self.doc.get(obj: self.obj, index: position) {
-                return try amvalue.dynamicType as? T
+            guard let amvalue = try self.doc.get(obj: self.obj, index: position) else {
+                fatalError("Unable to access list \(self.obj) at index \(position)")
             }
+            return try T.fromValue(amvalue).get()
         } catch {
-            // swallow errors to return nil
+            fatalError("Unable to convert value: \(error)")
         }
     }
 }

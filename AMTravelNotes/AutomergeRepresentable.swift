@@ -3,9 +3,9 @@ import Foundation
 
 /// A type that represents all the potential options that can be represented in the schema supported by Automerge.
 public enum AutomergeRepresentable: Equatable, Hashable {
-    case List
-    case Map
-    case Text
+    case List // [??]
+    case Map // [String:??]
+    case Text // String
     case bool
     case bytes
     case string
@@ -15,6 +15,36 @@ public enum AutomergeRepresentable: Equatable, Hashable {
     case counter
     case timestamp
     // case null // this is better expressed as a full Optional<AutomergeRepresentable> type
+
+//    public func value() -> Automerge.Value {
+//        switch self {
+//        case .List:
+//            fatalError("unimplemented")
+//            //Value.Object(<#T##ObjId#>, <#T##ObjType#>)
+//        case .Map:
+//            fatalError("unimplemented")
+//            //Value.Object(<#T##ObjId#>, <#T##ObjType#>)
+//        case .Text:
+//            fatalError("unimplemented")
+//            //Value.Object(<#T##ObjId#>, <#T##ObjType#>)
+//        case .bool:
+//            Value.Scalar(.Boolean(<#T##Bool#>))
+//        case .bytes:
+//            <#code#>
+//        case .string:
+//            <#code#>
+//        case .uint:
+//            <#code#>
+//        case .int:
+//            <#code#>
+//        case .double:
+//            <#code#>
+//        case .counter:
+//            <#code#>
+//        case .timestamp:
+//            <#code#>
+//        }
+//    }
 }
 
 enum AutomergeRepresentableError: Error {

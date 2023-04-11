@@ -4,31 +4,29 @@ import Foundation
 import class Automerge.Document
 import struct Automerge.ObjId
 
+// MARK: Automerge 'List' overlays
+
 class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
     internal var doc: Document
     internal var obj: ObjId
 
     init(doc: Document, obj: ObjId) {
         precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+        precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
         self.doc = doc
         self.obj = obj
-        // It's be nice if, given an ObjId, we could verify this is a List, and not a Map
-        //
-        // Might be possible through
-        // https://docs.rs/automerge/latest/automerge/trait.ReadDoc.html#tymethod.object_type
-        // exposed up through the UniFFI layer...
     }
 
     init?(doc: Document, path: String) throws {
         self.doc = doc
-        if let objId = try doc.lookupPath(path: path) {
+        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .List {
             self.obj = objId
         } else {
             return nil
         }
     }
 
-    // MARK: Sequence Conformance
+    // MARK: DynamicAutomergeList Sequence Conformance
 
     typealias Element = AutomergeRepresentable?
 
@@ -66,7 +64,7 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
         }
     }
 
-    // MARK: RandomAccessCollection Conformance
+    // MARK: DynamicAutomergeList RandomAccessCollection Conformance
 
     // typealias Index = UInt64 // inferred
     typealias Iterator = AmListIterator<Element>
@@ -99,26 +97,23 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
     }
 }
 
+// MARK: Automerge 'Map' overlays
+
 class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
     internal var doc: Document
     internal var obj: ObjId
     private var _keys: [String]
 
     init(doc: Document, obj: ObjId) {
-        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
         self.doc = doc
         self.obj = obj
         self._keys = doc.keys(obj: obj)
-        // It's be nice if, given an ObjId, we could verify this is a List, and not a Map
-        //
-        // Might be possible through
-        // https://docs.rs/automerge/latest/automerge/trait.ReadDoc.html#tymethod.object_type
-        // exposed up through the UniFFI layer...
     }
 
     init?(doc: Document, path: String) throws {
         self.doc = doc
-        if let objId = try doc.lookupPath(path: path) {
+        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
             self.obj = objId
             self._keys = doc.keys(obj: objId)
         } else {
@@ -126,7 +121,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
         }
     }
 
-    // MARK: Sequence Conformance
+    // MARK: DynamicAutomergeMap Sequence Conformance
 
     // public typealias Element = (key: Key, value: Value)
     typealias Element = (String, AutomergeRepresentable?)
@@ -169,7 +164,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
         }
     }
 
-    // MARK: Collection Conformance
+    // MARK: DynamicAutomergeMap Collection Conformance
 
     // typealias Index = Int // inferred
     typealias Iterator = AmMapIterator<Element>
@@ -207,11 +202,11 @@ class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
 
     // alternate initializer that accepts a path into the Automerge document
     init(doc: Document, obj: ObjId = ObjId.ROOT) {
+        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
         self.doc = doc
         self.obj = obj
     }
 
-    // dynamic lookup for accessing internals "like a map"?
     init?(doc: Document, path: String) throws {
         self.doc = doc
         if let objId = try doc.lookupPath(path: path) {
@@ -225,52 +220,6 @@ class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
         do {
             if let amValue = try doc.get(obj: self.obj, key: member) {
                 return try amValue.dynamicType
-            }
-        } catch {
-            // yes, we're really swallowing any underlying errors.
-        }
-        return nil
-    }
-}
-
-/*
- ==============================================================================
- Observable Variants of the fully dynamic bound objects - return "Value" types
- rather than casting down to specific types.
- ==============================================================================
- */
-
-// This is a variant on AutomergeBoundObject that adds a publisher with the idea
-// of getting notified when sync's happen and the underlying elements change, but nothing is yet
-// wired up for that.
-@dynamicMemberLookup
-class DynamicAutomergeObject: ObservableAutomergeBoundObject {
-    var objectWillChange: ObservableObjectPublisher
-    var doc: Document
-    var obj: ObjId
-
-    init(doc: Document, obj: ObjId) {
-        // There should be some safety check here - verifying that what we're binding
-        // really is a Map object in Automerge.
-        self.objectWillChange = ObservableObjectPublisher()
-        self.doc = doc
-        self.obj = obj
-    }
-
-    init?(doc: Document, path: String) throws {
-        self.objectWillChange = ObservableObjectPublisher()
-        self.doc = doc
-        if let objId = try doc.lookupPath(path: path) {
-            self.obj = objId
-        } else {
-            return nil
-        }
-    }
-
-    subscript(dynamicMember member: String) -> AutomergeRepresentable? {
-        do {
-            if let valueType = try doc.get(obj: self.obj, key: member) {
-                return try valueType.dynamicType
             }
         } catch {
             // yes, we're really swallowing any underlying errors.
