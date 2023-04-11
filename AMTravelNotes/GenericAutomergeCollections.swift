@@ -26,6 +26,12 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
     }
 }
 
+// NOTE(heckj): ScalarValueRepresentable has the pieces to convert into and out of types to Scalar values
+// within Automerge, but I don't (yet) have the same thing for Lists or Object/Map representations.
+// I want to try and accomplish that with a broader AutomergeRepresentable protocol. The initial version
+// of which is relevant to READ-ONLY determine a type within Automerge, but doesn't have the bits in place
+// to support conversions. When done, all AutomergeRepresentables should *also* be ScalarValueRepresentable.
+
 class AutomergeList<T: ScalarValueRepresentable>: ObservableAutomergeBoundObject, Sequence {
     internal var doc: Document
     internal var obj: ObjId
