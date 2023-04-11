@@ -2,85 +2,107 @@ import Automerge
 import Foundation
 
 /// A type that can be represented within an Automerge document.
-public protocol AutomergeTypeRepresentable {
+///
+/// You can encode your own types to be used as scalar values in Automerge, or within ``ObjType/List`` or
+/// ``ObjType/Map``
+/// by conforming your type to `AutomergeRepresentable`.
+/// Implement ``AutomergeRepresentable/toValue(doc:objId:)`` and ``AutomergeRepresentable/fromValue(_:)``with your
+/// preferred encoding.
+///
+/// To treat your type as a scalar value with atomic updates, return a value of``ScalarValue/Bytes(_:)`` with the data
+/// encoded
+/// into the associated type, and read the bytes through ``AutomergeRepresentable/fromValue(_:)`` to decode into your
+/// type.
+public protocol AutomergeRepresentable {
     /// The error type associated with failed attempted conversion into or out of Automerge representation.
     associatedtype ConvertError: LocalizedError
 
     /// Converts the Automerge representation to a local type, or returns a failure
     /// - Parameter val: The Automerge ``Value`` to be converted as a scalar value into a local type.
-    /// - Returns: The type, converted to a local type, or an error indicating the reason for the failure to convert.
+    /// - Returns: The type, converted to a local type, or an error indicating the reason for the conversion failure.
     ///
     /// The protocol accepts defines a function to accept a ``Value`` primarily for convenience.
     /// ``Value`` is a higher level enumeration that can include object types such as ``ObjType/List``, ``ObjType/Map``,
     /// and ``ObjType/Text``.
     static func fromValue(_ val: Value) -> Result<Self, ConvertError>
 
-    /// Converts a local type into an Automerge scalar value.
-    /// - Returns: The ``ScalarValue`` that aligns with the provided type
-    func toValue(_ doc: Document, objId: ObjId) -> Result<Value, ConvertError>
-    // ^^ This might require options for doc: and objId: in order to know _where_ in the schema to land
-    // the created value when you're fiddling with things like Objects, Maps, and Lists. Could potentially
-    // also use `path` to go from a String based input and look up (or create) the relevant objId on the fly.
+    /// Converts a local type into an Automerge Value type.
+    /// - Parameters:
+    ///   - doc: The document your type is mapping into.
+    ///   - objId: The object id.
+    /// - Returns: The ``ScalarValue`` that aligns with the provided type or an error indicating the reason for the
+    /// conversion failure.
+    func toValue(doc: Document, objId: ObjId) -> Result<Value, ConvertError>
 }
-
-// Maybe AutomergeTypeRepresentable should _replace_ ScalarValueRepresentable entirely...
 
 /// A type that represents all the potential options that can be represented in the schema supported by Automerge.
-public enum AutomergeRepresentable: Equatable, Hashable {
-    case List // [??]
-    case Map // [String:??]
-    case Text // String
-    case bool // -> Bool
-    case bytes // -> Data
-    case string // -> String
-    case uint // -> UInt
-    case int // -> Int
-    case double // -> Double
-    case counter // -> Int
-    case timestamp // -> Date
-    // case null // this is better expressed as a full Optional<AutomergeRepresentable> type
-}
+public enum AutomergeType: Equatable, Hashable {
+    /// A list CRDT.
+    case List(ObjId) // [??]
+    /// A map CRDT.
+    case Map(ObjId) // [String:??]
+    /// A specialized list CRDT for representing text.
+    case Text(ObjId) // String
+    /// A byte buffer.
+    case Bytes(Data)
+    /// A string.
+    case String(String)
+    /// An unsigned integer.
+    case Uint(UInt64)
+    /// A signed integer.
+    case Int(Int64)
+    /// A floating point number.
+    case Double(Double)
+    /// An integer counter.
+    case Counter(Int64)
+    /// A timestamp represented by the milliseconds since UNIX epoch.
+    case Timestamp(Int64)
+    /// A Boolean value.
+    case Boolean(Bool)
+    /// An unknown, raw scalar type.
+    ///
+    /// This type is reserved for forward compatibility, and is not expected to be created directly.
+    case Unknown(typeCode: UInt8, data: Data)
 
-// ^^ NOTE(heckj) - biggest idea here was a single enumeration that represented an internal Automerge
-// type - aka Value, but without the potential tree walk to more easily convert it back out.
-// Thinking now that there's little value in this setup, as it's mostly for the fully dynamic form
-// of Obj/Map/Dict - and in practice that should return `Value` instead of this additional layer.
+    // Automerge `Value` has an internal null type, but for the swift type comparison mechanism
+    // it seems to be more effective to represent that as Optional<AutomergeRepresentable>.
+}
 
 enum AutomergeRepresentableError: Error {
     case unknownScalarType(UInt8, Data)
 }
 
 extension Automerge.Value {
-    var dynamicType: AutomergeRepresentable? {
+    var automergeType: AutomergeType? {
         get throws {
             switch self {
-            case let .Object(_, objectType):
+            case let .Object(objId, objectType):
                 switch objectType {
                 case .List:
-                    return .List
+                    return .List(objId)
                 case .Map:
-                    return .Map
+                    return .Map(objId)
                 case .Text:
-                    return .Text
+                    return .Text(objId)
                 }
             case let .Scalar(scalarValue):
                 switch scalarValue {
-                case .Bytes:
-                    return .bytes
-                case .String:
-                    return .string
-                case .Uint:
-                    return .uint
-                case .Int:
-                    return .int
-                case .F64:
-                    return .double
-                case .Counter:
-                    return .counter
-                case .Timestamp:
-                    return .timestamp
-                case .Boolean:
-                    return .bool
+                case let .Bytes(dataBuffer):
+                    return .Bytes(dataBuffer)
+                case let .String(stringValue):
+                    return .String(stringValue)
+                case let .Uint(uintValue):
+                    return .Uint(uintValue)
+                case let .Int(intValue):
+                    return .Int(intValue)
+                case let .F64(doubleValue):
+                    return .Double(doubleValue)
+                case let .Counter(intValue):
+                    return .Counter(intValue)
+                case let .Timestamp(int64Value):
+                    return .Timestamp(int64Value)
+                case let .Boolean(boolValue):
+                    return .Boolean(boolValue)
                 case let .Unknown(typeCode: typeCode, data: data):
                     throw AutomergeRepresentableError.unknownScalarType(typeCode, data)
                 case .Null:
@@ -88,5 +110,259 @@ extension Automerge.Value {
                 }
             }
         }
+    }
+}
+
+// MARK: Boolean Conversions
+
+///// A failure to convert an Automerge scalar value to or from a Boolean representation.
+// public enum BooleanScalarConversionError: LocalizedError {
+//    case notbool(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notbool(val):
+//            return "Failed to read the scalar value \(val) as a Boolean."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension Bool: AutomergeRepresentable {
+    public typealias ConvertError = BooleanScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<Self, BooleanScalarConversionError> {
+        switch val {
+        case let .Scalar(.Boolean(b)):
+            return .success(b)
+        default:
+            return .failure(BooleanScalarConversionError.notbool(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, BooleanScalarConversionError> {
+        .success(Value.Scalar(.Boolean(self)))
+    }
+}
+
+// MARK: String Conversions
+
+///// A failure to convert an Automerge scalar value to or from a String representation.
+// public enum StringScalarConversionError: LocalizedError {
+//    case notstring(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notstring(val):
+//            return "Failed to read the scalar value \(val) as a String."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension String: AutomergeRepresentable {
+    public typealias ConvertError = StringScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<String, StringScalarConversionError> {
+        switch val {
+        case let .Scalar(.String(s)):
+            return .success(s)
+        default:
+            return .failure(StringScalarConversionError.notstring(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, StringScalarConversionError> {
+        .success(.Scalar(.String(self)))
+    }
+}
+
+// MARK: Bytes Conversions
+
+///// A failure to convert an Automerge scalar value to or from a byte representation.
+// public enum BytesScalarConversionError: LocalizedError {
+//    case notbytes(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notbytes(val):
+//            return "Failed to read the scalar value \(val) as a bytes."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension Data: AutomergeRepresentable {
+    public typealias ConvertError = BytesScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<Data, BytesScalarConversionError> {
+        switch val {
+        case let .Scalar(.Bytes(d)):
+            return .success(d)
+        default:
+            return .failure(BytesScalarConversionError.notbytes(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, BytesScalarConversionError> {
+        .success(.Scalar(.Bytes(self)))
+    }
+}
+
+// MARK: UInt Conversions
+
+///// A failure to convert an Automerge scalar value to or from an unsigned integer representation.
+// public enum UIntScalarConversionError: LocalizedError {
+//    case notUInt(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notUInt(val):
+//            return "Failed to read the scalar value \(val) as an unsigned integer."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension UInt: AutomergeRepresentable {
+    public typealias ConvertError = UIntScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<UInt, UIntScalarConversionError> {
+        switch val {
+        case let .Scalar(.Uint(d)):
+            return .success(UInt(d))
+        default:
+            return .failure(UIntScalarConversionError.notUInt(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, UIntScalarConversionError> {
+        .success(.Scalar(.Uint(UInt64(self))))
+    }
+}
+
+// MARK: Int Conversions
+
+///// A failure to convert an Automerge scalar value to or from a signed integer representation.
+// public enum IntScalarConversionError: LocalizedError {
+//    case notInt(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notInt(val):
+//            return "Failed to read the scalar value \(val) as a signed integer."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension Int: AutomergeRepresentable {
+    public typealias ConvertError = IntScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<Int, IntScalarConversionError> {
+        switch val {
+        case let .Scalar(.Int(d)):
+            return .success(Int(d))
+        default:
+            return .failure(IntScalarConversionError.notInt(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, IntScalarConversionError> {
+        .success(.Scalar(.Int(Int64(self))))
+    }
+}
+
+// MARK: Double Conversions
+
+///// A failure to convert an Automerge scalar value to or from a 64-bit floating-point value representation.
+// public enum DoubleScalarConversionError: LocalizedError {
+//    case notDouble(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notDouble(val):
+//            return "Failed to read the scalar value \(val) as a 64-bit floating-point value."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension Double: AutomergeRepresentable {
+    public typealias ConvertError = DoubleScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<Double, DoubleScalarConversionError> {
+        switch val {
+        case let .Scalar(.F64(d)):
+            return .success(Double(d))
+        default:
+            return .failure(DoubleScalarConversionError.notDouble(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, DoubleScalarConversionError> {
+        .success(.Scalar(.F64(self)))
+    }
+}
+
+// MARK: Timestamp Conversions
+
+///// A failure to convert an Automerge scalar value to or from a timestamp representation.
+// public enum TimestampScalarConversionError: LocalizedError {
+//    case notTimetamp(_ val: Value)
+//
+//    /// A localized message describing what error occurred.
+//    public var errorDescription: String? {
+//        switch self {
+//        case let .notTimetamp(val):
+//            return "Failed to read the scalar value \(val) as a timestamp value."
+//        }
+//    }
+//
+//    /// A localized message describing the reason for the failure.
+//    public var failureReason: String? { nil }
+// }
+
+extension Date: AutomergeRepresentable {
+    public typealias ConvertError = TimestampScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<Date, TimestampScalarConversionError> {
+        switch val {
+        case let .Scalar(.Timestamp(d)):
+            return .success(Date(timeIntervalSince1970: TimeInterval(d)))
+        default:
+            return .failure(TimestampScalarConversionError.notTimetamp(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, TimestampScalarConversionError> {
+        .success(.Scalar(.Timestamp(Int64(timeIntervalSince1970))))
+    }
+}
+
+extension Counter: AutomergeRepresentable {
+    public typealias ConvertError = CounterScalarConversionError
+    public static func fromValue(_ val: Value) -> Result<Counter, CounterScalarConversionError> {
+        switch val {
+        case let .Scalar(.Counter(d)):
+            return .success(Counter(d))
+        default:
+            return .failure(CounterScalarConversionError.notCounter(val))
+        }
+    }
+
+    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, CounterScalarConversionError> {
+        .success(.Scalar(.Counter(Int64(value))))
     }
 }

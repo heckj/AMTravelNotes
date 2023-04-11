@@ -84,7 +84,7 @@ class AutomergeList<T: ScalarValueRepresentable>: ObservableAutomergeBoundObject
             self.cursorIndex += 1
             if let result = try! doc.get(obj: objId, index: cursorIndex) {
                 do {
-                    return try result.dynamicType as? Element
+                    return try result.automergeType as? Element
                 } catch {
                     // yes, we're really swallowing any underlying errors.
                 }

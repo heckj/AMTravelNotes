@@ -26,9 +26,18 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
         }
     }
 
+    init?(doc: Document, _ automergeType: AutomergeType) throws {
+        self.doc = doc
+        if case let .List(objId) = automergeType {
+            self.obj = objId
+        } else {
+            return nil
+        }
+    }
+
     // MARK: DynamicAutomergeList Sequence Conformance
 
-    typealias Element = AutomergeRepresentable?
+    typealias Element = AutomergeType?
 
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmListIterator<Element> {
@@ -55,7 +64,7 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
             self.cursorIndex += 1
             if let result = try! doc.get(obj: objId, index: cursorIndex) {
                 do {
-                    return try result.dynamicType as? Element
+                    return try result.automergeType as? Element
                 } catch {
                     // yes, we're really swallowing any underlying errors.
                 }
@@ -85,10 +94,10 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
         self.doc.length(obj: self.obj)
     }
 
-    subscript(position: UInt64) -> AutomergeRepresentable? {
+    subscript(position: UInt64) -> AutomergeType? {
         do {
             if let amvalue = try self.doc.get(obj: self.obj, index: position) {
-                return try amvalue.dynamicType
+                return try amvalue.automergeType
             }
         } catch {
             // swallow errors to return nil
@@ -121,10 +130,20 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
         }
     }
 
+    init?(doc: Document, _ automergeType: AutomergeType) throws {
+        self.doc = doc
+        if case let .Map(objId) = automergeType {
+            self.obj = objId
+            self._keys = doc.keys(obj: objId)
+        } else {
+            return nil
+        }
+    }
+
     // MARK: DynamicAutomergeMap Sequence Conformance
 
     // public typealias Element = (key: Key, value: Value)
-    typealias Element = (String, AutomergeRepresentable?)
+    typealias Element = (String, AutomergeType?)
 
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmMapIterator<Element> {
@@ -154,7 +173,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
             let currentKey = keys[Int(cursorIndex)]
             if let result = try! doc.get(obj: objId, key: currentKey) {
                 do {
-                    let amrep = try result.dynamicType
+                    let amrep = try result.automergeType
                     return (currentKey, amrep) as? Element
                 } catch {
                     // yes, we're really swallowing any underlying errors.
@@ -181,11 +200,11 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
         i + 1
     }
 
-    subscript(position: Int) -> (String, AutomergeRepresentable?) {
+    subscript(position: Int) -> (String, AutomergeType?) {
         let currentKey = self._keys[position]
         if let result = try! doc.get(obj: self.obj, key: currentKey) {
             do {
-                let amrep = try result.dynamicType
+                let amrep = try result.automergeType
                 return (currentKey, amrep)
             } catch {
                 // yes, we're really swallowing any underlying errors.
@@ -216,10 +235,19 @@ class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
         }
     }
 
-    subscript(dynamicMember member: String) -> AutomergeRepresentable? {
+    init?(doc: Document, _ automergeType: AutomergeType) throws {
+        self.doc = doc
+        if case let .Map(objId) = automergeType {
+            self.obj = objId
+        } else {
+            return nil
+        }
+    }
+
+    subscript(dynamicMember member: String) -> AutomergeType? {
         do {
             if let amValue = try doc.get(obj: self.obj, key: member) {
-                return try amValue.dynamicType
+                return try amValue.automergeType
             }
         } catch {
             // yes, we're really swallowing any underlying errors.
