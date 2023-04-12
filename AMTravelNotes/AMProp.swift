@@ -35,8 +35,13 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
     // @AmMap("map") var myMap: AMMap<String, FOO>()
     // @AmObject("myObject") var anInstance: AMObject() // non-dynamic version of AutomergeBoundObject
 
-    init(doc: Document, id _: String, done _: Bool) {
-        super.init(doc: doc)
+//    init(doc: Document, id _: String, done _: Bool) {
+//        super.init(doc: doc)
+//        // ? initial values
+//    }
+//
+    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
+        super.init(doc: doc, obj: obj)
     }
 }
 

@@ -10,7 +10,7 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
     internal var obj: ObjId
 
-    init(doc: Document, obj: ObjId = ObjId.ROOT) {
+    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
         precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
         self.doc = doc
         self.obj = obj
@@ -23,6 +23,30 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
         } else {
             return nil
         }
+    }
+
+    // if you're adding an object into a list, we need tp start with getting an objectId
+    // back from the list we're adding into =
+    // public func insertObject(obj: ObjId, index: UInt64, ty: ObjType) throws -> ObjId
+    // ^^ how you append an object type into an existing list
+
+    // We can't easily "create first, bind later" for objects with the low-level API provided.
+    // begs the question - can we add to list[0], skip 1, and add list[2]? Or does that pitch
+    // an error?
+
+    // This could be a free function, or even on another object
+    static func bind<T: AutomergeBoundObject>(_: T, in doc: Document, at path: String) throws -> T? {
+        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
+            return T(doc: doc, obj: objId)
+        }
+        return nil
+    }
+
+    class func bind(doc: Document, path: String) throws -> Self? {
+        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
+            return Self(doc: doc, obj: objId)
+        }
+        return nil
     }
 }
 
