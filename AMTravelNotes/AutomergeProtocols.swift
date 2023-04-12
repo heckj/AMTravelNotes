@@ -16,4 +16,6 @@ protocol HasObj {
 protocol ObservableAutomergeBoundObject: ObservableObject, HasDoc, HasObj {
     var objectWillChange: ObservableObjectPublisher { get }
     // ^^ this is really about more easily participating in ObservableObject notifications
+
+    init(doc: Document, obj: ObjId)
 }

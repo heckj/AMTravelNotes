@@ -10,7 +10,7 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
     internal var doc: Document
     internal var obj: ObjId
 
-    init(doc: Document, obj: ObjId) {
+    required init(doc: Document, obj: ObjId) {
         precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
         precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
         self.doc = doc
@@ -113,7 +113,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
     internal var obj: ObjId
     private var _keys: [String]
 
-    init(doc: Document, obj: ObjId) {
+    required init(doc: Document, obj: ObjId) {
         precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
         self.doc = doc
         self.obj = obj
@@ -220,7 +220,7 @@ class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var obj: ObjId
 
     // alternate initializer that accepts a path into the Automerge document
-    init(doc: Document, obj: ObjId = ObjId.ROOT) {
+    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
         precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
         self.doc = doc
         self.obj = obj

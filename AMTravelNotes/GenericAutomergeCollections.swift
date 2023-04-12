@@ -61,7 +61,7 @@ class AutomergeList<T: ScalarValueRepresentable>: ObservableAutomergeBoundObject
     internal var obj: ObjId
     private var length: UInt64
 
-    init(doc: Document, obj: ObjId) {
+    required init(doc: Document, obj: ObjId) {
         precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
         precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
         self.doc = doc

@@ -29,7 +29,7 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
         done
     }
 
-    // @AmList("images") var images: AutomergeList<Data>
+    @AmList("images") var images: AutomergeList<Data>
 
     // @AmList("list") var myList: AMList<Int>()
     // @AmMap("map") var myMap: AMMap<String, FOO>()
@@ -51,60 +51,52 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
  ==============================================================================
  */
 
-// @AmList("myList") -> something that acts like a collection, but is bound to Document
-// @AmObject("myOtherObject") -> something that acts like an object, but is bound to Document
-//   -- Supports different types annotated as objects within the map (AMProp currently)
-//   - - can the wrapper initialize in the doc and objId?
+@propertyWrapper
+struct AmList<Value: ObservableAutomergeBoundObject> {
+    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
+    var key: String
 
-// @AmMap("myDict") -> acts more like a Swift dict (values all the same type)
-// @AmText("collaborativeNotes") -> acts like String w/ Binding<String>, proxying updates to Document
-//
-// @propertyWrapper
-// struct AmList<AmListType: ObservableAutomergeBoundObject> {
-//    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
-//    var key: String
-//
-//    init(_ key: String) {
-//        self.key = key
-//    }
-//
-//    // MARK: wrapped value subscript
-//
-//    static subscript<T: ObservableAutomergeBoundObject>(
-//        _enclosingInstance instance: T,
-//        wrapped _: KeyPath<T, AmListType>,
-//        storage storageKeyPath: KeyPath<T, Self>
-//    ) -> AmListType {
-//        // retrieve the instance of the list for this subscript
-//        get {
-//            let doc = instance.doc
-//            let obj = instance.obj
-//            let key = instance[keyPath: storageKeyPath].key
-//            let amval = try! doc.get(obj: obj, key: key)!
-//            if case let .Object(objId, .List) = amval {
-//                return AmListType(doc: doc, obj: objId)
-//            } else {
-//                fatalError("object referenced at \(key) wasn't a List")
-//            }
-//        }
-//        // set/create the instance of the list for this subscript
-//        set {
+    init(_ key: String) {
+        self.key = key
+    }
+
+    // MARK: wrapped value subscript
+
+    static subscript<T: ObservableAutomergeBoundObject>(
+        _enclosingInstance instance: T,
+        wrapped _: KeyPath<T, Value>,
+        storage storageKeyPath: KeyPath<T, Self>
+    ) -> Value {
+        // retrieve the instance of the list for this subscript
+        get {
+            let doc = instance.doc
+            let parentObjectId = instance.obj
+            let key = instance[keyPath: storageKeyPath].key
+            let amval = try! doc.get(obj: parentObjectId, key: key)!
+            if case let .Object(newObjectId, .List) = amval {
+                return Value(doc: doc, obj: newObjectId)
+            } else {
+                fatalError("object referenced at \(key) wasn't a List")
+            }
+        }
+        // set/create the instance of the list for this subscript
+        set {
 //            instance.objectWillChange.send()
 //
 //            let doc = instance.doc
+//            let parentObjectId = instance.obj
 //            let key = instance[keyPath: storageKeyPath].key
-//            let obj = instance.obj
-//            // need essentially upsert logic here - create if not exist, then copy - otherwise
-//            // copy in values, replacing existing values
-//            let theNewObjectIdForThisList = try! doc.putObject(obj: obj, key: key, ty: .List)
-//            print(newValue) // has the object that was "set" into this place - copy in?
-////            for listItem in newValue {
-////                // crap - AmListType isn't declaring object vs. scalar...
-////            }
-//        }
-//    }
+//            // the following line creates the dynamic list in the structure, without any entries
+//            let theNewObjectIdForThisList = try! doc.putObject(obj: parentObjectId, key: key, ty: .List)
 
-// MARK: projected value subscript
+//            print(newValue) // has the object that was "set" into this place - copy in?
+//            for listItem in newValue {
+//                // crap - AmListType isn't declaring object vs. scalar...
+//            }
+        }
+    }
+
+    // MARK: projected value subscript
 
 //    static subscript<T: ObservableAutomergeBoundObject>(
 //        _enclosingInstance instance: T,
@@ -125,17 +117,17 @@ class TravelNotesModel: AutomergeBoundObject, Identifiable {
 //        )
 //        set {}
 //    }
-//
-//    @available(*, unavailable)
-//    var wrappedValue: Value {
-//        fatalError("not available")
-//    }
-//
-//    @available(*, unavailable)
-//    var projectedValue: Binding<Value> {
-//        fatalError("not available")
-//    }
-// }
+
+    @available(*, unavailable)
+    var wrappedValue: Value {
+        fatalError("not available")
+    }
+
+    @available(*, unavailable)
+    var projectedValue: Binding<Value> {
+        fatalError("not available")
+    }
+}
 
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {
