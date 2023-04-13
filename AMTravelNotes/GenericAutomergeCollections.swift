@@ -6,7 +6,7 @@ import struct Automerge.ObjId
 import protocol Automerge.ScalarValueRepresentable
 import enum Automerge.Value
 
-class AutomergeBoundObject: ObservableAutomergeBoundObject {
+class BaseAutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
     internal var obj: ObjId
 
@@ -35,7 +35,7 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
     // an error?
 
     // This could be a free function, or even on another object
-    static func bind<T: AutomergeBoundObject>(_: T, in doc: Document, at path: String) throws -> T? {
+    static func bind<T: BaseAutomergeBoundObject>(_: T, in doc: Document, at path: String) throws -> T? {
         if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
             return T(doc: doc, obj: objId)
         }
@@ -56,7 +56,7 @@ class AutomergeBoundObject: ObservableAutomergeBoundObject {
 // of which is relevant to READ-ONLY determine a type within Automerge, but doesn't have the bits in place
 // to support conversions. When done, all AutomergeRepresentables should *also* be ScalarValueRepresentable.
 
-class AutomergeList<T: ScalarValueRepresentable>: ObservableAutomergeBoundObject, Sequence {
+class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeBoundObject, Sequence {
     internal var doc: Document
     internal var obj: ObjId
     private var length: UInt64
@@ -146,7 +146,7 @@ extension AutomergeList: RandomAccessCollection {
             guard let amvalue = try self.doc.get(obj: self.obj, index: position) else {
                 fatalError("Unable to access list \(self.obj) at index \(position)")
             }
-            return try T.fromValue(amvalue).get()
+            return try T.fromValue(amvalue)
         } catch {
             fatalError("Unable to convert value: \(error)")
         }

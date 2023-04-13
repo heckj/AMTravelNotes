@@ -14,9 +14,6 @@ import Foundation
 /// into the associated type, and read the bytes through ``AutomergeRepresentable/fromValue(_:)`` to decode into your
 /// type.
 public protocol AutomergeRepresentable {
-    /// The error type associated with failed attempted conversion into or out of Automerge representation.
-    associatedtype ConvertError: LocalizedError
-
     /// Converts the Automerge representation to a local type, or returns a failure
     /// - Parameter val: The Automerge ``Value`` to be converted as a scalar value into a local type.
     /// - Returns: The type, converted to a local type, or an error indicating the reason for the conversion failure.
@@ -24,7 +21,7 @@ public protocol AutomergeRepresentable {
     /// The protocol accepts defines a function to accept a ``Value`` primarily for convenience.
     /// ``Value`` is a higher level enumeration that can include object types such as ``ObjType/List``, ``ObjType/Map``,
     /// and ``ObjType/Text``.
-    static func fromValue(_ val: Value) -> Result<Self, ConvertError>
+    static func fromValue(_ val: Value) throws -> Self
 
     /// Converts a local type into an Automerge Value type.
     /// - Parameters:
@@ -32,7 +29,7 @@ public protocol AutomergeRepresentable {
     ///   - objId: The object id.
     /// - Returns: The ``ScalarValue`` that aligns with the provided type or an error indicating the reason for the
     /// conversion failure.
-    func toValue(doc: Document, objId: ObjId) -> Result<Value, ConvertError>
+    func toValue(doc: Document, objId: ObjId) throws -> Value
 }
 
 // MARK: Boolean Conversions
@@ -54,18 +51,17 @@ public protocol AutomergeRepresentable {
 // }
 
 extension Bool: AutomergeRepresentable {
-    public typealias ConvertError = BooleanScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<Self, BooleanScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> Self {
         switch val {
         case let .Scalar(.Boolean(b)):
-            return .success(b)
+            return b
         default:
-            return .failure(BooleanScalarConversionError.notbool(val))
+            throw BooleanScalarConversionError.notbool(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, BooleanScalarConversionError> {
-        .success(Value.Scalar(.Boolean(self)))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        Value.Scalar(.Boolean(self))
     }
 }
 
@@ -88,18 +84,17 @@ extension Bool: AutomergeRepresentable {
 // }
 
 extension String: AutomergeRepresentable {
-    public typealias ConvertError = StringScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<String, StringScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> String {
         switch val {
         case let .Scalar(.String(s)):
-            return .success(s)
+            return s
         default:
-            return .failure(StringScalarConversionError.notstring(val))
+            throw StringScalarConversionError.notstring(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, StringScalarConversionError> {
-        .success(.Scalar(.String(self)))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        .Scalar(.String(self))
     }
 }
 
@@ -122,18 +117,17 @@ extension String: AutomergeRepresentable {
 // }
 
 extension Data: AutomergeRepresentable {
-    public typealias ConvertError = BytesScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<Data, BytesScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> Data {
         switch val {
         case let .Scalar(.Bytes(d)):
-            return .success(d)
+            return d
         default:
-            return .failure(BytesScalarConversionError.notbytes(val))
+            throw BytesScalarConversionError.notbytes(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, BytesScalarConversionError> {
-        .success(.Scalar(.Bytes(self)))
+    public func toValue(doc _: Document, objId _: ObjId) throws -> Value {
+        .Scalar(.Bytes(self))
     }
 }
 
@@ -156,18 +150,17 @@ extension Data: AutomergeRepresentable {
 // }
 
 extension UInt: AutomergeRepresentable {
-    public typealias ConvertError = UIntScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<UInt, UIntScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> UInt {
         switch val {
         case let .Scalar(.Uint(d)):
-            return .success(UInt(d))
+            return UInt(d)
         default:
-            return .failure(UIntScalarConversionError.notUInt(val))
+            throw UIntScalarConversionError.notUInt(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, UIntScalarConversionError> {
-        .success(.Scalar(.Uint(UInt64(self))))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        .Scalar(.Uint(UInt64(self)))
     }
 }
 
@@ -190,18 +183,17 @@ extension UInt: AutomergeRepresentable {
 // }
 
 extension Int: AutomergeRepresentable {
-    public typealias ConvertError = IntScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<Int, IntScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> Int {
         switch val {
         case let .Scalar(.Int(d)):
-            return .success(Int(d))
+            return Int(d)
         default:
-            return .failure(IntScalarConversionError.notInt(val))
+            throw IntScalarConversionError.notInt(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, IntScalarConversionError> {
-        .success(.Scalar(.Int(Int64(self))))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        .Scalar(.Int(Int64(self)))
     }
 }
 
@@ -224,18 +216,17 @@ extension Int: AutomergeRepresentable {
 // }
 
 extension Double: AutomergeRepresentable {
-    public typealias ConvertError = DoubleScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<Double, DoubleScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> Double {
         switch val {
         case let .Scalar(.F64(d)):
-            return .success(Double(d))
+            return Double(d)
         default:
-            return .failure(DoubleScalarConversionError.notDouble(val))
+            throw DoubleScalarConversionError.notDouble(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, DoubleScalarConversionError> {
-        .success(.Scalar(.F64(self)))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        .Scalar(.F64(self))
     }
 }
 
@@ -258,33 +249,32 @@ extension Double: AutomergeRepresentable {
 // }
 
 extension Date: AutomergeRepresentable {
-    public typealias ConvertError = TimestampScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<Date, TimestampScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> Date {
         switch val {
         case let .Scalar(.Timestamp(d)):
-            return .success(Date(timeIntervalSince1970: TimeInterval(d)))
+            return Date(timeIntervalSince1970: TimeInterval(d))
         default:
-            return .failure(TimestampScalarConversionError.notTimetamp(val))
+            throw TimestampScalarConversionError.notTimetamp(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, TimestampScalarConversionError> {
-        .success(.Scalar(.Timestamp(Int64(timeIntervalSince1970))))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        .Scalar(.Timestamp(Int64(timeIntervalSince1970)))
     }
 }
 
 extension Counter: AutomergeRepresentable {
     public typealias ConvertError = CounterScalarConversionError
-    public static func fromValue(_ val: Value) -> Result<Counter, CounterScalarConversionError> {
+    public static func fromValue(_ val: Value) throws -> Counter {
         switch val {
         case let .Scalar(.Counter(d)):
-            return .success(Counter(d))
+            return Counter(d)
         default:
-            return .failure(CounterScalarConversionError.notCounter(val))
+            throw CounterScalarConversionError.notCounter(val)
         }
     }
 
-    public func toValue(doc _: Document, objId _: ObjId) -> Result<Value, CounterScalarConversionError> {
-        .success(.Scalar(.Counter(Int64(value))))
+    public func toValue(doc _: Document, objId _: ObjId) -> Value {
+        .Scalar(.Counter(Int64(value)))
     }
 }

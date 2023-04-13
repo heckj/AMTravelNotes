@@ -20,7 +20,7 @@ import enum Automerge.Value
  ==============================================================================
  */
 
-class TravelNotesModel: AutomergeBoundObject, Identifiable {
+class TravelNotesModel: BaseAutomergeBoundObject, Identifiable {
     @AmScalarProp("id") var id: String
     @AmScalarProp("done") var done: Bool
     @AmText("notes") var notes: String
