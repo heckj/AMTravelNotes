@@ -20,40 +20,8 @@ import enum Automerge.Value
  ==============================================================================
  */
 
-class TravelNotesModel: BaseAutomergeBoundObject, Identifiable {
-    @AmScalarProp("id") var id: String
-    @AmScalarProp("done") var done: Bool
-    @AmText("notes") var notes: String
-
-    var computedProperty: Bool {
-        done
-    }
-
-    @AmList("images") var images: AutomergeList<Data>
-
-    // @AmList("list") var myList: AMList<Int>()
-    // @AmMap("map") var myMap: AMMap<String, FOO>()
-    // @AmObject("myObject") var anInstance: AMObject() // non-dynamic version of AutomergeBoundObject
-
-//    init(doc: Document, id _: String, done _: Bool) {
-//        super.init(doc: doc)
-//        // ? initial values
-//    }
-//
-    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
-        super.init(doc: doc, obj: obj)
-    }
-}
-
-/*
- ==============================================================================
- Property Wrappers
- ==============================================================================
- */
-
 @propertyWrapper
 struct AmList<Value: ObservableAutomergeBoundObject> {
-    // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items
     var key: String
 
     init(_ key: String) {
@@ -67,32 +35,14 @@ struct AmList<Value: ObservableAutomergeBoundObject> {
         wrapped _: KeyPath<T, Value>,
         storage storageKeyPath: KeyPath<T, Self>
     ) -> Value {
-        // retrieve the instance of the list for this subscript
-        get {
-            let doc = instance.doc
-            let parentObjectId = instance.obj
-            let key = instance[keyPath: storageKeyPath].key
-            let amval = try! doc.get(obj: parentObjectId, key: key)!
-            if case let .Object(newObjectId, .List) = amval {
-                return Value(doc: doc, obj: newObjectId)
-            } else {
-                fatalError("object referenced at \(key) wasn't a List")
-            }
-        }
-        // set/create the instance of the list for this subscript
-        set {
-//            instance.objectWillChange.send()
-//
-//            let doc = instance.doc
-//            let parentObjectId = instance.obj
-//            let key = instance[keyPath: storageKeyPath].key
-//            // the following line creates the dynamic list in the structure, without any entries
-//            let theNewObjectIdForThisList = try! doc.putObject(obj: parentObjectId, key: key, ty: .List)
-
-//            print(newValue) // has the object that was "set" into this place - copy in?
-//            for listItem in newValue {
-//                // crap - AmListType isn't declaring object vs. scalar...
-//            }
+        let doc = instance.doc
+        let parentObjectId = instance.obj
+        let key = instance[keyPath: storageKeyPath].key
+        let amval = try! doc.get(obj: parentObjectId, key: key)!
+        if case let .Object(newObjectId, .List) = amval {
+            return Value(doc: doc, obj: newObjectId)
+        } else {
+            fatalError("object referenced at \(key) wasn't a List")
         }
     }
 

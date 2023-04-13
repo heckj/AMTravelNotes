@@ -61,7 +61,7 @@ extension Bool: AutomergeRepresentable {
     }
 
     public func toValue(doc _: Document, objId _: ObjId) -> Value {
-        Value.Scalar(.Boolean(self))
+        .Scalar(.Boolean(self))
     }
 }
 

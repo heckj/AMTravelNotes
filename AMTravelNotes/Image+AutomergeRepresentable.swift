@@ -1,3 +1,4 @@
+import Automerge
 import Foundation
 
 #if os(iOS)
@@ -6,7 +7,6 @@ import UIKit
 import AppKit
 #endif
 
-import Automerge
 #if os(iOS)
 extension UIImage: AutomergeRepresentable {
     public enum ImageConversionError: LocalizedError {
