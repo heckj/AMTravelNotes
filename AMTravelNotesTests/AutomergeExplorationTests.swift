@@ -147,7 +147,7 @@ final class AutomergeExplorationTests: XCTestCase {
         )
     }
 
-    func testBeyondIndex() throws {
+    func testReadBeyondIndex() throws {
         let doc = Document()
         let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
         // let nestedMap = try! doc.insertObject(obj: list, index: 0, ty: .Map)
@@ -157,5 +157,24 @@ final class AutomergeExplorationTests: XCTestCase {
         let experiment: Value? = try doc.get(obj: list, index: 32)
         XCTAssertNil(experiment)
         // print(String(describing: experiment))
+    }
+
+    func testInsertBeyondIndex() throws {
+        let doc = Document()
+        let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
+
+        try doc.insert(obj: list, index: 0, value: .Int(0))
+        try doc.insert(obj: list, index: 1, value: .Int(1))
+        try doc.insert(obj: list, index: 2, value: .Int(2))
+
+        // If you attempt to insert beyond the index/length of the existing array, you'll
+        // get a DocError - with an inner error describing: index out of bounds
+        XCTAssertEqual(doc.length(obj: list), 3)
+
+        XCTAssertEqual(Value.Scalar(.Int(0)), try doc.get(obj: list, index: 0))
+        XCTAssertEqual(Value.Scalar(.Int(1)), try doc.get(obj: list, index: 1))
+        XCTAssertEqual(Value.Scalar(.Int(2)), try doc.get(obj: list, index: 2))
+        XCTAssertNil(try doc.get(obj: list, index: 3))
+        XCTAssertNil(try doc.get(obj: list, index: 4))
     }
 }

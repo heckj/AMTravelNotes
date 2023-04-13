@@ -20,7 +20,7 @@ final class AMTravelNotesTests: XCTestCase {
         // Add some text
         try! doc.spliceText(obj: text, start: 0, delete: 0, value: "hello world!")
 
-        let boundClass = TravelNotesModel(doc: doc, id: "1234", done: false)
+        let boundClass = TravelNotesModel(doc: doc)
 
         let mirror = Mirror(reflecting: boundClass)
 
