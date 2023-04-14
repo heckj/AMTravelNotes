@@ -16,20 +16,20 @@ final class AMTravelNotesTests: XCTestCase {
         let text = try! doc.putObject(obj: ObjId.ROOT, key: "notes", ty: .Text)
         try doc.put(obj: ObjId.ROOT, key: "id", value: .String("1234"))
         try doc.put(obj: ObjId.ROOT, key: "done", value: .Boolean(false))
-        let imageList = try! doc.putObject(obj: ObjId.ROOT, key: "images", ty: .List)
-        
+        let _ = try! doc.putObject(obj: ObjId.ROOT, key: "images", ty: .List)
+
         // Add some text
         try! doc.spliceText(obj: text, start: 0, delete: 0, value: "hello world!")
-        
+
         let boundClass = TravelNotesModel(doc: doc)
-        
+
         let mirror = Mirror(reflecting: boundClass)
-        
+
         for a_child in mirror.children {
             print("Child: \(a_child)")
             let _ = a_child.label // optional string
             let _ = a_child.value // Any
-            
+
             let submirror = Mirror(reflecting: a_child)
             print("    child static type: \(submirror.subjectType)")
             for grandkid in submirror.children {
@@ -39,7 +39,6 @@ final class AMTravelNotesTests: XCTestCase {
         print("displayStyle: \(String(describing: mirror.displayStyle.debugDescription))")
         print("subjectType: \(mirror.subjectType)") // Type of the object being mirrored - TravelNotesModel
         print("superclassMirror: \(String(describing: mirror.superclassMirror))")
-
 
 //    Child: (label: Optional("_id"), value: AMTravelNotes.AmScalarProp<Swift.String>(key: "id"))
 //        child static type: (label: Optional<String>, value: Any)
@@ -64,19 +63,16 @@ final class AMTravelNotesTests: XCTestCase {
 //    displayStyle: Optional(Swift.Mirror.DisplayStyle.class)
 //    subjectType: TravelNotesModel
 //    superclassMirror: Optional(Mirror for BaseAutomergeBoundObject)
-
-
     }
-    
-    func testMoreCheckMirror() throws {
 
+    func testMoreCheckMirror() throws {
         let example = CoupleOfThings(note: "hi")
 
         let mirror = Mirror(reflecting: example)
 
         for a_child in mirror.children {
             if case let (label?, value) = a_child {
-                print (label, value)
+                print(label, value)
                 let labelMirror = Mirror(reflecting: label)
                 let valueMirror = Mirror(reflecting: value)
                 print("    label static type: \(labelMirror.subjectType)")
@@ -90,7 +86,7 @@ final class AMTravelNotesTests: XCTestCase {
         print("displayStyle: \(String(describing: mirror.displayStyle.debugDescription))")
         print("subjectType: \(mirror.subjectType)") // Type of the object being mirrored - TravelNotesModel
         print("superclassMirror: \(String(describing: mirror.superclassMirror))")
-        
+
 //    Child: (label: Optional("id"), value: D24CD553-92A2-4F4E-9D36-1A7226EDA7B2)
 //        child static type: (label: Optional<String>, value: Any)
 //        grandkid: (label: Optional("label"), value: Optional("id"))
@@ -114,6 +110,5 @@ final class AMTravelNotesTests: XCTestCase {
 //    displayStyle: Optional(Swift.Mirror.DisplayStyle.struct)
 //    subjectType: CoupleOfThings
 //    superclassMirror: nil
-
     }
 }

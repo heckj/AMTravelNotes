@@ -138,6 +138,7 @@ struct AmObj<Value: ObservableAutomergeBoundObject> {
         fatalError("not available")
     }
 }
+
 @propertyWrapper
 struct AmScalarProp<Value: ScalarValueRepresentable> {
     // TODO: convert to something that allows pathing into nested CRDT objects, not only top-level items

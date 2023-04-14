@@ -18,11 +18,15 @@ extension UTType {
 class AMTravelNotesDocument: ReferenceFileDocument {
     typealias AMDoc = QueueProtectedAutomergeDocument
     var doc: AMDoc
+    var model: TravelNotesModel?
 
     static var readableContentTypes: [UTType] { [.automerge] }
 
     init() {
         doc = AMDoc()
+        doc.withSafety { doc in
+            self.model = TravelNotesModel(doc: doc)
+        }
     }
 
     required init(configuration: ReadConfiguration) throws {
@@ -32,11 +36,9 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         }
 
         doc = try! AMDoc(from: data)
-//        if case let .Object(id, .Map) = try! doc.get(obj: ObjId.ROOT, key: "items")! {
-//            //itemsObjId = id
-//        } else {
-//            fatalError("no items")
-//        }
+        doc.withSafety { doc in
+            self.model = TravelNotesModel(doc: doc)
+        }
     }
 
     func snapshot(contentType _: UTType) throws -> AMDoc {

@@ -26,6 +26,17 @@ class TravelNotesModel: BaseAutomergeBoundObject, Identifiable {
 
     required init(doc: Document, obj: ObjId = ObjId.ROOT) {
         super.init(doc: doc, obj: obj)
+
+        // TODO: check to see if it exists, and create if not
+        do {
+            let _ = try! doc.putObject(obj: obj, key: "notes", ty: .Text)
+            try doc.put(obj: obj, key: "id", value: .String("1234"))
+            try doc.put(obj: obj, key: "done", value: .Boolean(false))
+            let _ = try! doc.putObject(obj: obj, key: "images", ty: .List)
+            let _ = try! doc.putObject(obj: obj, key: "meta", ty: .Map)
+        } catch {
+            fatalError("Error establishing model schema: \(error)")
+        }
     }
 }
 
@@ -35,17 +46,17 @@ struct CoupleOfThings: Identifiable {
     let note: String
     let boolExample: Bool
     let doubleExample: Double
-    
+
     let listExample: [Int64]
-    let dictExample: [String:UInt64]
+    let dictExample: [String: UInt64]
 
     init(id: UUID = UUID(), timestamp: Date = Date.now, note: String) {
         self.id = id
         self.timestamp = timestamp
         self.note = note
-        self.boolExample = true
-        self.doubleExample = Double.pi
-        self.listExample = [5]
-        self.dictExample = ["one":1]
+        boolExample = true
+        doubleExample = Double.pi
+        listExample = [5]
+        dictExample = ["one": 1]
     }
 }

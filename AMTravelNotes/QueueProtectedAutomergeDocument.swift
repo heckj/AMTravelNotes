@@ -27,4 +27,8 @@ class QueueProtectedAutomergeDocument {
             doc.save()
         }
     }
+
+    public func withSafety(_ closure: (_ doc: Document) -> Void) {
+        closure(doc)
+    }
 }
