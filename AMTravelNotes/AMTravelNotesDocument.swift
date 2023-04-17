@@ -23,7 +23,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
 
     init() {
         doc = Document()
-        self.model = TravelNotesModel(doc: doc)
+        model = TravelNotesModel(doc: doc)
     }
 
     required init(configuration: ReadConfiguration) throws {
@@ -33,8 +33,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         }
 
         doc = try! Document(data)
-        self.model = TravelNotesModel(doc: doc)
-        
+        model = TravelNotesModel(doc: doc)
     }
 
     func snapshot(contentType _: UTType) throws -> Document {

@@ -6,13 +6,13 @@
  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
+
  WWDC Video references aligned with this code:
  - https://developer.apple.com/videos/play/wwdc2019/713/
  - https://developer.apple.com/videos/play/wwdc2020/10110/
  - https://developer.apple.com/videos/play/wwdc2022/110339/
 
-*/
+ */
 
 import Network
 
@@ -25,29 +25,29 @@ class PeerListener {
         case applicationService
     }
 
-	weak var delegate: PeerConnectionDelegate?
-	var listener: NWListener?
-	var name: String?
-	let passcode: String?
+    weak var delegate: PeerConnectionDelegate?
+    var listener: NWListener?
+    var name: String?
+    let passcode: String?
     let type: ServiceType
 
-	// Create a listener with a name to advertise, a passcode for authentication,
-	// and a delegate to handle inbound connections.
-	init(name: String, passcode: String, delegate: PeerConnectionDelegate) {
-        self.type = .bonjour
-		self.delegate = delegate
-		self.name = name
-		self.passcode = passcode
-		setupBonjourListener()
-	}
+    // Create a listener with a name to advertise, a passcode for authentication,
+    // and a delegate to handle inbound connections.
+    init(name: String, passcode: String, delegate: PeerConnectionDelegate) {
+        type = .bonjour
+        self.delegate = delegate
+        self.name = name
+        self.passcode = passcode
+        setupBonjourListener()
+    }
 
     // Create a listener that advertises the app's sync service
     // and has a delegate to handle inbound connections.
     init(delegate: PeerConnectionDelegate) {
-        self.type = .applicationService
+        type = .applicationService
         self.delegate = delegate
-        self.name = nil
-        self.passcode = nil
+        name = nil
+        passcode = nil
         setupApplicationServiceListener()
     }
 
@@ -67,11 +67,11 @@ class PeerListener {
         }
     }
 
-	// Start listening and advertising.
-	func setupBonjourListener() {
-		do {
+    // Start listening and advertising.
+    func setupBonjourListener() {
+        do {
             // When hosting a game via Bonjour, use the passcode and advertise the automerge sync service.
-            guard let name = self.name, let passcode = self.passcode else {
+            guard let name = name, let passcode = passcode else {
                 print("Cannot create Bonjour listener without name and passcode")
                 return
             }
@@ -83,26 +83,26 @@ class PeerListener {
             // Set the service to advertise.
             listener.service = NWListener.Service(name: name, type: AutomergeSyncProtocol.bonjourType)
 
-           startListening()
-		} catch {
-			print("Failed to create bonjour listener")
-			abort()
-		}
-	}
+            startListening()
+        } catch {
+            print("Failed to create bonjour listener")
+            abort()
+        }
+    }
 
     func bonjourListenerStateChanged(newState: NWListener.State) {
         switch newState {
         case .ready:
-            print("Listener ready on \(String(describing: self.listener?.port))")
-        case .failed(let error):
+            print("Listener ready on \(String(describing: listener?.port))")
+        case let .failed(error):
             if error == NWError.dns(DNSServiceErrorType(kDNSServiceErr_DefunctConnection)) {
                 print("Listener failed with \(error), restarting")
-                self.listener?.cancel()
-                self.setupBonjourListener()
+                listener?.cancel()
+                setupBonjourListener()
             } else {
                 print("Listener failed with \(error), stopping")
-                self.delegate?.displayAdvertiseError(error)
-                self.listener?.cancel()
+                delegate?.displayAdvertiseError(error)
+                listener?.cancel()
             }
         case .cancelled:
             bonjourListener = nil
@@ -110,24 +110,24 @@ class PeerListener {
             break
         }
     }
-    
+
     func applicationServiceListenerStateChanged(newState: NWListener.State) {
         switch newState {
         case .ready:
             print("Listener ready for nearby devices")
-        case .failed(let error):
+        case let .failed(error):
             print("Listener failed with \(error), stopping")
-            self.delegate?.displayAdvertiseError(error)
-            self.listener?.cancel()
+            delegate?.displayAdvertiseError(error)
+            listener?.cancel()
         case .cancelled:
             applicationServiceListener = nil
         default:
             break
         }
     }
-    
+
     func listenerStateChanged(newState: NWListener.State) {
-        switch self.type {
+        switch type {
         case .bonjour:
             bonjourListenerStateChanged(newState: newState)
         case .applicationService:
@@ -136,11 +136,11 @@ class PeerListener {
     }
 
     func startListening() {
-        self.listener?.stateUpdateHandler = listenerStateChanged
+        listener?.stateUpdateHandler = listenerStateChanged
 
         // The system calls this when a new connection arrives at the listener.
         // Start the connection to accept it, cancel to reject it.
-        self.listener?.newConnectionHandler = { newConnection in
+        listener?.newConnectionHandler = { newConnection in
             if let delegate = self.delegate {
                 if sharedConnection == nil {
                     // Accept a new connection.
@@ -153,14 +153,14 @@ class PeerListener {
         }
 
         // Start listening, and request updates on the main queue.
-        self.listener?.start(queue: .main)
+        listener?.start(queue: .main)
     }
 
     // Stop listening.
     func stopListening() {
         if let listener = listener {
             listener.cancel()
-            switch self.type {
+            switch type {
             case .bonjour:
                 bonjourListener = nil
             case .applicationService:
@@ -168,10 +168,10 @@ class PeerListener {
             }
         }
     }
-    
-	// If the user changes their name, update the advertised name.
-	func resetName(_ name: String) {
-        guard self.type == .bonjour else {
+
+    // If the user changes their name, update the advertised name.
+    func resetName(_ name: String) {
+        guard type == .bonjour else {
             return
         }
 
@@ -180,5 +180,5 @@ class PeerListener {
             // Reset the service to advertise.
             listener.service = NWListener.Service(name: self.name, type: "_tictactoe._tcp")
         }
-	}
+    }
 }
