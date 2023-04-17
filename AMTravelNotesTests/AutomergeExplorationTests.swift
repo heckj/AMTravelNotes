@@ -177,4 +177,37 @@ final class AutomergeExplorationTests: XCTestCase {
         XCTAssertNil(try doc.get(obj: list, index: 3))
         XCTAssertNil(try doc.get(obj: list, index: 4))
     }
+    
+    func testSyncStateUpdating() throws {
+        let doc1 = Document()
+        let syncState1 = SyncState()
+
+        let doc2 = Document()
+        let syncState2 = SyncState()
+
+        try! doc1.put(obj: ObjId.ROOT, key: "key1", value: .String("value1"))
+        try! doc2.put(obj: ObjId.ROOT, key: "key2", value: .String("value2"))
+
+        XCTAssertNil(syncState1.theirHeads)
+        let syncDataMsg = try XCTUnwrap(doc1.generateSyncMessage(state: syncState1))
+        print("sync msg size: \(syncDataMsg.count) bytes")
+        // syncState1 isn't updated by generating a sync message
+        //   .. so at this point syncState1 is effectively "empty" and doesn't contain a list of
+        //      any change hashes
+        // XCTAssertNotNil(syncState1.theirHeads)
+        // print("size of changes in syncState1: \(syncState1.theirHeads?.count)")
+        
+        // And we generally want to keep iterating sync messages UNTIL the syncDataMsg result
+        // is nil, which indicates that nothing further needs to be synced.
+        
+        XCTAssertNil(syncState2.theirHeads)
+        try doc2.receiveSyncMessage(state: syncState2, message: syncDataMsg)
+        XCTAssertNotNil(syncState2.theirHeads) // it IS updated when you invoke receiveSyncMessages(...)
+        print("size of changes in syncState2: \(syncState2.theirHeads?.count ?? -1)")
+        for change in syncState2.theirHeads! {
+            print(" -> ChangeHash: \(change)")
+        }
+        //XCTAssertEqual(syncState1.theirHeads, syncState2.theirHeads)
+        
+    }
 }
