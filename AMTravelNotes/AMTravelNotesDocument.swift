@@ -16,17 +16,14 @@ extension UTType {
 }
 
 class AMTravelNotesDocument: ReferenceFileDocument {
-    typealias AMDoc = QueueProtectedAutomergeDocument
-    var doc: AMDoc
+    var doc: Document
     var model: TravelNotesModel?
 
     static var readableContentTypes: [UTType] { [.automerge] }
 
     init() {
-        doc = AMDoc()
-        doc.withSafety { doc in
-            self.model = TravelNotesModel(doc: doc)
-        }
+        doc = Document()
+        self.model = TravelNotesModel(doc: doc)
     }
 
     required init(configuration: ReadConfiguration) throws {
@@ -35,17 +32,16 @@ class AMTravelNotesDocument: ReferenceFileDocument {
             throw CocoaError(.fileReadCorruptFile)
         }
 
-        doc = try! AMDoc(from: data)
-        doc.withSafety { doc in
-            self.model = TravelNotesModel(doc: doc)
-        }
+        doc = try! Document(data)
+        self.model = TravelNotesModel(doc: doc)
+        
     }
 
-    func snapshot(contentType _: UTType) throws -> AMDoc {
+    func snapshot(contentType _: UTType) throws -> Document {
         doc // Make a copy.
     }
 
-    func fileWrapper(snapshot: AMDoc, configuration _: WriteConfiguration) throws -> FileWrapper {
+    func fileWrapper(snapshot: Document, configuration _: WriteConfiguration) throws -> FileWrapper {
         let data = snapshot.save()
         let fileWrapper = FileWrapper(regularFileWithContents: data)
         return fileWrapper
