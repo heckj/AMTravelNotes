@@ -1,7 +1,7 @@
 import Automerge
 import Foundation
 
-extension UUID: AutomergeRepresentable {
+extension UUID: AutomergeRepresentable, ScalarValueRepresentable {
     public enum UUIDConversionError: LocalizedError {
         case notString(_ val: Value)
         case notUUIDString(_ stringValue: String)
@@ -19,6 +19,27 @@ extension UUID: AutomergeRepresentable {
         /// A localized message describing the reason for the failure.
         public var failureReason: String? { nil }
     }
+
+    // MARK: ScalarValueRepresentable implementation
+
+    public typealias ConvertError = UUIDConversionError
+    public static func fromValue(_ val: Automerge.Value) -> Result<UUID, UUIDConversionError> {
+        switch val {
+        case let .Scalar(.String(stringValue)):
+            guard let result = UUID(uuidString: stringValue) else {
+                return .failure(UUIDConversionError.notUUIDString(stringValue))
+            }
+            return .success(result)
+        default:
+            return .failure(UUIDConversionError.notString(val))
+        }
+    }
+
+    public func toScalarValue() -> Automerge.ScalarValue {
+        .String(uuidString)
+    }
+
+    // MARK: AutomergeRepresentable implementation
 
     public static func fromValue(_ val: Value) throws -> Self {
         switch val {

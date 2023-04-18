@@ -16,6 +16,14 @@ extension UTType {
 }
 
 class AMTravelNotesDocument: ReferenceFileDocument {
+    // NOTE(heckj): As of Automerge 2.0 - Automerge doesn't have an internal
+    // document identifier that's easily available to use for comparison
+    // to determine if documents have a "shared origin" or not.
+
+    // Upstream automerge is working around this with wrapping the data
+    // stream from "core" Automerge with a simple wrapper (CBOR) and tacking
+    // on an automatically generated UUID() as that identifier.
+
     var doc: Document
     var model: TravelNotesModel?
 
