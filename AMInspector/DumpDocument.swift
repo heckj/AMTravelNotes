@@ -4,6 +4,11 @@ import Foundation
 
 @main
 struct AMInspector: ParsableCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "AMInspector",
+        abstract: "Inspects and prints information about Automerge files."
+    )
+
     @Argument(help: "The Automerge document to inspect.")
     var inputFile: String
 
