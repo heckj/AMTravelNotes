@@ -177,7 +177,7 @@ final class AutomergeExplorationTests: XCTestCase {
         XCTAssertNil(try doc.get(obj: list, index: 3))
         XCTAssertNil(try doc.get(obj: list, index: 4))
     }
-    
+
     func testSyncStateUpdating() throws {
         let doc1 = Document()
         let syncState1 = SyncState()
@@ -196,10 +196,10 @@ final class AutomergeExplorationTests: XCTestCase {
         //      any change hashes
         // XCTAssertNotNil(syncState1.theirHeads)
         // print("size of changes in syncState1: \(syncState1.theirHeads?.count)")
-        
+
         // And we generally want to keep iterating sync messages UNTIL the syncDataMsg result
         // is nil, which indicates that nothing further needs to be synced.
-        
+
         XCTAssertNil(syncState2.theirHeads)
         try doc2.receiveSyncMessage(state: syncState2, message: syncDataMsg)
         XCTAssertNotNil(syncState2.theirHeads) // it IS updated when you invoke receiveSyncMessages(...)
@@ -207,7 +207,6 @@ final class AutomergeExplorationTests: XCTestCase {
         for change in syncState2.theirHeads! {
             print(" -> ChangeHash: \(change)")
         }
-        //XCTAssertEqual(syncState1.theirHeads, syncState2.theirHeads)
-        
+        // XCTAssertEqual(syncState1.theirHeads, syncState2.theirHeads)
     }
 }
