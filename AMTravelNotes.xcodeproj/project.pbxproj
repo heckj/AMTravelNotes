@@ -21,7 +21,7 @@
 		1AB6F1F429EE1A79003529D0 /* AMText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F1F329EE1A79003529D0 /* AMText.swift */; };
 		1AB6F20229EE1EFD003529D0 /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1AB6F20129EE1EFD003529D0 /* Automerge */; };
 		1AB6F20729EE1F9B003529D0 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1AB6F20629EE1F9B003529D0 /* ArgumentParser */; };
-		1AB6F20929EE202C003529D0 /* DumpDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F20829EE202C003529D0 /* DumpDocument.swift */; };
+		1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F20829EE202C003529D0 /* AMInspector.swift */; };
 		1AC4EBAE29CA6F6F00814B1E /* AMProp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */; };
 		1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */; };
 		1ACCBA4029EDB2BA005777B1 /* SyncProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3D29EDB2BA005777B1 /* SyncProtocol.swift */; };
@@ -84,7 +84,7 @@
 		1AB6F1F129EE1A2A003529D0 /* AMObj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMObj.swift; sourceTree = "<group>"; };
 		1AB6F1F329EE1A79003529D0 /* AMText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMText.swift; sourceTree = "<group>"; };
 		1AB6F1F929EE1EDF003529D0 /* AMInspector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AMInspector; sourceTree = BUILT_PRODUCTS_DIR; };
-		1AB6F20829EE202C003529D0 /* DumpDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DumpDocument.swift; sourceTree = "<group>"; };
+		1AB6F20829EE202C003529D0 /* AMInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMInspector.swift; sourceTree = "<group>"; };
 		1AC4EBAC29CA6EB400814B1E /* automerge-swifter */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "automerge-swifter"; path = "../automerge-swifter"; sourceTree = "<group>"; };
 		1AC4EBAD29CA6F6F00814B1E /* AMProp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMProp.swift; sourceTree = "<group>"; };
 		1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoCode.swift; sourceTree = "<group>"; };
@@ -166,7 +166,7 @@
 		1AB6F1FA29EE1EDF003529D0 /* AMInspector */ = {
 			isa = PBXGroup;
 			children = (
-				1AB6F20829EE202C003529D0 /* DumpDocument.swift */,
+				1AB6F20829EE202C003529D0 /* AMInspector.swift */,
 			);
 			path = AMInspector;
 			sourceTree = "<group>";
@@ -420,7 +420,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AB6F20929EE202C003529D0 /* DumpDocument.swift in Sources */,
+				1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
