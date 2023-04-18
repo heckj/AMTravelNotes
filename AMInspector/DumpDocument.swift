@@ -8,6 +8,12 @@ struct AMInspector: ParsableCommand {
     var inputFile: String
 
     @Flag(
+        name: [.long],
+        help: "Provide summary statistics about the Automerge document."
+    )
+    var stats = false
+
+    @Flag(
         name: [.customShort("l"), .long],
         help: "List out the changeset hashes in the summary."
     )
@@ -17,6 +23,10 @@ struct AMInspector: ParsableCommand {
     var walk = false
 
     mutating func run() throws {
+        if listchanges {
+            stats = true
+        }
+
         let data: Data
         let doc: Document
         do {
@@ -33,23 +43,22 @@ struct AMInspector: ParsableCommand {
             AMInspector.exit(withError: error)
         }
 
-        let changesets = doc.heads()
-        print("Filename: \(inputFile)")
-        print("- Size: \(data.count) bytes")
-        print("- ActorId: \(doc.actor)")
-        print("- ChangeSets: \(doc.heads().count)")
-        if listchanges {
-            for cs in changesets {
-                print("  - \(cs)")
+        if stats {
+            let changesets = doc.heads()
+            print("Filename: \(inputFile)")
+            print("- Size: \(data.count) bytes")
+            print("- ActorId: \(doc.actor)")
+            print("- ChangeSets: \(doc.heads().count)")
+            if listchanges {
+                for cs in changesets {
+                    print("  - \(cs)")
+                }
             }
         }
 
         if walk {
             do {
-                print("SCHEMA AND DATA:")
-                print("{")
                 try walk(doc)
-                print("}")
             } catch {
                 print("Error while walking document.")
                 AMInspector.exit(withError: error)
@@ -57,7 +66,13 @@ struct AMInspector: ParsableCommand {
         }
     }
 
-    func walk(_ doc: Document, from objId: ObjId = ObjId.ROOT, indent: Int = 1) throws {
+    func walk(_ doc: Document) throws {
+        print("{")
+        try walk(doc, from: ObjId.ROOT)
+        print("}")
+    }
+
+    func walk(_ doc: Document, from objId: ObjId, indent: Int = 1) throws {
         let indentString = String(repeating: " ", count: indent * 2)
         switch doc.objectType(obj: objId) {
         case .Map:
