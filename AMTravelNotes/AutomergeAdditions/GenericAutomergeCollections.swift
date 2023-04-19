@@ -8,12 +8,14 @@ import enum Automerge.Value
 
 class BaseAutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
-    internal var obj: ObjId
+    internal var obj: ObjId?
 
-    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
-        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
+    required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
         self.doc = doc
-        self.obj = obj
+        if let obj {
+            precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
+            self.obj = obj
+        }
     }
 
     init?(doc: Document, path: String) throws {
@@ -58,15 +60,20 @@ class BaseAutomergeBoundObject: ObservableAutomergeBoundObject {
 
 class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeBoundObject, Sequence {
     internal var doc: Document
-    internal var obj: ObjId
+    internal var obj: ObjId?
     private var length: UInt64
 
-    required init(doc: Document, obj: ObjId) {
-        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
-        precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
+    required init(doc: Document, obj: ObjId?) {
         self.doc = doc
-        self.obj = obj
-        self.length = doc.length(obj: obj)
+        if let obj {
+            precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+            precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
+            self.obj = obj
+            self.length = doc.length(obj: obj)
+        } else {
+            self.obj = nil
+            self.length = 0
+        }
         // TODO: add validation of schema - that all list entries are convertible to type `T`
     }
 
@@ -74,7 +81,7 @@ class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeBoundObject, 
         self.doc = doc
         if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .List {
             self.obj = objId
-            self.length = doc.length(obj: obj)
+            self.length = doc.length(obj: objId)
             // TODO: add validation of schema - that all list entries are convertible to type `T`
         } else {
             return nil
@@ -90,27 +97,33 @@ class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeBoundObject, 
 
     struct AmListIterator<Element>: IteratorProtocol {
         private let doc: Document
-        private let objId: ObjId
+        private let objId: ObjId?
         private var cursorIndex: UInt64
         private let length: UInt64
 
-        init(doc: Document, objId: ObjId) {
+        init(doc: Document, objId: ObjId?) {
             self.doc = doc
             self.objId = objId
             self.cursorIndex = 0
-            self.length = doc.length(obj: objId)
+            if let objId {
+                self.length = doc.length(obj: objId)
+            } else {
+                self.length = 0
+            }
         }
 
         mutating func next() -> Element? {
             if cursorIndex >= length {
                 return nil
             }
-            self.cursorIndex += 1
-            if let result = try! doc.get(obj: objId, index: cursorIndex) {
-                do {
-                    return try result.automergeType as? Element
-                } catch {
-                    // yes, we're really swallowing any underlying errors.
+            if let objId = self.objId {
+                self.cursorIndex += 1
+                if let result = try! doc.get(obj: objId, index: cursorIndex) {
+                    do {
+                        return try result.automergeType as? Element
+                    } catch {
+                        // yes, we're really swallowing any underlying errors.
+                    }
                 }
             }
             return nil
@@ -143,8 +156,8 @@ extension AutomergeList: RandomAccessCollection {
 
     subscript(position: UInt64) -> T {
         do {
-            guard let amvalue = try self.doc.get(obj: self.obj, index: position) else {
-                fatalError("Unable to access list \(self.obj) at index \(position)")
+            guard let amvalue = try self.doc.get(obj: self.obj!, index: position) else {
+                fatalError("Unable to access list \(self.obj!) at index \(position)")
             }
             return try T.fromValue(amvalue)
         } catch {

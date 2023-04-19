@@ -8,7 +8,7 @@ protocol HasDoc {
 }
 
 protocol HasObj {
-    var obj: ObjId { get }
+    var obj: ObjId? { get }
 }
 
 // mixing the Automerge doc & Observable object with an explicit marker for a
@@ -17,5 +17,13 @@ protocol ObservableAutomergeBoundObject: ObservableObject, HasDoc, HasObj {
     var objectWillChange: ObservableObjectPublisher { get }
     // ^^ this is really about more easily participating in ObservableObject notifications
 
-    init(doc: Document, obj: ObjId)
+    func isBound() -> Bool
+    init(doc: Document, obj: ObjId?)
+}
+
+// default implementation for bound/unbound
+extension ObservableAutomergeBoundObject {
+    public func isBound() -> Bool {
+        self.obj != nil
+    }
 }
