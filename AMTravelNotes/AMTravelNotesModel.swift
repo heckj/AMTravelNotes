@@ -32,11 +32,14 @@ class TravelNotesModel: BaseAutomergeBoundObject, Identifiable {
     @AmList("images") var images: AutomergeList<NSImage>
     #endif
 
-    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
+    required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
         super.init(doc: doc, obj: obj)
 
         // TODO: check to see if it exists, and create if not
         do {
+            guard let obj = obj else {
+                fatalError("initialized model not linked to an Automerge objectId.")
+            }
             let _ = try! doc.putObject(obj: obj, key: "summary", ty: .Text)
             try doc.put(obj: obj, key: "id", value: .String(UUID().uuidString))
             let _ = try! doc.putObject(obj: obj, key: "images", ty: .List)

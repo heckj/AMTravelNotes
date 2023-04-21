@@ -20,7 +20,7 @@ enum LoadItemError: Error {
 }
 
 class TodoItem: Identifiable, ObservableAutomergeBoundObject {
-    var obj: ObjId
+    var obj: ObjId?
     var doc: Document
     var subscriber: AnyCancellable?
 
@@ -28,7 +28,7 @@ class TodoItem: Identifiable, ObservableAutomergeBoundObject {
     @AmScalarProp("id") var id: String
     @AmScalarProp("done") var done: Bool
 
-    required init(doc: Document, obj: ObjId) {
+    required init(doc: Document, obj: ObjId?) {
         self.doc = doc
         self.obj = obj
     }
