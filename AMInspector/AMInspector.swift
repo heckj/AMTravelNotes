@@ -1,6 +1,7 @@
 import ArgumentParser
 import Automerge
 import Foundation
+import Rainbow
 
 @main
 struct AMInspector: ParsableCommand {
@@ -72,44 +73,45 @@ struct AMInspector: ParsableCommand {
     }
 
     func walk(_ doc: Document) throws {
-        print("{")
+        print("{".green)
         try walk(doc, from: ObjId.ROOT)
-        print("}")
+        print("}".green)
     }
 
     func walk(_ doc: Document, from objId: ObjId, indent: Int = 1) throws {
         let indentString = String(repeating: " ", count: indent * 2)
+        let greenquote = "\"".green
         switch doc.objectType(obj: objId) {
         case .Map:
             for (key, value) in try doc.mapEntries(obj: objId) {
                 if case let Value.Scalar(scalarValue) = value {
-                    print("\(indentString)\"\(key)\" : \(scalarValue)")
+                    print("\(indentString)\(greenquote)\("\(key)".red)\(greenquote) : \("\(scalarValue)".yellow)")
                 }
                 if case let Value.Object(childObjId, _) = value {
-                    print("\(indentString)\"\(key)\" : {")
+                    print("\(indentString)\(greenquote)\("\(key)".red)\(greenquote) : \("{".green)")
                     try walk(doc, from: childObjId, indent: indent + 1)
-                    print("\(indentString)}")
+                    print("\(indentString)}".green)
                 }
             }
         case .List:
             if doc.length(obj: objId) == 0 {
-                print("\(indentString)[]")
+                print("\(indentString)[]".green)
             } else {
-                print("\(indentString)[")
+                print("\(indentString)[".green)
                 for value in try doc.values(obj: objId) {
                     if case let Value.Scalar(scalarValue) = value {
-                        print("\(indentString)  \(scalarValue)")
+                        print("\(indentString)  \("\(scalarValue)".green)")
                     } else {
                         if case let Value.Object(childObjId, _) = value {
                             try walk(doc, from: childObjId, indent: indent + 1)
                         }
                     }
                 }
-                print("\(indentString)]")
+                print("\(indentString)]".green)
             }
         case .Text:
             let stringValue = try doc.text(obj: objId)
-            print("\(indentString)Text[\"\(stringValue)\"]")
+            print("\(indentString)\("Text[".yellow)\(greenquote)\(stringValue)\(greenquote)\("]".yellow)")
         }
     }
 }
