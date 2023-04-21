@@ -23,9 +23,11 @@ struct AmText {
     ) -> String {
         get {
             let doc = instance.doc
-            let obj = instance.obj
+            guard let parentObjectId = instance.obj else {
+                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            }
             let key = instance[keyPath: storageKeyPath].key
-            if case let .Object(id, .Text) = try! doc.get(obj: obj, key: key) {
+            if case let .Object(id, .Text) = try! doc.get(obj: parentObjectId, key: key) {
                 return try! doc.text(obj: id)
             } else {
                 fatalError("\(key) not text")
@@ -36,8 +38,10 @@ struct AmText {
 
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            let obj = instance.obj
-            try! updateText(doc: doc, objId: obj, key: key, newText: newValue)
+            guard let parentObjectId = instance.obj else {
+                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            }
+            try! updateText(doc: doc, objId: parentObjectId, key: key, newText: newValue)
         }
     }
 
@@ -49,8 +53,11 @@ struct AmText {
         get {
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            let obj = instance.obj
-            return textBinding(doc: doc, objId: obj, key: key, observer: instance)
+            guard let parentObjectId = instance.obj else {
+                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            }
+
+            return textBinding(doc: doc, objId: parentObjectId, key: key, observer: instance)
         }
         @available(
             *,

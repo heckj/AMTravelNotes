@@ -24,7 +24,9 @@ struct AmList<Value: ObservableAutomergeBoundObject> {
         storage storageKeyPath: KeyPath<T, Self>
     ) -> Value {
         let doc = instance.doc
-        let parentObjectId = instance.obj
+        guard let parentObjectId = instance.obj else {
+            fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+        }
         let key = instance[keyPath: storageKeyPath].key
         let amval = try! doc.get(obj: parentObjectId, key: key)!
         if case let .Object(newObjectId, .List) = amval {

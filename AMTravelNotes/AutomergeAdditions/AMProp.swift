@@ -30,12 +30,14 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
     ) -> Value {
         get {
             let doc = instance.doc
-            let obj = instance.obj
+            guard let parentObjectId = instance.obj else {
+                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            }
             // let whatshere = instance[keyPath: storageKeyPath] // AmScalarProp<Value>
             // ^^ this is the property wrapper itself, and we can read things from it
             // in this case \/ the `key` where we want to read from the Automerge doc
             let key = instance[keyPath: storageKeyPath].key
-            let amval = try! doc.get(obj: obj, key: key)!
+            let amval = try! doc.get(obj: parentObjectId, key: key)!
             if case let .success(v) = Value.fromValue(amval) {
                 return v
             } else {
@@ -47,8 +49,11 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
 
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            let obj = instance.obj
-            try! doc.put(obj: obj, key: key, value: newValue.toScalarValue())
+            guard let parentObjectId = instance.obj else {
+                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            }
+
+            try! doc.put(obj: parentObjectId, key: key, value: newValue.toScalarValue())
         }
     }
 
@@ -60,8 +65,16 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         get {
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            let obj = instance.obj
-            let binding: Binding<Value> = scalarPropBinding(doc: doc, objId: obj, key: key, observer: instance)
+            guard let parentObjectId = instance.obj else {
+                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            }
+
+            let binding: Binding<Value> = scalarPropBinding(
+                doc: doc,
+                objId: parentObjectId,
+                key: key,
+                observer: instance
+            )
             return binding
         }
         @available(

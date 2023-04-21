@@ -25,13 +25,15 @@ struct AmObj<Value: ObservableAutomergeBoundObject> {
         storage storageKeyPath: KeyPath<T, Self>
     ) -> BaseAutomergeBoundObject {
         let doc = instance.doc
-        let parentObjectId = instance.obj
+        guard let parentObjectId = instance.obj else {
+            fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+        }
         let key = instance[keyPath: storageKeyPath].key
         let amval = try! doc.get(obj: parentObjectId, key: key)!
         if case let .Object(newObjectId, .Map) = amval {
             return BaseAutomergeBoundObject(doc: doc, obj: newObjectId)
         } else {
-            fatalError("object referenced at \(key) wasn't a Map")
+            fatalError("object referenced at \(key) wasn't a Map.")
         }
     }
 

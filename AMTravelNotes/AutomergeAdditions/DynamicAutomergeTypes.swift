@@ -8,11 +8,13 @@ import struct Automerge.ObjId
 
 class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
     internal var doc: Document
-    internal var obj: ObjId
+    internal var obj: ObjId?
 
-    required init(doc: Document, obj: ObjId) {
-        precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
-        precondition(doc.objectType(obj: obj) == .List, "The object with id: \(obj) is not a List CRDT.")
+    required init(doc: Document, obj: ObjId?) {
+        if obj != nil {
+            precondition(obj != ObjId.ROOT, "A list object can't be bound to the Root of an Automerge document.")
+            precondition(doc.objectType(obj: obj!) == .List, "The object with id: \(obj!) is not a List CRDT.")
+        }
         self.doc = doc
         self.obj = obj
     }
@@ -46,23 +48,27 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
 
     struct AmListIterator<Element>: IteratorProtocol {
         private let doc: Document
-        private let objId: ObjId
+        private let objId: ObjId?
         private var cursorIndex: UInt64
         private let length: UInt64
 
-        init(doc: Document, objId: ObjId) {
+        init(doc: Document, objId: ObjId?) {
             self.doc = doc
             self.objId = objId
             self.cursorIndex = 0
-            self.length = doc.length(obj: objId)
+            if objId != nil {
+                self.length = doc.length(obj: objId!)
+            } else {
+                self.length = 0
+            }
         }
 
         mutating func next() -> Element? {
-            if cursorIndex >= length {
+            if cursorIndex >= length || objId == nil {
                 return nil
             }
             self.cursorIndex += 1
-            if let result = try! doc.get(obj: objId, index: cursorIndex) {
+            if let result = try! doc.get(obj: objId!, index: cursorIndex) {
                 do {
                     return try result.automergeType as? Element
                 } catch {
@@ -91,12 +97,15 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
     }
 
     var endIndex: UInt64 {
-        self.doc.length(obj: self.obj)
+        guard let objId = self.obj else {
+            return 0
+        }
+        return self.doc.length(obj: objId)
     }
 
     subscript(position: UInt64) -> AutomergeType? {
         do {
-            if let amvalue = try self.doc.get(obj: self.obj, index: position) {
+            if let objId = self.obj, let amvalue = try self.doc.get(obj: objId, index: position) {
                 return try amvalue.automergeType
             }
         } catch {
@@ -110,14 +119,18 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
 
 class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
     internal var doc: Document
-    internal var obj: ObjId
+    internal var obj: ObjId?
     private var _keys: [String]
 
-    required init(doc: Document, obj: ObjId) {
-        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
+    required init(doc: Document, obj: ObjId?) {
         self.doc = doc
         self.obj = obj
-        self._keys = doc.keys(obj: obj)
+        if obj != nil {
+            self._keys = doc.keys(obj: obj!)
+            precondition(doc.objectType(obj: obj!) == .Map, "The object with id: \(obj!) is not a Map CRDT.")
+        } else {
+            self._keys = []
+        }
     }
 
     init?(doc: Document, path: String) throws {
@@ -152,26 +165,31 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
 
     struct AmMapIterator<Element>: IteratorProtocol {
         private let doc: Document
-        private let objId: ObjId
+        private let objId: ObjId?
         private var cursorIndex: UInt64
         private let keys: [String]
         private let length: UInt64
 
-        init(doc: Document, objId: ObjId) {
+        init(doc: Document, objId: ObjId?) {
             self.doc = doc
             self.objId = objId
             self.cursorIndex = 0
-            self.length = doc.length(obj: objId)
-            self.keys = doc.keys(obj: objId)
+            if objId != nil {
+                self.length = doc.length(obj: objId!)
+                self.keys = doc.keys(obj: objId!)
+            } else {
+                self.length = 0
+                self.keys = []
+            }
         }
 
         mutating func next() -> Element? {
-            if cursorIndex >= length {
+            if cursorIndex >= length, self.objId != nil {
                 return nil
             }
             self.cursorIndex += 1
             let currentKey = keys[Int(cursorIndex)]
-            if let result = try! doc.get(obj: objId, key: currentKey) {
+            if let result = try! doc.get(obj: objId!, key: currentKey) {
                 do {
                     let amrep = try result.automergeType
                     return (currentKey, amrep) as? Element
@@ -202,7 +220,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
 
     subscript(position: Int) -> (String, AutomergeType?) {
         let currentKey = self._keys[position]
-        if let result = try! doc.get(obj: self.obj, key: currentKey) {
+        if let objId = self.obj, let result = try! doc.get(obj: objId, key: currentKey) {
             do {
                 let amrep = try result.automergeType
                 return (currentKey, amrep)
@@ -217,11 +235,13 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
 @dynamicMemberLookup
 class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
     internal var doc: Document
-    internal var obj: ObjId
+    internal var obj: ObjId?
 
     // alternate initializer that accepts a path into the Automerge document
-    required init(doc: Document, obj: ObjId = ObjId.ROOT) {
-        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
+    required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
+        if obj != nil {
+            precondition(doc.objectType(obj: obj!) == .Map, "The object with id: \(obj!) is not a Map CRDT.")
+        }
         self.doc = doc
         self.obj = obj
     }
@@ -246,7 +266,7 @@ class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
 
     subscript(dynamicMember member: String) -> AutomergeType? {
         do {
-            if let amValue = try doc.get(obj: self.obj, key: member) {
+            if let objId = self.obj, let amValue = try doc.get(obj: objId, key: member) {
                 return try amValue.automergeType
             }
         } catch {
