@@ -30,6 +30,8 @@
 		1ACCBA4229EDB2BA005777B1 /* PeerListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3E29EDB2BA005777B1 /* PeerListener.swift */; };
 		1ACCBA4329EDB2BA005777B1 /* PeerBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3F29EDB2BA005777B1 /* PeerBrowser.swift */; };
 		1ACCBA4429EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3B29EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift */; };
+		1AD173B429F7435C00D29D0F /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD173B329F7435C00D29D0F /* Info.swift */; };
+		1AD173B629F7466300D29D0F /* Dump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD173B529F7466300D29D0F /* Dump.swift */; };
 		1AEFDE9629CE0FF5004657E0 /* Document+Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFDE9529CE0FF5004657E0 /* Document+Path.swift */; };
 		1AF0BD7529CA62140039EB8B /* AMTravelNotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD7429CA62140039EB8B /* AMTravelNotesApp.swift */; };
 		1AF0BD7729CA62140039EB8B /* AMTravelNotesDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD7629CA62140039EB8B /* AMTravelNotesDocument.swift */; };
@@ -94,6 +96,8 @@
 		1ACCBA3D29EDB2BA005777B1 /* SyncProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncProtocol.swift; sourceTree = "<group>"; };
 		1ACCBA3E29EDB2BA005777B1 /* PeerListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerListener.swift; sourceTree = "<group>"; };
 		1ACCBA3F29EDB2BA005777B1 /* PeerBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerBrowser.swift; sourceTree = "<group>"; };
+		1AD173B329F7435C00D29D0F /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
+		1AD173B529F7466300D29D0F /* Dump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dump.swift; sourceTree = "<group>"; };
 		1AEFDE9529CE0FF5004657E0 /* Document+Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Document+Path.swift"; sourceTree = "<group>"; };
 		1AF0BD7129CA62140039EB8B /* AMTravelNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AMTravelNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AF0BD7429CA62140039EB8B /* AMTravelNotesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesApp.swift; sourceTree = "<group>"; };
@@ -169,6 +173,8 @@
 			isa = PBXGroup;
 			children = (
 				1AB6F20829EE202C003529D0 /* AMInspector.swift */,
+				1AD173B329F7435C00D29D0F /* Info.swift */,
+				1AD173B529F7466300D29D0F /* Dump.swift */,
 			);
 			path = AMInspector;
 			sourceTree = "<group>";
@@ -425,6 +431,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */,
+				1AD173B429F7435C00D29D0F /* Info.swift in Sources */,
+				1AD173B629F7466300D29D0F /* Dump.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
