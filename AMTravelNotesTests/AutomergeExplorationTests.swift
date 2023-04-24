@@ -13,7 +13,7 @@ final class AutomergeExplorationTests: XCTestCase {
     func testPathAtRoot() throws {
         let doc = Document()
         let path = try! doc.path(obj: ObjId.ROOT)
-        // print("\(path)")
+        print("\(path)")
         XCTAssertEqual(path, [])
     }
 
@@ -36,6 +36,7 @@ final class AutomergeExplorationTests: XCTestCase {
         XCTAssertNil(try doc.lookupPath(path: "a"))
         XCTAssertNil(try doc.lookupPath(path: "a."))
         XCTAssertEqual(try doc.lookupPath(path: "list"), list)
+        XCTAssertEqual(try doc.lookupPath(path: ".list"), list)
         XCTAssertNil(try doc.lookupPath(path: "list.1"))
 
         // The top level object isn't a list - so an index lookup should fail with an error
@@ -44,15 +45,15 @@ final class AutomergeExplorationTests: XCTestCase {
         // XCTAssertEqual(ObjId.ROOT, try XCTUnwrap(doc.lookupPath(path: "1.a")))
         // threw error "DocError(inner: AutomergeUniffi.DocError.WrongObjectType(message: "WrongObjectType"))"
         XCTAssertEqual(try doc.lookupPath(path: "list.0"), nestedMap)
-        XCTAssertEqual(try doc.lookupPath(path: "list.0"), nestedMap)
+        XCTAssertEqual(try doc.lookupPath(path: ".list.0"), nestedMap)
         XCTAssertEqual(try doc.lookupPath(path: "list.0.notes"), deeplyNestedText)
-
+        XCTAssertEqual(try doc.lookupPath(path: ".list.0.notes"), deeplyNestedText)
         print("Cache: \(DocumentCache.objId)")
         /*
          Cache: [
-         ".list.0.notes": (ObjId(1010867819f53d3748a498ecc9742ebf28de0003, Automerge.ObjType.Text),
-         ".list": (ObjId(1010867819f53d3748a498ecc9742ebf28de0001, Automerge.ObjType.List),
-         ".list.0": (ObjId(1010867819f53d3748a498ecc9742ebf28de0002, Automerge.ObjType.Map)
+           ".list": (ObjId(101096058f6a93204ab8ae5a78c4fe48865a0001, Automerge.ObjType.List),
+           ".list.0.notes": (ObjId(101096058f6a93204ab8ae5a78c4fe48865a0003, Automerge.ObjType.Text),
+           ".list.0": (ObjId(101096058f6a93204ab8ae5a78c4fe48865a0002, Automerge.ObjType.Map)
          ]
          */
 
@@ -83,7 +84,7 @@ final class AutomergeExplorationTests: XCTestCase {
                 ),
             ]
         )
-        XCTAssertEqual(pathToList.stringPath(), "list.0")
+        XCTAssertEqual(pathToList.stringPath(), ".list.[0]")
 
         let pathToText = try! doc.path(obj: deeplyNestedText)
         // print("textPath: \(pathToText)")
@@ -104,7 +105,7 @@ final class AutomergeExplorationTests: XCTestCase {
                 ),
             ]
         )
-        XCTAssertEqual(pathToText.stringPath(), "list.0.notes")
+        XCTAssertEqual(pathToText.stringPath(), ".list.[0].notes")
     }
 
     func testExample() throws {
