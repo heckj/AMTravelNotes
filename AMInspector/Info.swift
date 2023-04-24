@@ -1,6 +1,6 @@
-import Foundation
 import ArgumentParser
 import Automerge
+import Foundation
 
 extension AMInspector {
     struct Info: ParsableCommand {
@@ -8,15 +8,15 @@ extension AMInspector {
             commandName: "info",
             abstract: "Inspects and prints general metrics about Automerge files."
         )
-        
+
         @OptionGroup var options: AMInspector.Options
-        
+
         @Flag(
             name: [.customShort("v"), .long],
             help: "List the changeset hashes."
         )
         var verbose = false
-        
+
         mutating func run() throws {
             let data: Data
             let doc: Document
@@ -26,15 +26,14 @@ extension AMInspector {
                 print("Unable to open file at \(options.inputFile).")
                 AMInspector.exit(withError: error)
             }
-            
+
             do {
                 doc = try Document(data)
             } catch {
                 print("\(options.inputFile) is not an Automerge document.")
                 AMInspector.exit(withError: error)
             }
-            
-            
+
             let changesets = doc.heads()
             print("Filename: \(options.inputFile)")
             print("- Size: \(data.count) bytes")

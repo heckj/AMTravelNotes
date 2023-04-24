@@ -1,6 +1,6 @@
-import Foundation
 import ArgumentParser
 import Automerge
+import Foundation
 
 extension AMInspector {
     struct Dump: ParsableCommand {
@@ -8,9 +8,9 @@ extension AMInspector {
             commandName: "dump",
             abstract: "Inspects and prints general metrics about Automerge files."
         )
-        
+
         @OptionGroup var options: AMInspector.Options
-        
+
         mutating func run() throws {
             let data: Data
             let doc: Document
@@ -20,7 +20,7 @@ extension AMInspector {
                 print("Unable to open file at \(options.inputFile).")
                 AMInspector.exit(withError: error)
             }
-            
+
             do {
                 doc = try Document(data)
             } catch {
@@ -33,9 +33,8 @@ extension AMInspector {
                 print("Error while walking document.")
                 AMInspector.exit(withError: error)
             }
-            
         }
-    
+
         func walk(_ doc: Document) throws {
             print("{".white.bold)
             try walk(doc, from: ObjId.ROOT)
@@ -49,7 +48,9 @@ extension AMInspector {
             case .Map:
                 for (key, value) in try doc.mapEntries(obj: objId) {
                     if case let Value.Scalar(scalarValue) = value {
-                        print("\(indentString)\(whitequote)\("\(key)".lightBlue)\(whitequote) :\("\(scalarValue)".green)")
+                        print(
+                            "\(indentString)\(whitequote)\("\(key)".lightBlue)\(whitequote) :\("\(scalarValue)".green)"
+                        )
                     }
                     if case let Value.Object(childObjId, _) = value {
                         print("\(indentString)\(whitequote)\("\(key)".lightBlue)\(whitequote) : \("{".white.bold)")
