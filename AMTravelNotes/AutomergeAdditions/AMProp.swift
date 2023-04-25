@@ -33,7 +33,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
             guard let parentObjectId = instance.obj else {
                 fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
             }
-            // let whatshere = instance[keyPath: storageKeyPath] // AmScalarProp<Value>
+            // let whatIsHere = instance[keyPath: storageKeyPath] // AmScalarProp<Value>
             // ^^ this is the property wrapper itself, and we can read things from it
             // in this case \/ the `key` where we want to read from the Automerge doc
             let key = instance[keyPath: storageKeyPath].key
