@@ -18,15 +18,15 @@ final class AutomergeExplorationTests: XCTestCase {
     }
 
     func testPath() throws {
-        XCTAssertNotNil(DocumentCache.objId)
-        XCTAssertEqual(DocumentCache.objId.count, 0)
+        XCTAssertNotNil(PathCache.objId)
+        XCTAssertEqual(PathCache.objId.count, 0)
 
         let doc = Document()
         let list = try! doc.putObject(obj: ObjId.ROOT, key: "list", ty: .List)
         let nestedMap = try! doc.insertObject(obj: list, index: 0, ty: .Map)
         let deeplyNestedText = try! doc.putObject(obj: nestedMap, key: "notes", ty: .Text)
 
-        XCTAssertEqual(DocumentCache.objId.count, 0)
+        XCTAssertEqual(PathCache.objId.count, 0)
 
         let result = try XCTUnwrap(doc.lookupPath(path: ""))
         XCTAssertEqual(result, ObjId.ROOT)
@@ -37,32 +37,32 @@ final class AutomergeExplorationTests: XCTestCase {
         XCTAssertNil(try doc.lookupPath(path: "a."))
         XCTAssertEqual(try doc.lookupPath(path: "list"), list)
         XCTAssertEqual(try doc.lookupPath(path: ".list"), list)
-        XCTAssertNil(try doc.lookupPath(path: "list.1"))
+        XCTAssertNil(try doc.lookupPath(path: "list.[1]"))
 
         // The top level object isn't a list - so an index lookup should fail with an error
-        XCTAssertThrowsError(try doc.lookupPath(path: "1.a"))
+        XCTAssertThrowsError(try doc.lookupPath(path: "[1].a"))
 
         // XCTAssertEqual(ObjId.ROOT, try XCTUnwrap(doc.lookupPath(path: "1.a")))
         // threw error "DocError(inner: AutomergeUniffi.DocError.WrongObjectType(message: "WrongObjectType"))"
-        XCTAssertEqual(try doc.lookupPath(path: "list.0"), nestedMap)
-        XCTAssertEqual(try doc.lookupPath(path: ".list.0"), nestedMap)
-        XCTAssertEqual(try doc.lookupPath(path: "list.0.notes"), deeplyNestedText)
-        XCTAssertEqual(try doc.lookupPath(path: ".list.0.notes"), deeplyNestedText)
-        print("Cache: \(DocumentCache.objId)")
+        XCTAssertEqual(try doc.lookupPath(path: "list.[0]"), nestedMap)
+        XCTAssertEqual(try doc.lookupPath(path: ".list.[0]"), nestedMap)
+        XCTAssertEqual(try doc.lookupPath(path: "list.[0].notes"), deeplyNestedText)
+        XCTAssertEqual(try doc.lookupPath(path: ".list.[0].notes"), deeplyNestedText)
+        print("Cache: \(PathCache.objId)")
         /*
          Cache: [
-           ".list": (ObjId(101096058f6a93204ab8ae5a78c4fe48865a0001, Automerge.ObjType.List),
-           ".list.0.notes": (ObjId(101096058f6a93204ab8ae5a78c4fe48865a0003, Automerge.ObjType.Text),
-           ".list.0": (ObjId(101096058f6a93204ab8ae5a78c4fe48865a0002, Automerge.ObjType.Map)
+             ".list.[0]": (ObjId(1010d753481b2afb40a5b353e66bc0df63120002, Automerge.ObjType.Map),
+             ".list": (ObjId(1010d753481b2afb40a5b353e66bc0df63120001, Automerge.ObjType.List),
+             ".list.[0].notes": (ObjId(1010d753481b2afb40a5b353e66bc0df63120003, Automerge.ObjType.Text)
          ]
          */
 
         // verifying cache lookups
 
-        XCTAssertEqual(DocumentCache.objId.count, 3)
-        XCTAssertNotNil(DocumentCache.objId[".list"])
-        XCTAssertNil(DocumentCache.objId["list"])
-        XCTAssertNil(DocumentCache.objId["a"])
+        XCTAssertEqual(PathCache.objId.count, 3)
+        XCTAssertNotNil(PathCache.objId[".list"])
+        XCTAssertNil(PathCache.objId["list"])
+        XCTAssertNil(PathCache.objId["a"])
     }
 
     func testPathElementListToPath() throws {

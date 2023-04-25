@@ -8,22 +8,24 @@
 import Automerge
 import Foundation
 
-class DocumentCache {
+class PathCache {
     static var objId: [String: (ObjId, ObjType)] = [:]
 }
 
 enum PathParseError: Error {
     case invalidPathElement(String)
+    case emptyListIndex(String)
+    case indexOutOfBounds(String)
 }
 
 extension Document {
     public func lookupPath(path: String) throws -> ObjId? {
         if path.first == "." {
-            if let cacheResult = DocumentCache.objId[path] {
+            if let cacheResult = PathCache.objId[path] {
                 return cacheResult.0
             }
         } else {
-            if let cacheResult = DocumentCache.objId["." + path] {
+            if let cacheResult = PathCache.objId["." + path] {
                 return cacheResult.0
             }
         }
@@ -35,6 +37,21 @@ extension Document {
         return try lookupSubPath(bits, basePath: "", from: ObjId.ROOT)
     }
 
+    private func extractIndexString(pathElement: String) throws -> UInt64 {
+        if pathElement.first == "[", pathElement.last == "]" {
+            let start = pathElement.index(after: pathElement.startIndex)
+            let end = pathElement.index(before: pathElement.endIndex)
+            let substring = String(pathElement[start ..< end])
+            if !substring.isEmpty, let parsedIndexValue = UInt64(substring) {
+                return parsedIndexValue
+            } else {
+                throw PathParseError.emptyListIndex(String(pathElement))
+            }
+        } else {
+            throw PathParseError.invalidPathElement(String(pathElement))
+        }
+    }
+
     private func lookupSubPath(_ pathList: [String], basePath: String, from obj: ObjId) throws -> ObjId? {
         guard let pathPiece = pathList.first,
               let firstChar: Character = pathPiece.first
@@ -43,15 +60,17 @@ extension Document {
         }
         let remainingPathPieces = Array(pathList[1...])
 
-        if firstChar.isNumber,
-           let parsedIndexValue = UInt64(pathPiece)
-        {
-            // ?? We probably need to verify we're not requesting beyond end of index here - need to check in tests
-            if let value = try get(obj: obj, index: parsedIndexValue) {
+        if firstChar == "[" {
+            let indexValue = try extractIndexString(pathElement: pathPiece)
+            if indexValue > length(obj: obj) {
+                throw PathParseError
+                    .indexOutOfBounds("Index value \(indexValue) is beyond the length: \(length(obj: obj))")
+            }
+            if let value = try get(obj: obj, index: indexValue) {
                 switch value {
                 case let .Object(objId, objType):
                     let extendedPath: String = [basePath, pathPiece].joined(separator: ".")
-                    DocumentCache.objId[extendedPath] = (objId, objType)
+                    PathCache.objId[extendedPath] = (objId, objType)
                     return try lookupSubPath(remainingPathPieces, basePath: extendedPath, from: objId)
                 case .Scalar:
                     return nil
@@ -67,7 +86,7 @@ extension Document {
                 switch value {
                 case let .Object(objId, objType):
                     let extendedPath: String = [basePath, pathPiece].joined(separator: ".")
-                    DocumentCache.objId[extendedPath] = (objId, objType)
+                    PathCache.objId[extendedPath] = (objId, objType)
                     return try lookupSubPath(remainingPathPieces, basePath: extendedPath, from: objId)
                 case .Scalar:
                     return nil
