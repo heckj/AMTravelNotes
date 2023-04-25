@@ -39,6 +39,7 @@ final class AutomergeExplorationTests: XCTestCase {
         XCTAssertEqual(try doc.lookupPath(path: ".list"), list)
         XCTAssertNil(try doc.lookupPath(path: "list.[1]"))
 
+        XCTAssertThrowsError(try doc.lookupPath(path: ".list.[5]"), "Index Out of Bounds should throw an error")
         // The top level object isn't a list - so an index lookup should fail with an error
         XCTAssertThrowsError(try doc.lookupPath(path: "[1].a"))
 

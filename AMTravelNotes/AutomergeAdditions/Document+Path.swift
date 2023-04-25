@@ -1,10 +1,3 @@
-//
-//  Document+Path.swift
-//  AMTravelNotes
-//
-//  Created by Joseph Heck on 3/24/23.
-//
-
 import Automerge
 import Foundation
 
@@ -12,13 +5,23 @@ class PathCache {
     static var objId: [String: (ObjId, ObjType)] = [:]
 }
 
-enum PathParseError: Error {
+/// Path Errors
+public enum PathParseError: Error {
+    /// The path element is not valid.
     case invalidPathElement(String)
+    /// The path element, structured as a Index location, doesn't include an index value.
     case emptyListIndex(String)
+    /// The list index requested was longer than the list in the Document.
     case indexOutOfBounds(String)
 }
 
 extension Document {
+    /// Looks up the objectId represented by the path string you provide.
+    /// - Parameter path: A string representation of the location within an Automerge document.
+    /// - Returns: The objectId at the schema location you provide, or nil if the path is valid and no object exists in
+    /// the document.
+    ///
+    /// The method throws errors on invalid paths
     public func lookupPath(path: String) throws -> ObjId? {
         if path.first == "." {
             if let cacheResult = PathCache.objId[path] {
@@ -102,6 +105,7 @@ extension Document {
 }
 
 extension Sequence where Element == Automerge.PathElement {
+    /// Returns a string that represents the path.
     func stringPath() -> String {
         let path = map { pathElement in
             switch pathElement.prop {
