@@ -233,7 +233,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
 }
 
 @dynamicMemberLookup
-class DynamicAutomergeBoundObject: ObservableAutomergeBoundObject {
+class DynamicAutomergeObject: ObservableAutomergeBoundObject {
     internal var doc: Document
     internal var obj: ObjId?
 
