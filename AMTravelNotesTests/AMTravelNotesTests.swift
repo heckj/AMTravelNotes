@@ -52,17 +52,17 @@ final class AMTravelNotesTests: XCTestCase {
 //        child static type: (label: Optional<String>, value: Any)
 //        grandkid: (label: Optional("label"), value: Optional("_notes"))
 //        grandkid: (label: Optional("value"), value: AMTravelNotes.AmText(key: "notes"))
-//    Child: (label: Optional("_subObject"), value: AMTravelNotes.AmObj<AMTravelNotes.BaseAutomergeBoundObject>(key: "meta"))
+//    Child: (label: Optional("_subObject"), value: AMTravelNotes.AmObj<AMTravelNotes.BaseAutomergeObject>(key: "meta"))
 //        child static type: (label: Optional<String>, value: Any)
 //        grandkid: (label: Optional("label"), value: Optional("_subObject"))
-//        grandkid: (label: Optional("value"), value: AMTravelNotes.AmObj<AMTravelNotes.BaseAutomergeBoundObject>(key: "meta"))
+//        grandkid: (label: Optional("value"), value: AMTravelNotes.AmObj<AMTravelNotes.BaseAutomergeObject>(key: "meta"))
 //    Child: (label: Optional("_images"), value: AMTravelNotes.AmList<AMTravelNotes.AutomergeList<__C.NSImage>>(key: "images"))
 //        child static type: (label: Optional<String>, value: Any)
 //        grandkid: (label: Optional("label"), value: Optional("_images"))
 //        grandkid: (label: Optional("value"), value: AMTravelNotes.AmList<AMTravelNotes.AutomergeList<__C.NSImage>>(key: "images"))
 //    displayStyle: Optional(Swift.Mirror.DisplayStyle.class)
 //    subjectType: TravelNotesModel
-//    superclassMirror: Optional(Mirror for BaseAutomergeBoundObject)
+//    superclassMirror: Optional(Mirror for BaseAutomergeObject)
     }
 
     func testMoreCheckMirror() throws {

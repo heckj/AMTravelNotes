@@ -11,12 +11,13 @@
 		1A23E26929F32B590008264F /* Rainbow in Frameworks */ = {isa = PBXBuildFile; productRef = 1A23E26829F32B590008264F /* Rainbow */; };
 		1A3D1E2D29DF76BF00EA1C4F /* AutomergeProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */; };
 		1A3D1E2F29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */; };
+		1A4D67DA2A04389300FD0498 /* AutomergeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4D67D92A04389300FD0498 /* AutomergeObject.swift */; };
 		1A823EF329E8AE550054DFA4 /* Image+AutomergeRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF229E8AE550054DFA4 /* Image+AutomergeRepresentable.swift */; };
 		1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
 		1A823EF729E8BA4A0054DFA4 /* UUID+AutomergeRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF629E8BA4A0054DFA4 /* UUID+AutomergeRepresentable.swift */; };
 		1A82E7D829E620D70069EFAF /* AutomergeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A82E7D729E620D70069EFAF /* AutomergeType.swift */; };
 		1A84640029CCDA620050B817 /* AutomergeExplorationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */; };
-		1A8A234C29E49185001B17CC /* GenericAutomergeCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A234B29E49185001B17CC /* GenericAutomergeCollections.swift */; };
+		1A8A234C29E49185001B17CC /* AutomergeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A234B29E49185001B17CC /* AutomergeList.swift */; };
 		1AB6F1F029EE1A23003529D0 /* AMList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F1EF29EE1A23003529D0 /* AMList.swift */; };
 		1AB6F1F229EE1A2A003529D0 /* AMObj.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F1F129EE1A2A003529D0 /* AMObj.swift */; };
 		1AB6F1F429EE1A79003529D0 /* AMText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F1F329EE1A79003529D0 /* AMText.swift */; };
@@ -77,12 +78,13 @@
 		1A1257E229D3A36C00A197F7 /* AutomergeRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeRepresentable.swift; sourceTree = "<group>"; };
 		1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeProtocols.swift; sourceTree = "<group>"; };
 		1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicAutomergeTypes.swift; sourceTree = "<group>"; };
+		1A4D67D92A04389300FD0498 /* AutomergeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeObject.swift; sourceTree = "<group>"; };
 		1A823EF229E8AE550054DFA4 /* Image+AutomergeRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+AutomergeRepresentable.swift"; sourceTree = "<group>"; };
 		1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesModel.swift; sourceTree = "<group>"; };
 		1A823EF629E8BA4A0054DFA4 /* UUID+AutomergeRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+AutomergeRepresentable.swift"; sourceTree = "<group>"; };
 		1A82E7D729E620D70069EFAF /* AutomergeType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeType.swift; sourceTree = "<group>"; };
 		1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeExplorationTests.swift; sourceTree = "<group>"; };
-		1A8A234B29E49185001B17CC /* GenericAutomergeCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericAutomergeCollections.swift; sourceTree = "<group>"; };
+		1A8A234B29E49185001B17CC /* AutomergeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeList.swift; sourceTree = "<group>"; };
 		1AB6F1EF29EE1A23003529D0 /* AMList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMList.swift; sourceTree = "<group>"; };
 		1AB6F1F129EE1A2A003529D0 /* AMObj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMObj.swift; sourceTree = "<group>"; };
 		1AB6F1F329EE1A79003529D0 /* AMText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMText.swift; sourceTree = "<group>"; };
@@ -162,7 +164,8 @@
 				1AB6F1F329EE1A79003529D0 /* AMText.swift */,
 				1AB6F1EF29EE1A23003529D0 /* AMList.swift */,
 				1AB6F1F129EE1A2A003529D0 /* AMObj.swift */,
-				1A8A234B29E49185001B17CC /* GenericAutomergeCollections.swift */,
+				1A8A234B29E49185001B17CC /* AutomergeList.swift */,
+				1A4D67D92A04389300FD0498 /* AutomergeObject.swift */,
 				1A82E7D729E620D70069EFAF /* AutomergeType.swift */,
 				1A1257E229D3A36C00A197F7 /* AutomergeRepresentable.swift */,
 				1A823EF229E8AE550054DFA4 /* Image+AutomergeRepresentable.swift */,
@@ -443,7 +446,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */,
-				1A8A234C29E49185001B17CC /* GenericAutomergeCollections.swift in Sources */,
+				1A8A234C29E49185001B17CC /* AutomergeList.swift in Sources */,
 				1ACCBA4229EDB2BA005777B1 /* PeerListener.swift in Sources */,
 				1AF0BD7729CA62140039EB8B /* AMTravelNotesDocument.swift in Sources */,
 				1A3D1E2D29DF76BF00EA1C4F /* AutomergeProtocols.swift in Sources */,
@@ -455,6 +458,7 @@
 				1A82E7D829E620D70069EFAF /* AutomergeType.swift in Sources */,
 				1A823EF729E8BA4A0054DFA4 /* UUID+AutomergeRepresentable.swift in Sources */,
 				1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */,
+				1A4D67DA2A04389300FD0498 /* AutomergeObject.swift in Sources */,
 				1A823EF329E8AE550054DFA4 /* Image+AutomergeRepresentable.swift in Sources */,
 				1ACCBA4329EDB2BA005777B1 /* PeerBrowser.swift in Sources */,
 				1A3D1E2F29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift in Sources */,

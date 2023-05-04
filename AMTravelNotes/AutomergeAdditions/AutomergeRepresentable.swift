@@ -14,6 +14,12 @@ import Foundation
 /// into the associated type, and read the bytes through ``AutomergeRepresentable/fromValue(_:)`` to decode into your
 /// type.
 public protocol AutomergeRepresentable {
+    // NOTE(heckj): ScalarValueRepresentable has the pieces to convert into and out of types to Scalar values
+    // within Automerge, but I don't (yet) have the same thing for Lists or Object/Map representations.
+    // I want to try and accomplish that with a broader AutomergeRepresentable protocol. The initial version
+    // of which is relevant to READ-ONLY determine a type within Automerge, but doesn't have the bits in place
+    // to support conversions. When done, all AutomergeRepresentables should *also* be ScalarValueRepresentable.
+
     /// Converts the Automerge representation to a local type, or returns a failure
     /// - Parameter val: The Automerge ``Value`` to be converted as a scalar value into a local type.
     /// - Returns: The type, converted to a local type, or an error indicating the reason for the conversion failure.

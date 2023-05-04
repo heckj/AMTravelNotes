@@ -3,56 +3,6 @@ import Foundation
 
 import class Automerge.Document
 import struct Automerge.ObjId
-import protocol Automerge.ScalarValueRepresentable
-import enum Automerge.Value
-
-class BaseAutomergeBoundObject: ObservableAutomergeContainer {
-    internal var doc: Document
-    internal var obj: ObjId?
-
-    required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
-        self.doc = doc
-        if let obj {
-            precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
-            self.obj = obj
-        }
-    }
-
-    init?(doc: Document, path: String) throws {
-        self.doc = doc
-        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
-            self.obj = objId
-        } else {
-            return nil
-        }
-    }
-
-    // When you add an object into an Automerge list, start with getting an objectId that Automerge
-    // provides for the new object reference:
-    // public func insertObject(obj: ObjId, index: UInt64, ty: ObjType) throws -> ObjId
-    // ^^ how you append an object type into an existing list
-
-    // This could be a free function, or even a static function on Document perhaps
-    static func bind<T: BaseAutomergeBoundObject>(_: T, in doc: Document, at path: String) throws -> T? {
-        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
-            return T(doc: doc, obj: objId)
-        }
-        return nil
-    }
-
-    class func bind(doc: Document, path: String) throws -> Self? {
-        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
-            return Self(doc: doc, obj: objId)
-        }
-        return nil
-    }
-}
-
-// NOTE(heckj): ScalarValueRepresentable has the pieces to convert into and out of types to Scalar values
-// within Automerge, but I don't (yet) have the same thing for Lists or Object/Map representations.
-// I want to try and accomplish that with a broader AutomergeRepresentable protocol. The initial version
-// of which is relevant to READ-ONLY determine a type within Automerge, but doesn't have the bits in place
-// to support conversions. When done, all AutomergeRepresentables should *also* be ScalarValueRepresentable.
 
 class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeContainer, Sequence {
     internal var doc: Document

@@ -33,7 +33,7 @@ struct AmObj<Value: ObservableAutomergeContainer> {
         let key = instance[keyPath: storageKeyPath].key
         let amval = try! doc.get(obj: parentObjectId, key: key)!
         if case let .Object(newObjectId, .Map) = amval {
-            return BaseAutomergeBoundObject(doc: doc, obj: newObjectId) as! Value
+            return BaseAutomergeObject(doc: doc, obj: newObjectId) as! Value
         } else {
             fatalError("object referenced at \(key) wasn't a Map.")
         }
