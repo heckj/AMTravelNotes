@@ -6,7 +6,7 @@ import struct Automerge.ObjId
 
 // MARK: Automerge 'List' overlays
 
-class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAccessCollection {
+class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccessCollection {
     internal var doc: Document
     internal var obj: ObjId?
 
@@ -117,7 +117,7 @@ class DynamicAutomergeList: ObservableAutomergeBoundObject, Sequence, RandomAcce
 
 // MARK: Automerge 'Map' overlays
 
-class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection {
+class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
     internal var doc: Document
     internal var obj: ObjId?
     private var _keys: [String]
@@ -233,7 +233,7 @@ class DynamicAutomergeMap: ObservableAutomergeBoundObject, Sequence, Collection 
 }
 
 @dynamicMemberLookup
-class DynamicAutomergeObject: ObservableAutomergeBoundObject {
+class DynamicAutomergeObject: ObservableAutomergeContainer {
     internal var doc: Document
     internal var obj: ObjId?
 

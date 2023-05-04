@@ -23,7 +23,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         self.key = key
     }
 
-    static subscript<T: ObservableAutomergeBoundObject>(
+    static subscript<T: ObservableAutomergeContainer>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, Value>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -57,7 +57,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         }
     }
 
-    static subscript<T: ObservableAutomergeBoundObject>(
+    static subscript<T: ObservableAutomergeContainer>(
         _enclosingInstance instance: T,
         projected _: KeyPath<T, Binding<Value>>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -96,7 +96,7 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
     }
 }
 
-func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeBoundObject>(
+func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeContainer>(
     doc: Document,
     objId: ObjId,
     key: String,

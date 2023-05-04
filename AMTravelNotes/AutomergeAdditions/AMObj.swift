@@ -9,7 +9,7 @@ import enum Automerge.ScalarValue
 import enum Automerge.Value
 
 @propertyWrapper
-struct AmObj<Value: ObservableAutomergeBoundObject> {
+struct AmObj<Value: ObservableAutomergeContainer> {
     //              ^^ a constraint on the type of the object that the wrapper returns
     var key: String
 
@@ -19,7 +19,7 @@ struct AmObj<Value: ObservableAutomergeBoundObject> {
 
     // MARK: wrapped value subscript
 
-    static subscript<T: ObservableAutomergeBoundObject>(
+    static subscript<T: ObservableAutomergeContainer>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, Value>,
         storage storageKeyPath: KeyPath<T, Self>

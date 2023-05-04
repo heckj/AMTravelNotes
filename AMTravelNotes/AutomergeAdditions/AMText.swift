@@ -16,7 +16,7 @@ struct AmText {
         self.key = key
     }
 
-    static subscript<T: ObservableAutomergeBoundObject>(
+    static subscript<T: ObservableAutomergeContainer>(
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, String>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -45,7 +45,7 @@ struct AmText {
         }
     }
 
-    static subscript<T: ObservableAutomergeBoundObject>(
+    static subscript<T: ObservableAutomergeContainer>(
         _enclosingInstance instance: T,
         projected _: KeyPath<T, Binding<String>>,
         storage storageKeyPath: KeyPath<T, Self>
@@ -104,7 +104,7 @@ func updateText(doc: Document, objId: ObjId, key: String, newText: String) throw
     }
 }
 
-func textBinding<O: ObservableAutomergeBoundObject>(
+func textBinding<O: ObservableAutomergeContainer>(
     doc: Document,
     objId: ObjId,
     key: String,

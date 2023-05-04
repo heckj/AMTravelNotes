@@ -6,7 +6,7 @@ import struct Automerge.ObjId
 import protocol Automerge.ScalarValueRepresentable
 import enum Automerge.Value
 
-class BaseAutomergeBoundObject: ObservableAutomergeBoundObject {
+class BaseAutomergeBoundObject: ObservableAutomergeContainer {
     internal var doc: Document
     internal var obj: ObjId?
 
@@ -58,7 +58,7 @@ class BaseAutomergeBoundObject: ObservableAutomergeBoundObject {
 // of which is relevant to READ-ONLY determine a type within Automerge, but doesn't have the bits in place
 // to support conversions. When done, all AutomergeRepresentables should *also* be ScalarValueRepresentable.
 
-class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeBoundObject, Sequence {
+class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeContainer, Sequence {
     internal var doc: Document
     internal var obj: ObjId?
     private var length: UInt64

@@ -19,7 +19,7 @@ enum LoadItemError: Error {
     case invalid(String)
 }
 
-class TodoItem: Identifiable, ObservableAutomergeBoundObject {
+class TodoItem: Identifiable, ObservableAutomergeContainer {
     var obj: ObjId?
     var doc: Document
     var subscriber: AnyCancellable?
