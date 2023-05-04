@@ -38,10 +38,12 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
             // in this case \/ the `key` where we want to read from the Automerge doc
             let key = instance[keyPath: storageKeyPath].key
             let amval = try! doc.get(obj: parentObjectId, key: key)!
-            if case let .success(v) = Value.fromValue(amval) {
+
+            switch Value.fromValue(amval) {
+            case let .success(v):
                 return v
-            } else {
-                fatalError("description not text")
+            case let .failure(errDetail):
+                fatalError("Unable to convert \(amval) to \(Value.self): \(errDetail).")
             }
         }
         set {
@@ -80,19 +82,19 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         @available(
             *,
             unavailable,
-            message: "@Concatenating projected value is readonly"
+            message: "The projected value (`Binding<Value>`) is read-only."
         )
         set {}
     }
 
     @available(*, unavailable)
     var wrappedValue: Value {
-        fatalError("not available")
+        fatalError("AmScalarProp is only available for reference types (classes).")
     }
 
     @available(*, unavailable)
     var projectedValue: Binding<Value> {
-        fatalError("not available")
+        fatalError("AmScalarProp is only available for reference types (classes).")
     }
 }
 
@@ -105,10 +107,11 @@ func scalarPropBinding<V: ScalarValueRepresentable, O: ObservableAutomergeContai
     Binding(
         get: {
             let amval = try! doc.get(obj: objId, key: key)!
-            if case let .success(v) = V.fromValue(amval) {
+            switch V.fromValue(amval) {
+            case let .success(v):
                 return v
-            } else {
-                fatalError("description not text")
+            case let .failure(errDetail):
+                fatalError("Unable to convert \(amval) to \(Value.self): \(errDetail).")
             }
         },
         set: { newValue in
