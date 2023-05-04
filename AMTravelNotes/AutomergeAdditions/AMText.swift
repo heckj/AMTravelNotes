@@ -5,7 +5,6 @@ import struct SwiftUI.Binding
 import class Automerge.Document
 import struct Automerge.ObjId
 import enum Automerge.ScalarValue
-// import protocol Automerge.ScalarValueRepresentable
 import enum Automerge.Value
 
 @propertyWrapper
@@ -23,25 +22,40 @@ struct AmText {
     ) -> String {
         get {
             let doc = instance.doc
-            guard let parentObjectId = instance.obj else {
-                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
-            }
             let key = instance[keyPath: storageKeyPath].key
-            if case let .Object(id, .Text) = try! doc.get(obj: parentObjectId, key: key) {
-                return try! doc.text(obj: id)
+            if let parentObjectId = instance.obj {
+                if case let .Object(id, .Text) = try! doc.get(obj: parentObjectId, key: key) {
+                    return try! doc.text(obj: id)
+                } else {
+                    fatalError("\(key) on \(parentObjectId) doesn't reference an Automerge Text container")
+                }
             } else {
-                fatalError("\(key) not text")
+                // instance is unbound, so attempt to retrieve a text value from unbound storage
+                if let unboundStoredValue = instance.unboundStorage[key] {
+                    switch String.fromScalarValue(unboundStoredValue) {
+                    case let .success(v):
+                        return v
+                    case let .failure(errDetail):
+                        fatalError("Unable to convert \(unboundStoredValue) to String: \(errDetail).")
+                    }
+                } else {
+                    fatalError(
+                        "enclosing instance \(instance) isn't bound and there is no internally stored value from unboundStorage."
+                    )
+                }
             }
         }
         set {
-            instance.objectWillChange.send()
-
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            guard let parentObjectId = instance.obj else {
-                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            if let parentObjectId = instance.obj {
+                instance.objectWillChange.send()
+                try! updateText(doc: doc, objId: parentObjectId, key: key, newText: newValue)
+            } else {
+                // The enclosing instance is unbound, so stash the value as a scalar in
+                // the internal 'unboundStorage'.
+                instance.unboundStorage[key] = newValue.toScalarValue()
             }
-            try! updateText(doc: doc, objId: parentObjectId, key: key, newText: newValue)
         }
     }
 
@@ -53,11 +67,11 @@ struct AmText {
         get {
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            guard let parentObjectId = instance.obj else {
+            if let parentObjectId = instance.obj {
+                return textBinding(doc: doc, objId: parentObjectId, key: key, observer: instance)
+            } else {
                 fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
             }
-
-            return textBinding(doc: doc, objId: parentObjectId, key: key, observer: instance)
         }
         @available(
             *,

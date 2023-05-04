@@ -85,17 +85,17 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
         get {
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            guard let parentObjectId = instance.obj else {
+            if let parentObjectId = instance.obj {
+                let binding: Binding<Value> = scalarPropBinding(
+                    doc: doc,
+                    objId: parentObjectId,
+                    key: key,
+                    observer: instance
+                )
+                return binding
+            } else {
                 fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
             }
-
-            let binding: Binding<Value> = scalarPropBinding(
-                doc: doc,
-                objId: parentObjectId,
-                key: key,
-                observer: instance
-            )
-            return binding
         }
         @available(
             *,
