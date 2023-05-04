@@ -62,7 +62,7 @@ struct AmText {
         @available(
             *,
             unavailable,
-            message: "@Concatenating projected value is readonly"
+            message: "The projected value (`Binding<String>`) is read-only."
         )
         set {}
     }
@@ -100,7 +100,7 @@ func updateText(doc: Document, objId: ObjId, key: String, newText: String) throw
             }
         }
     } else {
-        fatalError("\(key) not text")
+        fatalError("The property \(key) on \(objId) is not an Automerge Text reference.")
     }
 }
 
@@ -115,7 +115,7 @@ func textBinding<O: ObservableAutomergeContainer>(
             if case let .Object(id, .Text) = try! doc.get(obj: objId, key: key)! {
                 return try! doc.text(obj: id)
             } else {
-                fatalError("\(key) not text")
+                fatalError("The property \(key) on \(objId) is not an Automerge Text reference.")
             }
         },
         set: { (newValue: String) in

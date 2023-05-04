@@ -38,7 +38,7 @@ struct AmList<Value: ObservableAutomergeContainer> {
 
     // MARK: projected value subscript
 
-//    static subscript<T: ObservableAutomergeBoundObject>(
+//    static subscript<T: ObservableAutomergeContainer>(
 //        _enclosingInstance instance: T,
 //        projected _: KeyPath<T, Binding<AmListType>>,
 //        storage storageKeyPath: KeyPath<T, Self>

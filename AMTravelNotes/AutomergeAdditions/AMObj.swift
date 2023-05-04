@@ -13,6 +13,8 @@ struct AmObj<Value: ObservableAutomergeContainer> {
     //              ^^ a constraint on the type of the object that the wrapper returns
     var key: String
 
+    /// Creates a wrapper that returns a reference to a type that maps to an Automerge object.
+    /// - Parameter key: The string that represents the key within the Automerge map for this property.
     init(_ key: String) {
         self.key = key
     }
@@ -23,7 +25,7 @@ struct AmObj<Value: ObservableAutomergeContainer> {
         _enclosingInstance instance: T,
         wrapped _: KeyPath<T, Value>,
         storage storageKeyPath: KeyPath<T, Self>
-    ) -> BaseAutomergeBoundObject {
+    ) -> Value {
         let doc = instance.doc
         guard let parentObjectId = instance.obj else {
             fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
@@ -31,7 +33,7 @@ struct AmObj<Value: ObservableAutomergeContainer> {
         let key = instance[keyPath: storageKeyPath].key
         let amval = try! doc.get(obj: parentObjectId, key: key)!
         if case let .Object(newObjectId, .Map) = amval {
-            return BaseAutomergeBoundObject(doc: doc, obj: newObjectId)
+            return BaseAutomergeBoundObject(doc: doc, obj: newObjectId) as! Value
         } else {
             fatalError("object referenced at \(key) wasn't a Map.")
         }
@@ -39,11 +41,11 @@ struct AmObj<Value: ObservableAutomergeContainer> {
 
     // MARK: projected value subscript
 
-//    static subscript<T: ObservableAutomergeBoundObject>(
+//    static subscript<T: ObservableAutomergeContainer>(
 //        _enclosingInstance instance: T,
-//        projected _: KeyPath<T, Binding<AmListType>>,
+//        projected _: KeyPath<T, Binding<Value>>,
 //        storage storageKeyPath: KeyPath<T, Self>
-//    ) -> Binding<AmListType> {
+//    ) -> Binding<Value> {
 //        get {
 //            let doc = instance.doc
 //            let key = instance[keyPath: storageKeyPath].key
