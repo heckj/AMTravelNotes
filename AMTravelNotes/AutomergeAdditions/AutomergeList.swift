@@ -3,10 +3,12 @@ import Foundation
 
 import class Automerge.Document
 import struct Automerge.ObjId
+import enum Automerge.ScalarValue
 
 class AutomergeList<T: AutomergeRepresentable>: ObservableAutomergeContainer, Sequence {
     internal var doc: Document
     internal var obj: ObjId?
+    internal var unboundStorage: [String: Automerge.ScalarValue] = [:] // un-used, req by ObservableAutomergeContainer
     private var length: UInt64
 
     required init(doc: Document, obj: ObjId?) {

@@ -62,7 +62,7 @@ extension Bool: AutomergeRepresentable {
         case let .Scalar(.Boolean(b)):
             return b
         default:
-            throw BooleanScalarConversionError.notbool(val)
+            throw BooleanScalarConversionError.notboolValue(val)
         }
     }
 
@@ -95,7 +95,7 @@ extension String: AutomergeRepresentable {
         case let .Scalar(.String(s)):
             return s
         default:
-            throw StringScalarConversionError.notstring(val)
+            throw StringScalarConversionError.notstringValue(val)
         }
     }
 
@@ -128,7 +128,7 @@ extension Data: AutomergeRepresentable {
         case let .Scalar(.Bytes(d)):
             return d
         default:
-            throw BytesScalarConversionError.notbytes(val)
+            throw BytesScalarConversionError.notbytesValue(val)
         }
     }
 
@@ -161,7 +161,7 @@ extension UInt: AutomergeRepresentable {
         case let .Scalar(.Uint(d)):
             return UInt(d)
         default:
-            throw UIntScalarConversionError.notUInt(val)
+            throw UIntScalarConversionError.notUIntValue(val)
         }
     }
 
@@ -194,7 +194,7 @@ extension Int: AutomergeRepresentable {
         case let .Scalar(.Int(d)):
             return Int(d)
         default:
-            throw IntScalarConversionError.notInt(val)
+            throw IntScalarConversionError.notIntValue(val)
         }
     }
 
@@ -227,7 +227,7 @@ extension Double: AutomergeRepresentable {
         case let .Scalar(.F64(d)):
             return Double(d)
         default:
-            throw DoubleScalarConversionError.notDouble(val)
+            throw DoubleScalarConversionError.notDoubleValue(val)
         }
     }
 
@@ -260,7 +260,7 @@ extension Date: AutomergeRepresentable {
         case let .Scalar(.Timestamp(d)):
             return Date(timeIntervalSince1970: TimeInterval(d))
         default:
-            throw TimestampScalarConversionError.notTimetamp(val)
+            throw TimestampScalarConversionError.notTimetampValue(val)
         }
     }
 
@@ -276,7 +276,7 @@ extension Counter: AutomergeRepresentable {
         case let .Scalar(.Counter(d)):
             return Counter(d)
         default:
-            throw CounterScalarConversionError.notCounter(val)
+            throw CounterScalarConversionError.notCounterValue(val)
         }
     }
 

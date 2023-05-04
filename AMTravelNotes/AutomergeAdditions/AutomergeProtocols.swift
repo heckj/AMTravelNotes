@@ -2,6 +2,7 @@ import Combine
 
 import class Automerge.Document
 import struct Automerge.ObjId
+import enum Automerge.ScalarValue
 
 /// A type that has a reference to an Automerge document.
 protocol HasDoc {
@@ -34,6 +35,8 @@ protocol ObservableAutomergeContainer: ObservableObject, HasDoc, HasObj {
     var objectWillChange: ObservableObjectPublisher { get }
     // By using the type `ObservableObjectPublisher`, the conforming type can
     // more easily invoke a send() through a generics reference.
+
+    var unboundStorage: [String: ScalarValue] { get set }
 
     /// Creates a new instance of this type.
     /// - Parameters:

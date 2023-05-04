@@ -3,13 +3,16 @@ import Foundation
 
 extension UUID: AutomergeRepresentable, ScalarValueRepresentable {
     public enum UUIDConversionError: LocalizedError {
-        case notString(_ val: Value)
+        case notStringValue(_ val: Value)
+        case notStringScalarValue(_ val: ScalarValue)
         case notUUIDString(_ stringValue: String)
 
         /// A localized message describing what error occurred.
         public var errorDescription: String? {
             switch self {
-            case let .notString(val):
+            case let .notStringValue(val):
+                return "Failed to read the value \(val) as a String."
+            case let .notStringScalarValue(val):
                 return "Failed to read the scalar value \(val) as a String."
             case let .notUUIDString(stringValue):
                 return "Unable to use the string \(stringValue) as a UUID"
@@ -23,6 +26,7 @@ extension UUID: AutomergeRepresentable, ScalarValueRepresentable {
     // MARK: ScalarValueRepresentable implementation
 
     public typealias ConvertError = UUIDConversionError
+
     public static func fromValue(_ val: Automerge.Value) -> Result<UUID, UUIDConversionError> {
         switch val {
         case let .Scalar(.String(stringValue)):
@@ -31,7 +35,19 @@ extension UUID: AutomergeRepresentable, ScalarValueRepresentable {
             }
             return .success(result)
         default:
-            return .failure(UUIDConversionError.notString(val))
+            return .failure(UUIDConversionError.notStringValue(val))
+        }
+    }
+
+    public static func fromScalarValue(_ val: Automerge.ScalarValue) -> Result<UUID, UUIDConversionError> {
+        switch val {
+        case let .String(stringValue):
+            guard let result = UUID(uuidString: stringValue) else {
+                return .failure(UUIDConversionError.notUUIDString(stringValue))
+            }
+            return .success(result)
+        default:
+            return .failure(UUIDConversionError.notStringScalarValue(val))
         }
     }
 
@@ -50,7 +66,7 @@ extension UUID: AutomergeRepresentable, ScalarValueRepresentable {
             }
             return result
         default:
-            throw UUIDConversionError.notString(val)
+            throw UUIDConversionError.notStringValue(val)
         }
     }
 

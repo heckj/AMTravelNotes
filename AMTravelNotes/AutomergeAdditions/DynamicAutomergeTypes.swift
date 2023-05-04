@@ -3,10 +3,12 @@ import Foundation
 
 import class Automerge.Document
 import struct Automerge.ObjId
+import enum Automerge.ScalarValue
 
 // MARK: Automerge 'List' overlays
 
 class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccessCollection {
+    internal var unboundStorage: [String: Automerge.ScalarValue]
     internal var doc: Document
     internal var obj: ObjId?
 
@@ -17,12 +19,14 @@ class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccess
         }
         self.doc = doc
         self.obj = obj
+        self.unboundStorage = [:]
     }
 
     init?(doc: Document, path: String) throws {
         self.doc = doc
         if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .List {
             self.obj = objId
+            self.unboundStorage = [:]
         } else {
             return nil
         }
@@ -32,6 +36,7 @@ class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccess
         self.doc = doc
         if case let .List(objId) = automergeType {
             self.obj = objId
+            self.unboundStorage = [:]
         } else {
             return nil
         }
@@ -121,10 +126,12 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
     internal var doc: Document
     internal var obj: ObjId?
     private var _keys: [String]
+    internal var unboundStorage: [String: Automerge.ScalarValue]
 
     required init(doc: Document, obj: ObjId?) {
         self.doc = doc
         self.obj = obj
+        self.unboundStorage = [:]
         if obj != nil {
             self._keys = doc.keys(obj: obj!)
             precondition(doc.objectType(obj: obj!) == .Map, "The object with id: \(obj!) is not a Map CRDT.")
@@ -137,6 +144,7 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
         self.doc = doc
         if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
             self.obj = objId
+            self.unboundStorage = [:]
             self._keys = doc.keys(obj: objId)
         } else {
             return nil
@@ -147,6 +155,7 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
         self.doc = doc
         if case let .Map(objId) = automergeType {
             self.obj = objId
+            self.unboundStorage = [:]
             self._keys = doc.keys(obj: objId)
         } else {
             return nil
@@ -236,6 +245,7 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
 class DynamicAutomergeObject: ObservableAutomergeContainer {
     internal var doc: Document
     internal var obj: ObjId?
+    internal var unboundStorage: [String: Automerge.ScalarValue]
 
     // alternate initializer that accepts a path into the Automerge document
     required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
@@ -244,12 +254,14 @@ class DynamicAutomergeObject: ObservableAutomergeContainer {
         }
         self.doc = doc
         self.obj = obj
+        self.unboundStorage = [:]
     }
 
     init?(doc: Document, path: String) throws {
         self.doc = doc
         if let objId = try doc.lookupPath(path: path) {
             self.obj = objId
+            self.unboundStorage = [:]
         } else {
             return nil
         }
@@ -259,6 +271,7 @@ class DynamicAutomergeObject: ObservableAutomergeContainer {
         self.doc = doc
         if case let .Map(objId) = automergeType {
             self.obj = objId
+            self.unboundStorage = [:]
         } else {
             return nil
         }

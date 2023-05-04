@@ -22,6 +22,7 @@ enum LoadItemError: Error {
 class TodoItem: Identifiable, ObservableAutomergeContainer {
     var obj: ObjId?
     var doc: Document
+    var unboundStorage: [String: Automerge.ScalarValue]
     var subscriber: AnyCancellable?
 
     @AmText("description") var description: String
@@ -31,6 +32,7 @@ class TodoItem: Identifiable, ObservableAutomergeContainer {
     required init(doc: Document, obj: ObjId?) {
         self.doc = doc
         self.obj = obj
+        self.unboundStorage = [:]
     }
 }
 

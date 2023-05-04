@@ -3,11 +3,13 @@ import Foundation
 
 import class Automerge.Document
 import struct Automerge.ObjId
+import enum Automerge.ScalarValue
 
 /// A base class for classes that reference Automerge containers.
 class BaseAutomergeObject: ObservableAutomergeContainer {
     internal var doc: Document
     internal var obj: ObjId?
+    internal var unboundStorage: [String: ScalarValue]
 
     /// Creates a new instance of a class that references a container with an Automerge document.
     /// - Parameters:
@@ -16,6 +18,7 @@ class BaseAutomergeObject: ObservableAutomergeContainer {
     /// the Automerge document is used.
     required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
         self.doc = doc
+        self.unboundStorage = [:]
         if let obj {
             precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
             self.obj = obj
@@ -31,6 +34,7 @@ class BaseAutomergeObject: ObservableAutomergeContainer {
     ///   referenced by the path is a List type of container.
     init?(doc: Document, path: String) throws {
         self.doc = doc
+        self.unboundStorage = [:]
         if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
             self.obj = objId
         } else {

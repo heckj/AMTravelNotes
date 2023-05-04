@@ -30,32 +30,50 @@ struct AmScalarProp<Value: ScalarValueRepresentable> {
     ) -> Value {
         get {
             let doc = instance.doc
-            guard let parentObjectId = instance.obj else {
-                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
-            }
+            let key = instance[keyPath: storageKeyPath].key
             // let whatIsHere = instance[keyPath: storageKeyPath] // AmScalarProp<Value>
             // ^^ this is the property wrapper itself, and we can read things from it
             // in this case \/ the `key` where we want to read from the Automerge doc
-            let key = instance[keyPath: storageKeyPath].key
-            let amval = try! doc.get(obj: parentObjectId, key: key)!
 
-            switch Value.fromValue(amval) {
-            case let .success(v):
-                return v
-            case let .failure(errDetail):
-                fatalError("Unable to convert \(amval) to \(Value.self): \(errDetail).")
+            if let parentObjectId = instance.obj {
+                // The enclosing instance is 'bound' to a specific objectId, therefore
+                // we attempt to retrieve the value using that objectId and the key
+                // provided to the wrapper.
+                let amval = try! doc.get(obj: parentObjectId, key: key)!
+                switch Value.fromValue(amval) {
+                case let .success(v):
+                    return v
+                case let .failure(errDetail):
+                    fatalError("Unable to convert \(amval) to \(Value.self): \(errDetail).")
+                }
+            } else if let unboundStoredValue = instance.unboundStorage[key] {
+                // The enclosing instance is 'unbound' therefore
+                // we attempt to retrieve the value from the enclosing instance type's
+                // internal storage.
+                switch Value.fromScalarValue(unboundStoredValue) {
+                case let .success(v):
+                    return v
+                case let .failure(errDetail):
+                    fatalError("Unable to convert \(unboundStoredValue) to \(Value.self): \(errDetail).")
+                }
             }
+            fatalError(
+                "enclosing instance \(instance) isn't bound and there is no internally stored value from unboundStorage."
+            )
         }
         set {
-            instance.objectWillChange.send()
-
             let doc = instance.doc
             let key = instance[keyPath: storageKeyPath].key
-            guard let parentObjectId = instance.obj else {
-                fatalError("enclosing instance \(instance) isn't bound, ObjId is nil.")
+            if let parentObjectId = instance.obj {
+                // The enclosing instance is bound to an Automerge document and container,
+                // report that a change is happening and set the value directly.
+                instance.objectWillChange.send()
+                try! doc.put(obj: parentObjectId, key: key, value: newValue.toScalarValue())
+            } else {
+                // The enclosing instance is unbound, so stash the value as a scalar in
+                // the internal 'unboundStorage'.
+                instance.unboundStorage[key] = newValue.toScalarValue()
             }
-
-            try! doc.put(obj: parentObjectId, key: key, value: newValue.toScalarValue())
         }
     }
 
