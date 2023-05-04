@@ -32,7 +32,7 @@ class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccess
         }
     }
 
-    init?(doc: Document, _ automergeType: AutomergeType) throws {
+    init?(doc: Document, _ automergeType: UnifiedAutomergeEnumType) throws {
         self.doc = doc
         if case let .List(objId) = automergeType {
             self.obj = objId
@@ -44,7 +44,7 @@ class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccess
 
     // MARK: DynamicAutomergeList Sequence Conformance
 
-    typealias Element = AutomergeType?
+    typealias Element = UnifiedAutomergeEnumType?
 
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmListIterator<Element> {
@@ -108,7 +108,7 @@ class DynamicAutomergeList: ObservableAutomergeContainer, Sequence, RandomAccess
         return self.doc.length(obj: objId)
     }
 
-    subscript(position: UInt64) -> AutomergeType? {
+    subscript(position: UInt64) -> UnifiedAutomergeEnumType? {
         do {
             if let objId = self.obj, let amvalue = try self.doc.get(obj: objId, index: position) {
                 return try amvalue.automergeType
@@ -151,7 +151,7 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
         }
     }
 
-    init?(doc: Document, _ automergeType: AutomergeType) throws {
+    init?(doc: Document, _ automergeType: UnifiedAutomergeEnumType) throws {
         self.doc = doc
         if case let .Map(objId) = automergeType {
             self.obj = objId
@@ -165,7 +165,7 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
     // MARK: DynamicAutomergeMap Sequence Conformance
 
     // public typealias Element = (key: Key, value: Value)
-    typealias Element = (String, AutomergeType?)
+    typealias Element = (String, UnifiedAutomergeEnumType?)
 
     /// Returns an iterator over the elements of this sequence.
     func makeIterator() -> AmMapIterator<Element> {
@@ -227,7 +227,7 @@ class DynamicAutomergeMap: ObservableAutomergeContainer, Sequence, Collection {
         i + 1
     }
 
-    subscript(position: Int) -> (String, AutomergeType?) {
+    subscript(position: Int) -> (String, UnifiedAutomergeEnumType?) {
         let currentKey = self._keys[position]
         if let objId = self.obj, let result = try! doc.get(obj: objId, key: currentKey) {
             do {
@@ -267,7 +267,7 @@ class DynamicAutomergeObject: ObservableAutomergeContainer {
         }
     }
 
-    init?(doc: Document, _ automergeType: AutomergeType) throws {
+    init?(doc: Document, _ automergeType: UnifiedAutomergeEnumType) throws {
         self.doc = doc
         if case let .Map(objId) = automergeType {
             self.obj = objId
@@ -277,7 +277,7 @@ class DynamicAutomergeObject: ObservableAutomergeContainer {
         }
     }
 
-    subscript(dynamicMember member: String) -> AutomergeType? {
+    subscript(dynamicMember member: String) -> UnifiedAutomergeEnumType? {
         do {
             if let objId = self.obj, let amValue = try doc.get(obj: objId, key: member) {
                 return try amValue.automergeType

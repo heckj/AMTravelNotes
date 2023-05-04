@@ -7,7 +7,7 @@ import Foundation
 /// AutomergeType is a mapping from the nested enumerations in `Automerge.Value` into a
 /// single enumeration, externalizing null and the reserved `unknown` scalar type for ergonomic
 /// convenience in returning consistent value from underlying Automerge data structures.
-public enum AutomergeType: Equatable, Hashable {
+public enum UnifiedAutomergeEnumType: Equatable, Hashable {
     /// A list CRDT.
     case List(ObjId) // [??]
     /// A map CRDT.
@@ -44,7 +44,7 @@ enum AutomergeRepresentableError: Error {
 }
 
 extension Automerge.Value {
-    var automergeType: AutomergeType? {
+    var automergeType: UnifiedAutomergeEnumType? {
         get throws {
             switch self {
             case let .Object(objId, objectType):
