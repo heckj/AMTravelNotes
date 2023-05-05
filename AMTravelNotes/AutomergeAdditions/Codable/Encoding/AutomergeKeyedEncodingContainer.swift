@@ -1,3 +1,5 @@
+import class Automerge.Document
+import struct Automerge.ObjId
 
 struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProtocol {
     typealias Key = K
@@ -5,25 +7,32 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     let impl: AutomergeEncoderImpl
     let object: AutomergeObject
     let codingPath: [CodingKey]
+    let document: Document
+    let objectId: ObjId
 
     private var firstValueWritten: Bool = false
 
-    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey]) {
+    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
         self.impl = impl
         object = impl.object!
         self.codingPath = codingPath
+        self.document = doc
+        self.objectId = objectId
     }
 
     // used for nested containers
-    init(impl: AutomergeEncoderImpl, object: AutomergeObject, codingPath: [CodingKey]) {
+    init(impl: AutomergeEncoderImpl, object: AutomergeObject, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
         self.impl = impl
         self.object = object
         self.codingPath = codingPath
+        self.document = doc
+        self.objectId = objectId
     }
 
     mutating func encodeNil(forKey _: Self.Key) throws {}
 
     mutating func encode(_ value: Bool, forKey key: Self.Key) throws {
+        // this is where we want to call into AM to set the value on the objectId for the key provided
         object.set(.bool(value), for: key.stringValue)
     }
 
@@ -113,7 +122,9 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
         let nestedContainer = AutomergeKeyedEncodingContainer<NestedKey>(
             impl: impl,
             object: object,
-            codingPath: newPath
+            codingPath: newPath,
+            doc: self.document,
+            objectId: self.objectId
         )
         return KeyedEncodingContainer(nestedContainer)
     }

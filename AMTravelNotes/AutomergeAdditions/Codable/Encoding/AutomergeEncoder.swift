@@ -68,10 +68,31 @@ class AutomergeEncoderImpl {
     }
 }
 
+// extension Coordinate: Encodable {
+//    func encode(to encoder: Encoder) throws {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//        try container.encode(latitude, forKey: .latitude)
+//        try container.encode(longitude, forKey: .longitude)
+//
+//        var additionalInfo = container.nestedContainer(keyedBy: AdditionalInfoKeys.self, forKey: .additionalInfo)
+//        try additionalInfo.encode(elevation, forKey: .elevation)
+//    }
+// }
+
+// 1. encode calls to create the container for the instance, passing in available coding keys type that it'll use
+// 2. iterate through the properties, and on each:
+//      call container.encode(AValue, forKey: AKey)
+// // container.nestedContainer creates a new keyed or unkeyed reference
+
 extension AutomergeEncoderImpl: Encoder {
     func container<Key>(keyedBy _: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
         if let _ = object {
-            let container = AutomergeKeyedEncodingContainer<Key>(impl: self, codingPath: codingPath)
+            let container = AutomergeKeyedEncodingContainer<Key>(
+                impl: self,
+                codingPath: codingPath,
+                doc: self.document,
+                objectId: self.objectId
+            )
             return KeyedEncodingContainer(container)
         }
 
@@ -80,7 +101,12 @@ extension AutomergeEncoderImpl: Encoder {
         }
 
         self.object = AutomergeObject()
-        let container = AutomergeKeyedEncodingContainer<Key>(impl: self, codingPath: codingPath)
+        let container = AutomergeKeyedEncodingContainer<Key>(
+            impl: self,
+            codingPath: codingPath,
+            doc: self.document,
+            objectId: self.objectId
+        )
         return KeyedEncodingContainer(container)
     }
 
