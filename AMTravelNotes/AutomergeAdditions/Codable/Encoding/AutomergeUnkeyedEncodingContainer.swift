@@ -1,23 +1,34 @@
+import class Automerge.Document
+import struct Automerge.ObjId
+import protocol Automerge.ScalarValueRepresentable
 
 struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
     let impl: AutomergeEncoderImpl
     let array: AutomergeArray
     let codingPath: [CodingKey]
+    /// The Automerge document that the encoder writes into.
+    let document: Document
+    /// The objectId that this keyed encoding container maps to within an Automerge document.
+    let objectId: ObjId
 
     private(set) var count: Int = 0
     private var firstValueWritten: Bool = false
 
-    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey]) {
+    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
         self.impl = impl
         array = impl.array!
         self.codingPath = codingPath
+        self.document = doc
+        self.objectId = objectId
     }
 
     // used for nested containers
-    init(impl: AutomergeEncoderImpl, array: AutomergeArray, codingPath: [CodingKey]) {
+    init(impl: AutomergeEncoderImpl, array: AutomergeArray, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
         self.impl = impl
         self.array = array
         self.codingPath = codingPath
+        self.document = doc
+        self.objectId = objectId
     }
 
     mutating func encodeNil() throws {}
@@ -94,7 +105,12 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
 
     mutating func encode<T>(_ value: T) throws where T: Encodable {
         let newPath = impl.codingPath + [ArrayKey(index: count)]
-        let newEncoder = AutomergeEncoderImpl(userInfo: impl.userInfo, codingPath: newPath)
+        let newEncoder = AutomergeEncoderImpl(
+            userInfo: impl.userInfo,
+            codingPath: newPath,
+            doc: self.document,
+            objectId: self.objectId
+        )
         try value.encode(to: newEncoder)
 
         guard let value = newEncoder.value else {
@@ -112,7 +128,7 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         let nestedContainer = AutomergeKeyedEncodingContainer<NestedKey>(
             impl: impl,
             object: object,
-            codingPath: newPath
+            codingPath: newPath, doc: self.document, objectId: self.objectId
         )
         return KeyedEncodingContainer(nestedContainer)
     }
@@ -120,7 +136,13 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
     mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
         let newPath = impl.codingPath + [ArrayKey(index: count)]
         let array = array.appendArray()
-        let nestedContainer = AutomergeUnkeyedEncodingContainer(impl: impl, array: array, codingPath: newPath)
+        let nestedContainer = AutomergeUnkeyedEncodingContainer(
+            impl: impl,
+            array: array,
+            codingPath: newPath,
+            doc: self.document,
+            objectId: self.objectId
+        )
         return nestedContainer
     }
 

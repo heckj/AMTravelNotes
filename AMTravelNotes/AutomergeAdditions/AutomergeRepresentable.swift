@@ -227,7 +227,7 @@ extension Double: AutomergeRepresentable {
         case let .Scalar(.F64(d)):
             return Double(d)
         default:
-            throw DoubleScalarConversionError.notDoubleValue(val)
+            throw FloatingPointScalarConversionError.notF64Value(val)
         }
     }
 

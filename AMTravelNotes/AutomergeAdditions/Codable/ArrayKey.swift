@@ -1,4 +1,6 @@
 /// A type the represents a location within an un-keyed container.
+///
+/// `ArrayKey` acts as the coding-key for list or array based structures.
 struct ArrayKey: CodingKey, Equatable {
     init(index: Int) {
         intValue = index

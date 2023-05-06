@@ -3,6 +3,10 @@ import Foundation
 // conceptually borrowing the same idea that was used for JSON encoding and decoding
 // at https://github.com/swift-extras/swift-extras-json/blob/main/Sources/ExtrasJSON/JSONValue.swift
 
+/// A single type that encapsulates any of the schema combinations that can exist within a Swift object.
+///
+/// Used when building a schema with strict types that encapsulate the dynamics for encoding from a Swift
+/// struct or class into an Automerge document schema.
 enum AutomergeFuture {
     case value(AutomergeValue)
     case nestedArray(AutomergeArray)
