@@ -170,6 +170,13 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
 
         // as we create newEncoder, we don't have any idea what kind of thing this is - singleValue, keyed, or
         // unkeyed...
+        // As such, we can't easily assert the "new" objectId - because we don't know if we need one,
+        // and if so, if it's associated with singleValue (don't need a new one), keyed (need a new map one),
+        // or unkeyed (need a new list one). In fact, we don't even know for sure what we'll need until
+        // the Codable method `encode` is called - because that's where a container is created. So while we
+        // can set this "newPath", we don't have the deets to create (if needed) a new objectId until we
+        // initialize a specific container type.
+
         let newEncoder = AutomergeEncoderImpl(
             userInfo: impl.userInfo,
             codingPath: newPath,

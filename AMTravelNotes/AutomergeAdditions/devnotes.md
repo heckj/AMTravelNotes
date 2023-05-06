@@ -155,3 +155,81 @@ I have this vague idea that I might replicate what Alex did with AutoSurgeon wit
 If I can "decode" into one of these developer-provided classes that leverage the Property Wrappers for providing bindings from Swift types back to Automerge updates, that might work quite smoothly.
 
 The same process, reversed (that is - `Encoding`) would then potentially create the schema that I'd like to exist even within a blank Automerge document.
+
+## Implementing an Automerge Encoder - first pass.
+
+6 May, 2023
+
+The fact that Swift 1) doesn't have much in the way of type introspection and 2) DOES have the Codable protocols makes it a no brainer to at least attempt to see if I can wrangle a custom Encoder implementation. 
+The idea being I could use this to translate/map from "A type or collection of types" into schema and values set within an Automerge document.
+First was sorting out HOW the Encoder implementations work, with the solid idea that I want to leverage, if possible, the synthesized - or developer provided - codable implementations to serialize their types.
+The magic that interrogates a type goes enables this Codable conformance is compiler synthesis when all of the relevant stored types are `Codable` - cool, but also kind of annoyingly out of reach for general access and use.
+
+So the first piece is to make an `AutomergeEncoder`, which (interesting to me) _doesn't_ conform to Codable itself. There's (IMO useful) flexibility in the methods you provide on it.
+I'm aiming for a top-level encoder signature of `public func encode<T: Encodable>(_ value: T, at objId: ObjId = ObjId.ROOT) throws` so that (with luck) I can pick a point within an Automerge document (using the objectId) and start writing into the schema at that location, defaulting to `ObjId.ROOT`.
+ The bit that actually does the `Encodable` work is an internal class (`AutomergeEncoderImpl`).
+ Conforming to `Encodable`, it has the following methods:
+ 
+- `func container<Key>(keyedBy _: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey`
+- `func unkeyedContainer() -> UnkeyedEncodingContainer`
+- `func singleValueContainer() -> SingleValueEncodingContainer`
+
+And it is these methods, along with calls on each of the containers they return, that the developer (or compiler) provides when making a type encodable.
+
+The general pattern of flow here is that the top-level encoder establishes base pieces, creates an initial instance of `AutomergeEncoderImpl`, and then the work is handed off to the developer side.
+On the developer side, the developer creates a container if needed, and then procedes to iteratively called container.encode() passing in the thing (type) be encoded. 
+That could be another type, or it could be one of the root types - but the process recurses down from there.
+
+As the type chain is recursed, quite a few implementations create a shadow schema of their own internal types for each of the containers - keyed, unkeyed, or value - and builds up a tree of the schema with values included.
+At the tail end of the process, the top-level encoder can then "walk" that tree and generate the relevant encoding of the data. 
+For example, it might generate `Data` from ASCII JSON, or `Data` that is a MsgPack or CBOR encoding.
+
+I started with a root ObjectId and pass through document references to everything and tried sorting out passing the ObjectId through as well, only updating it when needed.
+Unfortunately for my initial whack at this, the generic version of this encoding doesn't quite have the information I need to make the relevant Automerge schema along with new objectIds (if needed).
+
+A bit of example code, from the `KeyedEncodingContainer`:
+
+```swift
+
+mutating func encode<T>(_ value: T, forKey key: Self.Key) throws where T: Encodable {
+    let newPath = impl.codingPath + [key]
+    let newEncoder = AutomergeEncoderImpl(
+        userInfo: impl.userInfo,
+        codingPath: newPath,
+        doc: self.document,
+        objectId: objectId
+    )
+    try value.encode(to: newEncoder)
+
+    guard let encodedValue = newEncoder.value else {
+        preconditionFailure()
+    }
+
+    object.set(encodedValue, for: key.stringValue)
+}
+```  
+In my ideal world, anywhere we extended the codingPath is potentially a place where we might need a new objectId in Automerge.
+We need a new one if we're creating a list, nested dictionary, or if there's another type that's Encodable that is also a container.
+However, I don't know *which* kind of container at this point, and there's really now direct way to interrogate `T` here to determine if it's an object, map, array, or single value.
+
+Where I *do* know that information is within the *kind* of container, and which kind of container is specified by either the developer or compiler synthesis.
+So the point at which I extend the keyPath and the point at which I need to potentially make a new objectId needs to be separated.
+
+I _think_ I can come up with a means to at least look up an existing objectId from a `[CodingKey]` (array of types that conform to CodingKey). 
+It's a little awkward - as I need to walk the Automerge document to look up the relevant objectIds - but it's quite possible.
+
+So instead of passing around objectId through this chain of calls and callbacks, I might instead be able to look up a relevant ObjectId based on the array of types conforming to CodingKey and the TYPE of the container that I'm creating - which gives us the "you need to create one for Map vs List"
+
+All this is working from the final Type of the property in question - so there's also a bit of challenge in how to represent encoding into a scalar string vs. and Automerge Text container. 
+I'm not quite sure how to tackle that yet - the inference that I can play out is based on the specific type, and so far I've been sort of working around that with a property wrapper that shoves in a proxy to the underlying returned type.
+I might be able to wrangle some `AutomergeText` type, but that looks and feels weird in a schema - and in talking with Alex, I think we want to default to Text rather than a scalar string in most of those cases.
+   
+Next up, I think I'll need to backtrack a smidge and come up with a function that accepts a parameter of `[CodingKey]` and a type (.list, .map, .value) and returns the relevant ObjectId.
+Ideally, this method would look it up, and if not found, then create it - or maybe it just returns a `nil` if not found, and I can create it within the Container initializer if needed. 
+I have yet to work through those details, and see how it looks a feels in code.
+Oh - and because I'm going to call this sucker at every level of the container creation process, I probably ought to cache the results while I'm encoding so I don't need to walk Automerge all the damn time.
+I'm thinking something like a dictionary of `[[CodingKey] : ObjectId]` - if I can wrangle array of CodingKey into something `Hashable`; maybe using a string representation of the array of coding key conforming types.
+
+With that in place, I may be able to dump ObjecId from the various method calls and implement what's needed only on the relevant container creation (`KeyedEncodingContainer` or `UnkeyedEncodingContainer`), and hopefully that works.
+At the moment, I'm following the footsteps of JSONEncoderImpl and creating a shadow type structure, but I think I can get away with NOT building that. 
+I don't need to walk that structure later to get the final encoding - instead I'm writing as that structure would otherwise be built into an existing Automerge document.
