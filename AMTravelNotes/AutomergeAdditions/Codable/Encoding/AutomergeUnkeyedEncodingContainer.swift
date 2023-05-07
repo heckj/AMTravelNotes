@@ -153,12 +153,12 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
 
 extension AutomergeUnkeyedEncodingContainer {
     @inline(__always) private mutating func encodeFixedWidthInteger<N: FixedWidthInteger>(_ value: N) throws {
-        array.append(.number(value.description))
+        array.append(.int(Int64(value.description)!))
     }
 
     @inline(__always) private mutating func encodeFloatingPoint<N: FloatingPoint>(_ value: N)
         throws where N: CustomStringConvertible
     {
-        array.append(.number(value.description))
+        array.append(.double(Double(value.description)!))
     }
 }
