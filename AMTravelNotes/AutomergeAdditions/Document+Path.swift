@@ -105,7 +105,7 @@ extension Document {
 }
 
 extension Sequence where Element == Automerge.PathElement {
-    /// Returns a string that represents the path.
+    /// Returns a string that represents the schema path.
     func stringPath() -> String {
         let path = map { pathElement in
             switch pathElement.prop {
@@ -113,6 +113,20 @@ extension Sequence where Element == Automerge.PathElement {
                 return String("[\(idx)]")
             case let .Key(key):
                 return key
+            }
+        }.joined(separator: ".")
+        return ".\(path)"
+    }
+}
+
+extension Sequence where Element: CodingKey {
+    /// Returns a string that represents the schema path.
+    func stringPath() -> String {
+        let path = map { pathElement in
+            if let idx = pathElement.intValue {
+                return String("[\(idx)]")
+            } else {
+                return pathElement.stringValue
             }
         }.joined(separator: ".")
         return ".\(path)"
