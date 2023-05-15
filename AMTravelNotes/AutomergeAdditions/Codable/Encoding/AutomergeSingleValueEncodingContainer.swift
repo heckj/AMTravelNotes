@@ -6,15 +6,13 @@ struct AutomergeSingleValueEncodingContainer: SingleValueEncodingContainer {
     let impl: AutomergeEncoderImpl
     let codingPath: [CodingKey]
     let doc: Document
-    let objectId: ObjId
 
     private var firstValueWritten: Bool = false
 
-    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
+    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document) {
         self.impl = impl
         self.codingPath = codingPath
         self.doc = doc
-        self.objectId = objectId
     }
 
     mutating func encodeNil() throws {}

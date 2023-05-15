@@ -1,5 +1,6 @@
 import class Automerge.Document
 import struct Automerge.ObjId
+import Foundation
 
 public struct AutomergeEncoder {
     public var userInfo: [CodingUserInfoKey: Any] = [:]
@@ -9,35 +10,29 @@ public struct AutomergeEncoder {
         self.doc = doc
     }
 
-    public func encode<T: Encodable>(_ value: T, at objId: ObjId = ObjId.ROOT) throws {
-        precondition(doc.objectType(obj: objId) == .Map, "The object with id: \(objId) is not a Map CRDT.")
+    public func encode<T: Encodable>(_ value: T) throws {
         let encoder = AutomergeEncoderImpl(
             userInfo: userInfo,
             codingPath: [],
-            doc: self.doc,
-            objectId: objId
+            doc: self.doc
         )
         try value.encode(to: encoder)
     }
+}
 
-//    public func encode<T: Encodable>(_ value: T, onto objId: ObjId, as key: String) throws {
-//        precondition(doc.objectType(obj: objId) == .Map, "The object with id: \(objId) is not a Map CRDT.")
-//        let _: AutomergeValue = try encodeAsAutomergeValue(value)
-//    }
-//
-//    public func encode<T: Encodable>(_ value: T, onto objId: ObjId, at index: Int) throws {
-//        precondition(doc.objectType(obj: objId) == .List, "The object with id: \(objId) is not a List CRDT.")
-//        let _: AutomergeValue = try encodeAsAutomergeValue(value)
-//    }
+public enum AutomergeEncoderError: LocalizedError {
+    case unexpectedLookupFailure(_ msg: String)
 
-    // or some variation that accepts a "path" string:
-//        precondition(doc.objectType(obj: obj) == .Map, "The object with id: \(obj) is not a Map CRDT.")
-//        self.doc = doc
-//        if let objId = try doc.lookupPath(path: path), doc.objectType(obj: objId) == .Map {
-//            self.obj = objId
-//        } else {
-//            return nil
-//        }
+    /// A localized message describing what error occurred.
+    public var errorDescription: String? {
+        switch self {
+        case let .unexpectedLookupFailure(stringValue):
+            return " \(stringValue) "
+        }
+    }
+
+    /// A localized message describing the reason for the failure.
+    public var failureReason: String? { nil }
 }
 
 /// The internal implementation of AutomergeEncoder.
@@ -48,7 +43,6 @@ class AutomergeEncoderImpl {
     let userInfo: [CodingUserInfoKey: Any]
     let codingPath: [CodingKey]
     let document: Document
-    let objectId: ObjId
 
     // Only one of these optional properties is expected to be valid at a time,
     // effectively exposed on the instance as the `value` property.
@@ -66,11 +60,10 @@ class AutomergeEncoderImpl {
         return self.singleValue
     }
 
-    init(userInfo: [CodingUserInfoKey: Any], codingPath: [CodingKey], doc: Document, objectId: ObjId) {
+    init(userInfo: [CodingUserInfoKey: Any], codingPath: [CodingKey], doc: Document) {
         self.userInfo = userInfo
         self.codingPath = codingPath
         self.document = doc
-        self.objectId = objectId
     }
 }
 
@@ -108,8 +101,7 @@ extension AutomergeEncoderImpl: Encoder {
             let container = AutomergeKeyedEncodingContainer<Key>(
                 impl: self,
                 codingPath: codingPath,
-                doc: self.document,
-                objectId: self.objectId
+                doc: self.document
             )
             return KeyedEncodingContainer(container)
         }
@@ -125,8 +117,7 @@ extension AutomergeEncoderImpl: Encoder {
         let container = AutomergeKeyedEncodingContainer<Key>(
             impl: self,
             codingPath: codingPath,
-            doc: self.document,
-            objectId: self.objectId
+            doc: self.document
         )
         return KeyedEncodingContainer(container)
     }
@@ -142,8 +133,7 @@ extension AutomergeEncoderImpl: Encoder {
             return AutomergeUnkeyedEncodingContainer(
                 impl: self,
                 codingPath: self.codingPath,
-                doc: self.document,
-                objectId: self.objectId
+                doc: self.document
             )
         }
 
@@ -155,8 +145,7 @@ extension AutomergeEncoderImpl: Encoder {
         return AutomergeUnkeyedEncodingContainer(
             impl: self,
             codingPath: self.codingPath,
-            doc: self.document,
-            objectId: self.objectId
+            doc: self.document
         )
     }
 
@@ -174,8 +163,7 @@ extension AutomergeEncoderImpl: Encoder {
         return AutomergeSingleValueEncodingContainer(
             impl: self,
             codingPath: self.codingPath,
-            doc: self.document,
-            objectId: self.objectId
+            doc: self.document
         )
     }
 }

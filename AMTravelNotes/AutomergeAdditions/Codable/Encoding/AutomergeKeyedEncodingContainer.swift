@@ -16,7 +16,8 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     /// The Automerge document that the encoder writes into.
     let document: Document
     /// The objectId that this keyed encoding container maps to within an Automerge document.
-    let objectId: ObjId
+    let objectId: ObjId?
+    let lookupError: Error?
 
     private var firstValueWritten: Bool = false
 
@@ -33,42 +34,76 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     /// the root of the top-level encoded type.
     ///   - doc: The Automerge document that the encoder writes into.
     ///   - objectId: The objectId that this keyed encoding container maps to within an Automerge document.
-    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
+    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document) {
         self.impl = impl
         object = impl.object!
         self.codingPath = codingPath
         self.document = doc
-        self.objectId = objectId
+        switch lookupObjectId(doc: doc, path: codingPath, type: .Key) {
+        case let .success((objId, _)):
+            self.objectId = objId
+            self.lookupError = nil
+        case let .failure(capturedError):
+            self.objectId = nil
+            self.lookupError = capturedError
+        }
     }
 
     // used for nested containers
-    init(impl: AutomergeEncoderImpl, object: AutomergeObject, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
+    init(impl: AutomergeEncoderImpl, object: AutomergeObject, codingPath: [CodingKey], doc: Document) {
         self.impl = impl
         self.object = object
         self.codingPath = codingPath
         self.document = doc
-        self.objectId = objectId
+        switch lookupObjectId(doc: doc, path: codingPath, type: .Key) {
+        case let .success((objId, _)):
+            self.objectId = objId
+            self.lookupError = nil
+        case let .failure(capturedError):
+            self.objectId = nil
+            self.lookupError = capturedError
+        }
+    }
+
+    fileprivate func reportBestError() -> Error {
+        if let containerLookupError = self.lookupError {
+            return containerLookupError
+        } else {
+            return AutomergeEncoderError
+                .unexpectedLookupFailure(
+                    "Encoding called on KeyedContainer when ObjectId is nil, and there was no recorded lookup error for the path \(self.codingPath)"
+                )
+        }
     }
 
     mutating func encodeNil(forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
         // This builds up a mirror of the schema that can be consistently walked
         object.set(.null, for: key.stringValue)
         // This writes the value into the Automerge document as the encoding process advances.
-        try document.put(obj: self.objectId, key: key.stringValue, value: .Null)
+        try document.put(obj: objectId, key: key.stringValue, value: .Null)
     }
 
     mutating func encode(_ value: Bool, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
         // this is where we want to call into AM to set the value on the objectId for the key provided
         object.set(.bool(value), for: key.stringValue)
         // This writes the value into the Automerge document as the encoding process advances.
-        try document.put(obj: self.objectId, key: key.stringValue, value: .Boolean(value))
+        try document.put(obj: objectId, key: key.stringValue, value: .Boolean(value))
     }
 
     mutating func encode(_ value: String, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
         // this is where we want to call into AM to set the value on the objectId for the key provided
         object.set(.string(value), for: key.stringValue)
         // This writes the value into the Automerge document as the encoding process advances.
-        try document.put(obj: self.objectId, key: key.stringValue, value: .String(value))
+        try document.put(obj: objectId, key: key.stringValue, value: .String(value))
 
         // NOTE(heckj): This override of the generic encode() is keyed by the type within the schema
         // and writes into Automerge as a ScalarValue of the String instead of as an Automerge
@@ -78,6 +113,9 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     }
 
     mutating func encode(_ value: Double, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
         guard !value.isNaN, !value.isInfinite else {
             throw EncodingError.invalidValue(value, .init(
                 codingPath: codingPath + [key],
@@ -85,10 +123,13 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
             ))
         }
         object.set(.double(value), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: Float, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
         guard !value.isNaN, !value.isInfinite else {
             throw EncodingError.invalidValue(value, .init(
                 codingPath: codingPath + [key],
@@ -96,62 +137,106 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
             ))
         }
         object.set(.double(Double(value)), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: Int, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: Int8, forKey key: Self.Key) throws {
+        guard let objectId = objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: Int16, forKey key: Self.Key) throws {
+        guard let objectId = objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: Int32, forKey key: Self.Key) throws {
+        guard let objectId = objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: Int64, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: UInt, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: UInt8, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: UInt16, forKey key: Self.Key) throws {
+        guard let objectId = objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: UInt32, forKey key: Self.Key) throws {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode(_ value: UInt64, forKey key: Self.Key) throws {
+        guard let objectId = objectId else {
+            throw reportBestError()
+        }
+
         object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode<T>(_ value: T, forKey key: Self.Key) throws where T: ScalarValueRepresentable {
+        guard let objectId = self.objectId else {
+            throw reportBestError()
+        }
+
         // object.set(.int(Int64(value.description)!), for: key.stringValue)
-        try document.put(obj: self.objectId, key: key.stringValue, value: value.toScalarValue())
+        try document.put(obj: objectId, key: key.stringValue, value: value.toScalarValue())
     }
 
     mutating func encode<T>(_ value: T, forKey key: Self.Key) throws where T: Encodable {
@@ -163,10 +248,6 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
         // objectId.
         // This should ideally be an "upsert" - look up and find if there already, otherwise create
         // a new instance to write into...
-
-        // FIXME: rather than creating a new objectId at this location, look it up (& create if needed)
-        // from the [CodingKey] in the relevant keyed encoder initialization...
-        let newObjectId = try document.putObject(obj: self.objectId, key: key.stringValue, ty: .Map)
 
         // as we create newEncoder, we don't have any idea what kind of thing this is - singleValue, keyed, or
         // unkeyed...
@@ -180,8 +261,7 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
         let newEncoder = AutomergeEncoderImpl(
             userInfo: impl.userInfo,
             codingPath: newPath,
-            doc: self.document,
-            objectId: newObjectId
+            doc: self.document
         )
         try value.encode(to: newEncoder)
 
@@ -197,41 +277,25 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     {
         let newPath = impl.codingPath + [key]
         let object = object.setObject(for: key.stringValue)
-        do {
-            let newObjectId = try document.putObject(obj: self.objectId, key: key.stringValue, ty: .Map)
-            let nestedContainer = AutomergeKeyedEncodingContainer<NestedKey>(
-                impl: impl,
-                object: object,
-                codingPath: newPath,
-                doc: self.document,
-                objectId: newObjectId
-            )
-            return KeyedEncodingContainer(nestedContainer)
-        } catch {
-            fatalError(
-                "Unable to create new map object as a nested container on \(self.objectId) at the key \(key.stringValue)"
-            )
-        }
+        let nestedContainer = AutomergeKeyedEncodingContainer<NestedKey>(
+            impl: impl,
+            object: object,
+            codingPath: newPath,
+            doc: self.document
+        )
+        return KeyedEncodingContainer(nestedContainer)
     }
 
     mutating func nestedUnkeyedContainer(forKey key: Self.Key) -> UnkeyedEncodingContainer {
         let newPath = impl.codingPath + [key]
         let array = object.setArray(for: key.stringValue)
-        do {
-            let newObjectId = try document.putObject(obj: self.objectId, key: key.stringValue, ty: .List)
-            let nestedContainer = AutomergeUnkeyedEncodingContainer(
-                impl: impl,
-                array: array,
-                codingPath: newPath,
-                doc: self.document,
-                objectId: newObjectId
-            )
-            return nestedContainer
-        } catch {
-            fatalError(
-                "Unable to create new list object as a nested container on \(self.objectId) at the key \(key.stringValue)"
-            )
-        }
+        let nestedContainer = AutomergeUnkeyedEncodingContainer(
+            impl: impl,
+            array: array,
+            codingPath: newPath,
+            doc: self.document
+        )
+        return nestedContainer
     }
 
     mutating func superEncoder() -> Encoder {

@@ -40,7 +40,7 @@ public enum CodingKeyLookupError: Error {
 
 func lookupObjectId(
     doc: Document,
-    path: [SchemaPathElement],
+    path: [any CodingKey],
     type: LookupType
 ) -> Result<(ObjId, SchemaPathElement), Error> {
     // returns a Result type because we can't throw within a Container initializer in Encodable
@@ -77,8 +77,14 @@ func lookupObjectId(
         }
     }
 
+    // iterate through the existential CodingKey array and convert them to explicit SchemaPathElement
+    // instances that we can use to look up an ObjectId.
+    let convertedPath = path.map { codingkey in
+        SchemaPathElement(codingkey)
+    }
+
     do {
-        let (objId, pathPiece) = try lookupSubPath(doc: doc, path, basePath: [], from: ObjId.ROOT)
+        let (objId, pathPiece) = try lookupSubPath(doc: doc, convertedPath, basePath: [], from: ObjId.ROOT)
         return .success((objId, pathPiece))
     } catch {
         return .failure(error)

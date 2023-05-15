@@ -8,27 +8,23 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
     let codingPath: [CodingKey]
     /// The Automerge document that the encoder writes into.
     let document: Document
-    /// The objectId that this keyed encoding container maps to within an Automerge document.
-    let objectId: ObjId
 
     private(set) var count: Int = 0
     private var firstValueWritten: Bool = false
 
-    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
+    init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document) {
         self.impl = impl
         array = impl.array!
         self.codingPath = codingPath
         self.document = doc
-        self.objectId = objectId
     }
 
     // used for nested containers
-    init(impl: AutomergeEncoderImpl, array: AutomergeArray, codingPath: [CodingKey], doc: Document, objectId: ObjId) {
+    init(impl: AutomergeEncoderImpl, array: AutomergeArray, codingPath: [CodingKey], doc: Document) {
         self.impl = impl
         self.array = array
         self.codingPath = codingPath
         self.document = doc
-        self.objectId = objectId
     }
 
     mutating func encodeNil() throws {}
@@ -108,8 +104,7 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         let newEncoder = AutomergeEncoderImpl(
             userInfo: impl.userInfo,
             codingPath: newPath,
-            doc: self.document,
-            objectId: self.objectId
+            doc: self.document
         )
         try value.encode(to: newEncoder)
 
@@ -128,7 +123,8 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         let nestedContainer = AutomergeKeyedEncodingContainer<NestedKey>(
             impl: impl,
             object: object,
-            codingPath: newPath, doc: self.document, objectId: self.objectId
+            codingPath: newPath,
+            doc: self.document
         )
         return KeyedEncodingContainer(nestedContainer)
     }
@@ -140,8 +136,7 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
             impl: impl,
             array: array,
             codingPath: newPath,
-            doc: self.document,
-            objectId: self.objectId
+            doc: self.document
         )
         return nestedContainer
     }
