@@ -1,9 +1,7 @@
 import class Automerge.Document
 import struct Automerge.ObjId
-import enum Automerge.ObjType
-import enum Automerge.Prop
-// import protocol Automerge.ScalarValueRepresentable
 
+// import enum Automerge.ObjType
 // enum EncoderPathCache {
 //    typealias CacheKey = [SchemaPathElement]
 //    static var cache: [CacheKey: (ObjId, ObjType)] = [:]
@@ -70,7 +68,7 @@ func retrieveObjectId(
         }
     }
 
-    // iterate through the existential CodingKey array and convert them to explicit SchemaPathElement
+    // Iterate through the existential CodingKey array and convert them to explicit SchemaPathElement
     // instances that we can use to look up an ObjectId.
     let convertedPath = path.map { codingkey in
         SchemaPathElement(codingkey)
@@ -84,6 +82,17 @@ func retrieveObjectId(
     }
 }
 
+/// A function that iterates through a path, creating schema structure as necessary within an Automerge document, to
+/// return an object Id for a codable container type.
+/// - Parameters:
+///   - doc: The automerge document to operate against.
+///   - pathList: The path to be iterated.
+///   - basePath: The path that has already been iterated.
+///   - obj: The object Id that maps to the current state path iteration.
+///   - readOnly: A Boolean value that indicates whether this function read or create schema elements as necessary.
+/// - Throws: An error condition attempting to look up, and potentially create, the schema path within an Automerge
+/// document.
+/// - Returns: A tuple of the object Id and the key or index, represented by a ``SchemaPathElement``, on that objectId.
 private func retrieveSchemaPath(
     doc: Document,
     _ pathList: [SchemaPathElement],
@@ -91,6 +100,8 @@ private func retrieveSchemaPath(
     from obj: ObjId,
     readOnly: Bool = true
 ) throws -> (ObjId, SchemaPathElement) {
+    // Iterate through the list, pulling off the first element from the path, and extending
+    // the `basePath` for the next (possible) iteration.
     guard let pathPiece = pathList.first else {
         if let previousPiece = basePath.last {
             return (obj, previousPiece)
@@ -103,33 +114,41 @@ private func retrieveSchemaPath(
     var extendedPath = basePath
     extendedPath.append(pathPiece)
 
+    // Determine if the current path element we're processing is an index or key.
     if let indexValue = pathPiece.intValue {
+        // If it's an index, verify that it doesn't represent an element beyond the end of an existing list.
         if indexValue > doc.length(obj: obj) {
             throw CodingKeyLookupError
                 .indexOutOfBounds("Index value \(indexValue) is beyond the length: \(doc.length(obj: obj))")
         }
+        // Look up Automerge `Value` matching this index within the list
         if let value = try doc.get(obj: obj, index: UInt64(indexValue)) {
             switch value {
             case let .Object(objId, objType):
 //                EncoderPathCache.upsert(extendedPath, value: (objId, objType))
                 // if the type of Object is Text, we should error here if there are more pieces to look up
                 if !remainingPathPieces.isEmpty, objType == .Text {
+                    // If the looked up Value is a Text node, then it's a leaf on the schema structure.
+                    // If there's remaining values to be looked up, the overall path is invalid.
                     throw CodingKeyLookupError
                         .pathExtendsThroughText(
-                            "Path at \(extendedPath) is a Text object, which is not a container - and the path has additional elements."
+                            "Path at \(extendedPath) is a Text object, which is not a container - and the path has additional elements: \(remainingPathPieces)."
                         )
                 }
                 return try retrieveSchemaPath(doc: doc, remainingPathPieces, basePath: extendedPath, from: objId)
             case .Scalar:
+                // If the looked up Value is a Scalar value, then it's a leaf on the schema structure.
+                // If there's remaining values to be looked up, the overall path is invalid.
                 if !remainingPathPieces.isEmpty {
                     throw CodingKeyLookupError
                         .pathExtendsThroughScalar(
-                            "Path at \(extendedPath) is a single value, not a container - and the path has additional elements."
+                            "Path at \(extendedPath) is a single value, not a container - and the path has additional elements: \(remainingPathPieces)."
                         )
                 }
                 return (obj, pathPiece)
             }
         } else {
+            // the current value in the Automerge document at this index position is `nil`
             if readOnly {
                 // path is a valid request, there's just nothing there
                 throw CodingKeyLookupError
@@ -169,31 +188,35 @@ private func retrieveSchemaPath(
             }
         }
 
-    } else {
+    } else { // if let indexValue = pathPiece.intValue was false, this path element is a key
         let keyValue = pathPiece.stringValue
 
         if let value = try doc.get(obj: obj, key: keyValue) {
             switch value {
             case let .Object(objId, objType):
 //                EncoderPathCache.upsert(extendedPath, value: (objId, objType))
-                // if the type of Object is Text, we should error here if there are more pieces to look up
+
+                // If the looked up Value is a Text node, then it's a leaf on the schema structure.
+                // If there's remaining values to be looked up, the overall path is invalid.
                 if !remainingPathPieces.isEmpty, objType == .Text {
                     throw CodingKeyLookupError
                         .pathExtendsThroughText(
-                            "Path at \(extendedPath) is a Text object, which is not a container - and the path has additional elements."
+                            "Path at \(extendedPath) is a Text object, which is not a container - and the path has additional elements: \(remainingPathPieces)."
                         )
                 }
                 return try retrieveSchemaPath(doc: doc, remainingPathPieces, basePath: extendedPath, from: objId)
             case .Scalar:
+                // If the looked up Value is a Scalar value, then it's a leaf on the schema structure.
+                // If there's remaining values to be looked up, the overall path is invalid.
                 if !remainingPathPieces.isEmpty {
                     throw CodingKeyLookupError
                         .pathExtendsThroughScalar(
-                            "Path at \(extendedPath) is a single value, not a container - and the path has additional elements."
+                            "Path at \(extendedPath) is a single value, not a container - and the path has additional elements: \(remainingPathPieces)."
                         )
                 }
                 return (obj, pathPiece)
             }
-        } else {
+        } else { // value returned from doc.get() is nil
             if readOnly {
                 // path is a valid request, there's just nothing there
                 throw CodingKeyLookupError

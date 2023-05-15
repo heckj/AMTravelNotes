@@ -8,6 +8,13 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
     let codingPath: [CodingKey]
     /// The Automerge document that the encoder writes into.
     let document: Document
+    /// The objectId that this keyed encoding container maps to within an Automerge document.
+    ///
+    /// If `document` is `nil`, the error attempting to retrieve should be in ``lookupError``.
+    let objectId: ObjId?
+    /// An error captured when attempting to look up or create an objectId in Automerge based on the coding path
+    /// provided.
+    let lookupError: Error?
 
     private(set) var count: Int = 0
     private var firstValueWritten: Bool = false
@@ -17,6 +24,14 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         array = impl.array!
         self.codingPath = codingPath
         self.document = doc
+        switch retrieveObjectId(doc: doc, path: codingPath, type: .Index) {
+        case let .success((objId, _)):
+            self.objectId = objId
+            self.lookupError = nil
+        case let .failure(capturedError):
+            self.objectId = nil
+            self.lookupError = capturedError
+        }
     }
 
     // used for nested containers
@@ -25,6 +40,14 @@ struct AutomergeUnkeyedEncodingContainer: UnkeyedEncodingContainer {
         self.array = array
         self.codingPath = codingPath
         self.document = doc
+        switch retrieveObjectId(doc: doc, path: codingPath, type: .Index) {
+        case let .success((objId, _)):
+            self.objectId = objId
+            self.lookupError = nil
+        case let .failure(capturedError):
+            self.objectId = nil
+            self.lookupError = capturedError
+        }
     }
 
     mutating func encodeNil() throws {}
