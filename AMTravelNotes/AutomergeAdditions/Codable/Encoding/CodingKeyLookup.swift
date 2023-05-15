@@ -21,23 +21,6 @@ enum LookupType {
     case Value
 }
 
-public enum CodingKeyLookupError: Error {
-    /// The path element is not valid.
-    case invalidPathElement(String)
-    /// The path element, structured as a Index location, doesn't include an index value.
-    case emptyListIndex(String)
-    /// The list index requested was longer than the list in the Document.
-    case indexOutOfBounds(String)
-
-    case invalidValueLookup(String)
-    case invalidIndexLookup(String)
-    case pathExtendsThroughText(String)
-    case pathExtendsThroughScalar(String)
-
-    // schema is missing beyond a certain point - only in readOnly mode
-    case schemaMissing(String)
-}
-
 func lookupObjectId(
     doc: Document,
     path: [any CodingKey],

@@ -16,12 +16,22 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     /// The Automerge document that the encoder writes into.
     let document: Document
     /// The objectId that this keyed encoding container maps to within an Automerge document.
+    ///
+    /// If `document` is `nil`, the error attempting to retrieve should be in ``lookupError``.
     let objectId: ObjId?
+    /// An error captured when attempting to look up or create an objectId in Automerge based on the coding path
+    /// provided.
     let lookupError: Error?
 
     private var firstValueWritten: Bool = false
-
     /// Creates a new keyed-encoding container you use to encode into an Automerge document.
+    ///
+    /// After initialization, the container has one of two properties set: ``objectId`` or ``lookupError``.
+    /// As the container is created and initialized, it attempts to either look up or create an Automerge objectId that
+    /// maps to the relevant schema path matching from the ``codingPath``.
+    /// If the lookup was successful, the property `objectId` has the proper value from the associated ``doc``.
+    /// Otherwise, the initialization captures the error into ``lookupError`` and is thrown when you invoke any of the
+    /// `encode` methods.
     ///
     /// Called from within a developer's type providing conformance to `Encodable`, for example:
     /// ```swift
@@ -33,7 +43,6 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     ///   - codingPath: An array of types that conform to CodingKey that make up the "schema path" to this instance from
     /// the root of the top-level encoded type.
     ///   - doc: The Automerge document that the encoder writes into.
-    ///   - objectId: The objectId that this keyed encoding container maps to within an Automerge document.
     init(impl: AutomergeEncoderImpl, codingPath: [CodingKey], doc: Document) {
         self.impl = impl
         object = impl.object!
@@ -66,10 +75,13 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     }
 
     fileprivate func reportBestError() -> Error {
+        // Returns the best value it can from a lookup error scenario.
         if let containerLookupError = self.lookupError {
             return containerLookupError
         } else {
-            return AutomergeEncoderError
+            // If the error wasn't captured for some reason, drop back to a more general error exposing
+            // the precondition failure.
+            return CodingKeyLookupError
                 .unexpectedLookupFailure(
                     "Encoding called on KeyedContainer when ObjectId is nil, and there was no recorded lookup error for the path \(self.codingPath)"
                 )

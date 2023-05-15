@@ -1,6 +1,5 @@
 import class Automerge.Document
 import struct Automerge.ObjId
-import Foundation
 
 public struct AutomergeEncoder {
     public var userInfo: [CodingUserInfoKey: Any] = [:]
@@ -18,21 +17,6 @@ public struct AutomergeEncoder {
         )
         try value.encode(to: encoder)
     }
-}
-
-public enum AutomergeEncoderError: LocalizedError {
-    case unexpectedLookupFailure(_ msg: String)
-
-    /// A localized message describing what error occurred.
-    public var errorDescription: String? {
-        switch self {
-        case let .unexpectedLookupFailure(stringValue):
-            return " \(stringValue) "
-        }
-    }
-
-    /// A localized message describing the reason for the failure.
-    public var failureReason: String? { nil }
 }
 
 /// The internal implementation of AutomergeEncoder.
