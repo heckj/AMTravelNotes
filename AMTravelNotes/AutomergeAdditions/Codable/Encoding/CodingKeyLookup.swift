@@ -15,21 +15,30 @@ import enum Automerge.Prop
 //    }
 // }
 
+/// An enumeration that represents the type of encoding container.
 enum LookupType {
+    /// A keyed container.
     case Key
+    /// An un-keyed container.
     case Index
+    /// A single-value container.
     case Value
 }
 
-func lookupObjectId(
+func retrieveObjectId(
     doc: Document,
     path: [any CodingKey],
     type: LookupType
 ) -> Result<(ObjId, SchemaPathElement), Error> {
-    // returns a Result type because we can't throw within a Container initializer in Encodable
-    // Instead we stash the "Oh shit, this ain't gunna work" details into the container, and pitch
-    // a pitch on any of the .encode() methods, which DO throw.
+    // This method returns a Result type because the Codable protocol constrains the container initializers to not
+    // throw.
+    // Instead we stash the lookup failure into the container, and throw the relevant error on any of the .encode()
+    // methods, which do throw.
+    // This defers the error condition, and the container is essentially invalid in this state,
+    // but it provides a smoother integration with Codable.
 
+    // Path scenarios by the type of Codable container that invokes the lookup.
+    //
     // [] + Key -> ObjId.ROOT
     // [] + Index = error
     // [] + Value = error
@@ -43,6 +52,7 @@ func lookupObjectId(
     // [foo, bar] + Value = /Root/foo, key bar
     // [foo, bar] + Index = /Root/foo, key bar (container)
     // [foo, bar] + Key = /Root/foo, key bar   (container)
+
     if path.isEmpty {
         switch type {
         case .Key:
@@ -67,14 +77,14 @@ func lookupObjectId(
     }
 
     do {
-        let (objId, pathPiece) = try lookupSubPath(doc: doc, convertedPath, basePath: [], from: ObjId.ROOT)
+        let (objId, pathPiece) = try retrieveSchemaPath(doc: doc, convertedPath, basePath: [], from: ObjId.ROOT)
         return .success((objId, pathPiece))
     } catch {
         return .failure(error)
     }
 }
 
-private func lookupSubPath(
+private func retrieveSchemaPath(
     doc: Document,
     _ pathList: [SchemaPathElement],
     basePath: [SchemaPathElement],
@@ -109,7 +119,7 @@ private func lookupSubPath(
                             "Path at \(extendedPath) is a Text object, which is not a container - and the path has additional elements."
                         )
                 }
-                return try lookupSubPath(doc: doc, remainingPathPieces, basePath: extendedPath, from: objId)
+                return try retrieveSchemaPath(doc: doc, remainingPathPieces, basePath: extendedPath, from: objId)
             case .Scalar:
                 if !remainingPathPieces.isEmpty {
                     throw CodingKeyLookupError
@@ -133,7 +143,7 @@ private func lookupSubPath(
                         // add to cache
 //                        EncoderPathCache.upsert(extendedPath, value: (newObjectId, .List))
                         // carry on with remaining path elements
-                        return try lookupSubPath(
+                        return try retrieveSchemaPath(
                             doc: doc,
                             remainingPathPieces,
                             basePath: extendedPath,
@@ -145,7 +155,7 @@ private func lookupSubPath(
                         // add to cache
 //                        EncoderPathCache.upsert(extendedPath, value: (newObjectId, .Map))
                         // carry on with remaining path elements
-                        return try lookupSubPath(
+                        return try retrieveSchemaPath(
                             doc: doc,
                             remainingPathPieces,
                             basePath: extendedPath,
@@ -173,7 +183,7 @@ private func lookupSubPath(
                             "Path at \(extendedPath) is a Text object, which is not a container - and the path has additional elements."
                         )
                 }
-                return try lookupSubPath(doc: doc, remainingPathPieces, basePath: extendedPath, from: objId)
+                return try retrieveSchemaPath(doc: doc, remainingPathPieces, basePath: extendedPath, from: objId)
             case .Scalar:
                 if !remainingPathPieces.isEmpty {
                     throw CodingKeyLookupError
@@ -197,7 +207,7 @@ private func lookupSubPath(
                         // add to cache
 //                        EncoderPathCache.upsert(extendedPath, value: (newObjectId, .List))
                         // carry on with remaining path elements
-                        return try lookupSubPath(
+                        return try retrieveSchemaPath(
                             doc: doc,
                             remainingPathPieces,
                             basePath: extendedPath,
@@ -209,7 +219,7 @@ private func lookupSubPath(
                         // add to cache
 //                        EncoderPathCache.upsert(extendedPath, value: (newObjectId, .Map))
                         // carry on with remaining path elements
-                        return try lookupSubPath(
+                        return try retrieveSchemaPath(
                             doc: doc,
                             remainingPathPieces,
                             basePath: extendedPath,

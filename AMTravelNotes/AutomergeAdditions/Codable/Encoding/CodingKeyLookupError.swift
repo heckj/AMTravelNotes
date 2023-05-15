@@ -1,6 +1,8 @@
 import Foundation
 
 public enum CodingKeyLookupError: LocalizedError {
+    /// An error that represents a coding container was unable to look up a relevant Automerge objectId and was unable
+    /// to capture a more specific error.
     case unexpectedLookupFailure(String)
     /// The path element is not valid.
     case invalidPathElement(String)
