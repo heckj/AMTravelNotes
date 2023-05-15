@@ -23,6 +23,41 @@ enum LookupType {
     case Value
 }
 
+// Keyed container - I need an ObjectId that matches the keyed container (object) to write into.
+//   on `encode()`, I'll be encoding with a key thats provided on methods.
+//    - if needed, I should be extending the schema to add the container
+
+// Un-keyed container - I need an ObjectId that matches the un-keyed container (list) to write into.
+//   on `encode()`, I'll be encoding with a key thats provided on methods
+//    - if needed, I should be extending the array size to add the container
+
+// Single-value container - I need an ObjectId with the containing object AND the key (or index)
+//   on `encode()`, I'll need to know the key or index to determine what method to use to write into
+//     and Automerge objectId with the relevant value.
+
+// As a general pattern, and given how Codable works, I think we want to create Objects and/or Lists
+// within Automerge as we do the lookups through the schema in order to allow us to establish schema
+// in the first place. How we handle mismatches on "nothing found" is a bigger question. This would
+// mean that the very act of creating a relevant container with a CodingPath should do it's best to
+// establish the schema _to that point_, and capture the elements it needs (a relevant Automerge
+// objectId) to allow encode() methods to work.
+
+// Strategies contemplated:
+
+// read-only/super-double-strict: Only allow encoding into schema that is ALREADY present within
+// Automerge. Adding additional values (to a map, or to a list) would be invalid in these cases.
+// In a large sense, it's an "update values only" kind of scenario. And with that, I'm not sure it's
+// a useful scenario at all.
+
+// value-type-checked: As we call encode(), verify that the underlying types (ScalarValue, Text, etc)
+// in Automerge aren't incompatible with the type we are encoding - at least for the leaf nodes.
+
+// schema-create-on-nil: If the schema *doesn't* exist - nil lookups when searched - create
+// the relevant schema as it goes. This doesn't account for any specific value types or type checking.
+
+// schema-error-on-type-mismatch: If schema in Automerge is a scalar value, Text, or mis-matched
+// list/object types, throw an error instead of overwriting the schema.
+
 func retrieveObjectId(
     doc: Document,
     path: [any CodingKey],
