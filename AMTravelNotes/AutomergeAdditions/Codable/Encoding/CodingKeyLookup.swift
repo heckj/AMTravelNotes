@@ -1,6 +1,10 @@
 import class Automerge.Document
 import struct Automerge.ObjId
 
+// I think the cache would be useful for larger encoding scenarios - and it looks
+// like I can "stash" it as a static reference on the AutomergeEncoderImpl class, accessing
+// it as needed during the lookups that happen on Container creation.
+
 // import enum Automerge.ObjType
 // enum EncoderPathCache {
 //    typealias CacheKey = [SchemaPathElement]
@@ -14,13 +18,40 @@ import struct Automerge.ObjId
 // }
 
 /// An enumeration that represents the type of encoding container.
-enum LookupType {
+enum EncodingContainerType {
     /// A keyed container.
     case Key
     /// An un-keyed container.
     case Index
     /// A single-value container.
     case Value
+}
+
+/// A type that represents the encoder strategy to establish or error on differences in existing Automerge documents as
+/// compared to expected encoding.
+public enum SchemaStrategy {
+    // What we do while looking up if there's a schema mismatch:
+
+    /// Creates schema where none exists, errors on schema mismatch.
+    ///
+    /// Basic schema checking for containers that creates relevant objects in Automerge at the relevant path doesn't
+    /// exist.
+    /// If there is something in an existing Automerge document that doesn't match the type of container, or if the path
+    /// is a leaf-node
+    /// (a scalar value, or a Text instance), then the lookup captures the schema error for later presentation.
+    case `default`
+
+    /// Creates schema, irregardless of existing schema.
+    ///
+    /// Disregards any existing schema that currently exists in the Automerge document and overwrites the path elements
+    /// as
+    /// the encoding progresses. This option will potentially change the schema within an Automerge document.
+    case override
+
+    /// Allows updating of values only.
+    /// If the schema does not pre-exist in the format that the encoder expects, the lookup doesn't create schema and
+    /// captures an error for later presentation.
+    case readonly
 }
 
 // Keyed container - I need an ObjectId that matches the keyed container (object) to write into.
@@ -35,40 +66,18 @@ enum LookupType {
 //   on `encode()`, I'll need to know the key or index to determine what method to use to write into
 //     and Automerge objectId with the relevant value.
 
-// As a general pattern, and given how Codable works, I think we want to create Objects and/or Lists
-// within Automerge as we do the lookups through the schema in order to allow us to establish schema
-// in the first place. How we handle mismatches on "nothing found" is a bigger question. This would
-// mean that the very act of creating a relevant container with a CodingPath should do it's best to
-// establish the schema _to that point_, and capture the elements it needs (a relevant Automerge
-// objectId) to allow encode() methods to work.
-
-// Strategies contemplated:
-
-// read-only/super-double-strict: Only allow encoding into schema that is ALREADY present within
-// Automerge. Adding additional values (to a map, or to a list) would be invalid in these cases.
-// In a large sense, it's an "update values only" kind of scenario. And with that, I'm not sure it's
-// a useful scenario at all.
-
-// value-type-checked: As we call encode(), verify that the underlying types (ScalarValue, Text, etc)
-// in Automerge aren't incompatible with the type we are encoding - at least for the leaf nodes.
-
-// schema-create-on-nil: If the schema *doesn't* exist - nil lookups when searched - create
-// the relevant schema as it goes. This doesn't account for any specific value types or type checking.
-
-// schema-error-on-type-mismatch: If schema in Automerge is a scalar value, Text, or mis-matched
-// list/object types, throw an error instead of overwriting the schema.
-
 func retrieveObjectId(
     doc: Document,
-    path: [any CodingKey],
-    type: LookupType
+    path: [CodingKey],
+    type: EncodingContainerType,
+    strategy _: SchemaStrategy = .default
 ) -> Result<(ObjId, SchemaPathElement), Error> {
-    // This method returns a Result type because the Codable protocol constrains the container initializers to not
-    // throw.
-    // Instead we stash the lookup failure into the container, and throw the relevant error on any of the .encode()
-    // methods, which do throw.
-    // This defers the error condition, and the container is essentially invalid in this state,
-    // but it provides a smoother integration with Codable.
+    // This method returns a Result type because the Codable protocol constrains the
+    // container initializers to not throw on initialization.
+    // Instead we stash the lookup failure into the container, and throw the relevant
+    // error on any call to one of the `.encode()` methods, which do throw.
+    // This defers the error condition, and the container is essentially invalid in this
+    // state, but it provides a smoother integration with Codable.
 
     // Path scenarios by the type of Codable container that invokes the lookup.
     //
@@ -102,6 +111,49 @@ func retrieveObjectId(
             )
         }
     }
+
+    // Rewrite:
+    //
+    // Pre-allocate an array the same length as `path` for ObjectId lookups
+    //
+    // - Efficiency boost using a cache
+    // Iterate from the N-1 end of path, backwards - checking [] -> (ObjectId, ObjType) cache,
+    // checking until we get a positive hit from the cache. Worst case there'll be nothing in
+    // the cache and we iterate to the bottom. Save that as the starting cursor position.
+    //
+    // - Simple, make it work (no efficiency) - set cursor position at beginning of coding path.
+    // Iterate the cursor position forward doing lookups against the Automerge document
+    // until we get to the second-to-last element.
+    // Then what we do depends on the type of lookup.
+    // - on SingleValueContainer, we return the second-to-last objectId and the key and/or Index
+    // - on KeyedContainer or UnkeyedContainer, we look up and return the final objectId
+
+    // What we do on iterating if a lookup returns nil:
+
+    // (default)
+    // schema-create-on-nil: If the schema *doesn't* exist - nil lookups when searched - create
+    // the relevant schema as it goes. This doesn't account for any specific value types or type checking.
+
+    // What we do while looking up if there's a schema mismatch:
+
+    // (default)
+    // schema-error-on-type-mismatch: If schema in Automerge is a scalar value, Text, or mis-matched
+    // list/object types, throw an error instead of overwriting the schema.
+
+    // (!!danger zone)
+    // schema-overwrite: Disregard any schema that currently exists and overwrite values as needed to
+    // establish the schema that is being encoded.
+
+    // (not actually useful?)
+    // read-only/super-double-strict: Only allow encoding into schema that is ALREADY present within
+    // Automerge. Adding additional values (to a map, or to a list) would be invalid in these cases.
+    // In a large sense, it's an "update values only" kind of scenario.
+
+    // Encoder Configuration Option (effects encode() methods):
+
+    // (extra-check)
+    // value-type-checked: As we call encode(), verify that the underlying types (ScalarValue, Text, etc)
+    // in Automerge aren't incompatible with the type we are encoding - at least for the leaf nodes.
 
     // Iterate through the existential CodingKey array and convert them to explicit SchemaPathElement
     // instances that we can use to look up an ObjectId.
