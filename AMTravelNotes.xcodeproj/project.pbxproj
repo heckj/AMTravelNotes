@@ -10,6 +10,7 @@
 		1A1257E329D3A36C00A197F7 /* AutomergeRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1257E229D3A36C00A197F7 /* AutomergeRepresentable.swift */; };
 		1A23E26929F32B590008264F /* Rainbow in Frameworks */ = {isa = PBXBuildFile; productRef = 1A23E26829F32B590008264F /* Rainbow */; };
 		1A2C463D2A1431B400A3BED6 /* AutomergeEncoderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2C463C2A1431B400A3BED6 /* AutomergeEncoderImpl.swift */; };
+		1A2C463F2A14338C00A3BED6 /* AutomergeEncoderImpl+RetrieveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2C463E2A14338C00A3BED6 /* AutomergeEncoderImpl+RetrieveTests.swift */; };
 		1A3D1E2D29DF76BF00EA1C4F /* AutomergeProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */; };
 		1A3D1E2F29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */; };
 		1A4D67DA2A04389300FD0498 /* AutomergeObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4D67D92A04389300FD0498 /* AutomergeObject.swift */; };
@@ -88,6 +89,7 @@
 /* Begin PBXFileReference section */
 		1A1257E229D3A36C00A197F7 /* AutomergeRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeRepresentable.swift; sourceTree = "<group>"; };
 		1A2C463C2A1431B400A3BED6 /* AutomergeEncoderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeEncoderImpl.swift; sourceTree = "<group>"; };
+		1A2C463E2A14338C00A3BED6 /* AutomergeEncoderImpl+RetrieveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AutomergeEncoderImpl+RetrieveTests.swift"; sourceTree = "<group>"; };
 		1A3D1E2C29DF76BF00EA1C4F /* AutomergeProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeProtocols.swift; sourceTree = "<group>"; };
 		1A3D1E2E29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicAutomergeTypes.swift; sourceTree = "<group>"; };
 		1A4D67D92A04389300FD0498 /* AutomergeObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeObject.swift; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 			isa = PBXGroup;
 			children = (
 				1AF0BD8929CA62150039EB8B /* AMTravelNotesTests.swift */,
+				1A2C463E2A14338C00A3BED6 /* AutomergeEncoderImpl+RetrieveTests.swift */,
 				1A8463FF29CCDA620050B817 /* AutomergeExplorationTests.swift */,
 			);
 			path = AMTravelNotesTests;
@@ -544,6 +547,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AF0BD8A29CA62150039EB8B /* AMTravelNotesTests.swift in Sources */,
+				1A2C463F2A14338C00A3BED6 /* AutomergeEncoderImpl+RetrieveTests.swift in Sources */,
 				1A84640029CCDA620050B817 /* AutomergeExplorationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
