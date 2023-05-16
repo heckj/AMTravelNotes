@@ -15,6 +15,7 @@ public enum CodingKeyLookupError: LocalizedError {
     case invalidIndexLookup(String)
     case pathExtendsThroughText(String)
     case pathExtendsThroughScalar(String)
+    case mismatchedSchema(String)
 
     // schema is missing beyond a certain point - only in readOnly mode
     case schemaMissing(String)
@@ -39,6 +40,8 @@ public enum CodingKeyLookupError: LocalizedError {
         case let .pathExtendsThroughScalar(str):
             return str
         case let .schemaMissing(str):
+            return str
+        case let .mismatchedSchema(str):
             return str
         }
     }
