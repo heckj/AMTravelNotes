@@ -10,3 +10,5 @@ DerivedData/
 
 # Finder giblets
 .DS_Store
+
+*.xcodeproj/xcshareddata/

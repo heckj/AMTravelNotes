@@ -1,0 +1,39 @@
+{
+  "configurations" : [
+    {
+      "id" : "E68F9242-3E7F-4F8D-858E-2772D0AE639E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:AMTravelNotes.xcodeproj",
+      "identifier" : "1AF0BD7029CA62140039EB8B",
+      "name" : "AMTravelNotes"
+    },
+    "testExecutionOrdering" : "random",
+    "uiTestingScreenshotsLifetime" : "keepNever"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:AMTravelNotes.xcodeproj",
+        "identifier" : "1AF0BD8429CA62150039EB8B",
+        "name" : "AMTravelNotesTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:AMTravelNotes.xcodeproj",
+        "identifier" : "1AF0BD8E29CA62150039EB8B",
+        "name" : "AMTravelNotesUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
