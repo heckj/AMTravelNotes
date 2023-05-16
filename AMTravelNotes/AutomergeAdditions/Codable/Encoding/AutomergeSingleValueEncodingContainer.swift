@@ -20,7 +20,7 @@ struct AutomergeSingleValueEncodingContainer: SingleValueEncodingContainer {
         self.impl = impl
         self.codingPath = codingPath
         self.doc = doc
-        switch retrieveObjectId(doc: doc, path: codingPath, containerType: .Value) {
+        switch impl.retrieveObjectId(path: codingPath, containerType: .Value) {
         case let .success((objId, _)):
             self.objectId = objId
             self.lookupError = nil

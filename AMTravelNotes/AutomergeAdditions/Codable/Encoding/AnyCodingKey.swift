@@ -5,7 +5,7 @@ import enum Automerge.Prop
 // schema within Automerge.
 
 /// A type that maps provides a coding key value with an enumeration.
-public struct SchemaPathElement: Equatable {
+public struct AnyCodingKey: Equatable {
     private let pathElement: Automerge.Prop
 
     init(_ pathProperty: Automerge.Prop) {
@@ -45,12 +45,12 @@ public struct SchemaPathElement: Equatable {
     /// A coding key that represents the root of a schema hierarchy.
     ///
     /// `ROOT` conceptually maps to the equivalent of an empty array of `some CodingKey`.
-    public static let ROOT = SchemaPathElement(.Key(""))
+    public static let ROOT = AnyCodingKey(.Key(""))
 }
 
 // MARK: CodingKey conformance
 
-extension SchemaPathElement: CodingKey {
+extension AnyCodingKey: CodingKey {
     /// Creates a new schema path element for an un-keyed container using the index you provide.
     ///
     /// For a non-failable initializer for ``SchemaPathElement``, use ``init(_:)``.
@@ -91,7 +91,7 @@ extension SchemaPathElement: CodingKey {
     }
 }
 
-extension SchemaPathElement: CustomStringConvertible {
+extension AnyCodingKey: CustomStringConvertible {
     /// A string description of the schema path element.
     public var description: String {
         switch pathElement {
@@ -103,7 +103,7 @@ extension SchemaPathElement: CustomStringConvertible {
     }
 }
 
-extension SchemaPathElement: Hashable {
+extension AnyCodingKey: Hashable {
     public func hash(into hasher: inout Hasher) {
         switch pathElement {
         case let .Index(intVal):

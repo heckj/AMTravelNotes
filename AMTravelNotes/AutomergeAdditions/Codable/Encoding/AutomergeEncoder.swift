@@ -48,6 +48,19 @@ class AutomergeEncoderImpl {
         self.userInfo = userInfo
         self.codingPath = codingPath
         self.document = doc
+        // Clear out any cache on setting up with a new document
+        self.cache = [:]
+    }
+
+    // MARK: Cache for Object Id Lookups
+
+    typealias CacheKey = [AnyCodingKey]
+    var cache: [CacheKey: ObjId] = [:]
+
+    func upsert(_ key: CacheKey, value: ObjId) {
+        if cache[key] == nil {
+            cache[key] = value
+        }
     }
 }
 

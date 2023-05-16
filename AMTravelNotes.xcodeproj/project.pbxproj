@@ -36,8 +36,8 @@
 		1ACCBA4429EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3B29EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift */; };
 		1AD173B429F7435C00D29D0F /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD173B329F7435C00D29D0F /* Info.swift */; };
 		1AD173B629F7466300D29D0F /* Dump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD173B529F7466300D29D0F /* Dump.swift */; };
-		1AE23A792A0853DE002FBE4D /* CodingKeyLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE23A782A0853DE002FBE4D /* CodingKeyLookup.swift */; };
-		1AE23A7B2A085452002FBE4D /* SchemaPathElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE23A7A2A085452002FBE4D /* SchemaPathElement.swift */; };
+		1AE23A792A0853DE002FBE4D /* AutomergeEncoderImpl+RetrieveObjectId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE23A782A0853DE002FBE4D /* AutomergeEncoderImpl+RetrieveObjectId.swift */; };
+		1AE23A7B2A085452002FBE4D /* AnyCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE23A7A2A085452002FBE4D /* AnyCodingKey.swift */; };
 		1AECF0552A04616700C620C6 /* AutomergeEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF0542A04616700C620C6 /* AutomergeEncoder.swift */; };
 		1AECF0572A04617300C620C6 /* AutomergeDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF0562A04617300C620C6 /* AutomergeDecoder.swift */; };
 		1AECF0592A04659300C620C6 /* AutomergeSingleValueEncodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF0582A04659300C620C6 /* AutomergeSingleValueEncodingContainer.swift */; };
@@ -114,8 +114,8 @@
 		1ACCBA3F29EDB2BA005777B1 /* PeerBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerBrowser.swift; sourceTree = "<group>"; };
 		1AD173B329F7435C00D29D0F /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		1AD173B529F7466300D29D0F /* Dump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dump.swift; sourceTree = "<group>"; };
-		1AE23A782A0853DE002FBE4D /* CodingKeyLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodingKeyLookup.swift; sourceTree = "<group>"; };
-		1AE23A7A2A085452002FBE4D /* SchemaPathElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaPathElement.swift; sourceTree = "<group>"; };
+		1AE23A782A0853DE002FBE4D /* AutomergeEncoderImpl+RetrieveObjectId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AutomergeEncoderImpl+RetrieveObjectId.swift"; sourceTree = "<group>"; };
+		1AE23A7A2A085452002FBE4D /* AnyCodingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodingKey.swift; sourceTree = "<group>"; };
 		1AECF0542A04616700C620C6 /* AutomergeEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeEncoder.swift; sourceTree = "<group>"; };
 		1AECF0562A04617300C620C6 /* AutomergeDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeDecoder.swift; sourceTree = "<group>"; };
 		1AECF0582A04659300C620C6 /* AutomergeSingleValueEncodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomergeSingleValueEncodingContainer.swift; sourceTree = "<group>"; };
@@ -231,9 +231,9 @@
 				1AECF0582A04659300C620C6 /* AutomergeSingleValueEncodingContainer.swift */,
 				1AECF05A2A04695D00C620C6 /* AutomergeKeyedEncodingContainer.swift */,
 				1AECF05C2A04696500C620C6 /* AutomergeUnkeyedEncodingContainer.swift */,
-				1AE23A782A0853DE002FBE4D /* CodingKeyLookup.swift */,
+				1AE23A782A0853DE002FBE4D /* AutomergeEncoderImpl+RetrieveObjectId.swift */,
 				1A6388D92A12E0A900E268AD /* CodingKeyLookupError.swift */,
-				1AE23A7A2A085452002FBE4D /* SchemaPathElement.swift */,
+				1AE23A7A2A085452002FBE4D /* AnyCodingKey.swift */,
 			);
 			path = Encoding;
 			sourceTree = "<group>";
@@ -525,9 +525,9 @@
 				1A3D1E2F29DF77BB00EA1C4F /* DynamicAutomergeTypes.swift in Sources */,
 				1AEFDE9629CE0FF5004657E0 /* Document+Path.swift in Sources */,
 				1AC4EBAE29CA6F6F00814B1E /* AMProp.swift in Sources */,
-				1AE23A7B2A085452002FBE4D /* SchemaPathElement.swift in Sources */,
+				1AE23A7B2A085452002FBE4D /* AnyCodingKey.swift in Sources */,
 				1AB6F1F429EE1A79003529D0 /* AMText.swift in Sources */,
-				1AE23A792A0853DE002FBE4D /* CodingKeyLookup.swift in Sources */,
+				1AE23A792A0853DE002FBE4D /* AutomergeEncoderImpl+RetrieveObjectId.swift in Sources */,
 				1ACCBA4429EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift in Sources */,
 				1AF0BD7929CA62140039EB8B /* ContentView.swift in Sources */,
 				1A6388DA2A12E0A900E268AD /* CodingKeyLookupError.swift in Sources */,
