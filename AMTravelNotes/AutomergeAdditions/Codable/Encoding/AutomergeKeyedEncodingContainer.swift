@@ -29,7 +29,7 @@ struct AutomergeKeyedEncodingContainer<K: CodingKey>: KeyedEncodingContainerProt
     /// After initialization, the container has one of two properties set: ``objectId`` or ``lookupError``.
     /// As the container is created and initialized, it attempts to either look up or create an Automerge objectId that
     /// maps to the relevant schema path matching from the ``codingPath``.
-    /// If the lookup was successful, the property `objectId` has the proper value from the associated ``doc``.
+    /// If the lookup was successful, the property `objectId` has the proper value from the associated document.
     /// Otherwise, the initialization captures the error into ``lookupError`` and is thrown when you invoke any of the
     /// `encode` methods.
     ///
