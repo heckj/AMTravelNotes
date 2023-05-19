@@ -21,7 +21,7 @@
     {
       "target" : {
         "containerPath" : "container:AMTravelNotes.xcodeproj",
-        "identifier" : "1AF0BD8429CA62150039EB8B",
+        "identifier" : "1A96CA2A2A181E230092163C",
         "name" : "AMTravelNotesTests"
       }
     },

@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A0E00632A18248C0019F534 /* MirrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0E00622A18248C0019F534 /* MirrorTests.swift */; };
+		1A0E00672A1825B20019F534 /* AutomergeSwiftAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00662A1825B20019F534 /* AutomergeSwiftAdditions */; };
+		1A0E00692A1825B60019F534 /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00682A1825B60019F534 /* Automerge */; };
+		1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
 		1A23E26929F32B590008264F /* Rainbow in Frameworks */ = {isa = PBXBuildFile; productRef = 1A23E26829F32B590008264F /* Rainbow */; };
 		1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
-		1A96CA2E2A181E230092163C /* AMTravelNotesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A96CA2D2A181E230092163C /* AMTravelNotesTests.swift */; };
-		1AB6F20229EE1EFD003529D0 /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1AB6F20129EE1EFD003529D0 /* Automerge */; };
 		1AB6F20729EE1F9B003529D0 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1AB6F20629EE1F9B003529D0 /* ArgumentParser */; };
 		1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F20829EE202C003529D0 /* AMInspector.swift */; };
 		1ABECBA22A1448C600C966BB /* AutomergeSwiftAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = 1ABECBA12A1448C600C966BB /* AutomergeSwiftAdditions */; };
@@ -33,6 +35,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1A0E00642A1825350019F534 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AF0BD6929CA62140039EB8B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AF0BD7029CA62140039EB8B;
+			remoteInfo = AMTravelNotes;
+		};
 		1AF0BD9029CA62150039EB8B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1AF0BD6929CA62140039EB8B /* Project object */;
@@ -55,15 +64,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A0E00622A18248C0019F534 /* MirrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorTests.swift; sourceTree = "<group>"; };
 		1A2C46402A1439C900A3BED6 /* AMTravelNotes.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AMTravelNotes.xctestplan; sourceTree = "<group>"; };
-		1A443E982A1449F2004FFF40 /* AutomergeSwiftAdditions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AutomergeSwiftAdditions; path = ../AutomergeSwiftAdditions; sourceTree = "<group>"; };
 		1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesModel.swift; sourceTree = "<group>"; };
 		1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMTravelNotesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A96CA2D2A181E230092163C /* AMTravelNotesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesTests.swift; sourceTree = "<group>"; };
 		1AB6F1F929EE1EDF003529D0 /* AMInspector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AMInspector; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB6F20829EE202C003529D0 /* AMInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMInspector.swift; sourceTree = "<group>"; };
-		1ABECB9F2A14489B00C966BB /* AutomergeSwiftAdditions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AutomergeSwiftAdditions; path = ../AutomergeSwiftAdditions; sourceTree = "<group>"; };
-		1AC4EBAC29CA6EB400814B1E /* automerge-swifter */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "automerge-swifter"; path = "../automerge-swifter"; sourceTree = "<group>"; };
 		1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoCode.swift; sourceTree = "<group>"; };
 		1ACCBA3B29EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWParameters+InitWithPasscode.swift"; sourceTree = "<group>"; };
 		1ACCBA3C29EDB2BA005777B1 /* PeerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnection.swift; sourceTree = "<group>"; };
@@ -80,7 +86,6 @@
 		1AF0BD7C29CA62150039EB8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AF0BD7D29CA62150039EB8B /* AMTravelNotes.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AMTravelNotes.entitlements; sourceTree = "<group>"; };
 		1AF0BD7F29CA62150039EB8B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		1AF0BD8929CA62150039EB8B /* AMTravelNotesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesTests.swift; sourceTree = "<group>"; };
 		1AF0BD8F29CA62150039EB8B /* AMTravelNotesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMTravelNotesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AF0BD9329CA62150039EB8B /* AMTravelNotesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesUITests.swift; sourceTree = "<group>"; };
 		1AF0BD9529CA62150039EB8B /* AMTravelNotesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -91,6 +96,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A0E00692A1825B60019F534 /* Automerge in Frameworks */,
+				1A0E00672A1825B20019F534 /* AutomergeSwiftAdditions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +107,6 @@
 			files = (
 				1A23E26929F32B590008264F /* Rainbow in Frameworks */,
 				1AB6F20729EE1F9B003529D0 /* ArgumentParser in Frameworks */,
-				1AB6F20229EE1EFD003529D0 /* Automerge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,14 +129,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1A96CA2C2A181E230092163C /* AMTravelNotesTests */ = {
-			isa = PBXGroup;
-			children = (
-				1A96CA2D2A181E230092163C /* AMTravelNotesTests.swift */,
-			);
-			path = AMTravelNotesTests;
-			sourceTree = "<group>";
-		};
 		1AB6F1FA29EE1EDF003529D0 /* AMInspector */ = {
 			isa = PBXGroup;
 			children = (
@@ -148,15 +146,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1ABECB9E2A14489B00C966BB /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				1ABECB9F2A14489B00C966BB /* AutomergeSwiftAdditions */,
-				1A443E982A1449F2004FFF40 /* AutomergeSwiftAdditions */,
-			);
-			name = Packages;
-			sourceTree = "<group>";
-		};
 		1ACCBA2C29EDACB4005777B1 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,14 +161,11 @@
 		1AF0BD6829CA62140039EB8B = {
 			isa = PBXGroup;
 			children = (
-				1ABECB9E2A14489B00C966BB /* Packages */,
 				1A2C46402A1439C900A3BED6 /* AMTravelNotes.xctestplan */,
-				1AC4EBAC29CA6EB400814B1E /* automerge-swifter */,
 				1AF0BD7329CA62140039EB8B /* AMTravelNotes */,
 				1AF0BD8829CA62150039EB8B /* AMTravelNotesTests */,
 				1AF0BD9229CA62150039EB8B /* AMTravelNotesUITests */,
 				1AB6F1FA29EE1EDF003529D0 /* AMInspector */,
-				1A96CA2C2A181E230092163C /* AMTravelNotesTests */,
 				1AF0BD7229CA62140039EB8B /* Products */,
 				1AB6F20029EE1EFD003529D0 /* Frameworks */,
 			);
@@ -224,7 +210,7 @@
 		1AF0BD8829CA62150039EB8B /* AMTravelNotesTests */ = {
 			isa = PBXGroup;
 			children = (
-				1AF0BD8929CA62150039EB8B /* AMTravelNotesTests.swift */,
+				1A0E00622A18248C0019F534 /* MirrorTests.swift */,
 			);
 			path = AMTravelNotesTests;
 			sourceTree = "<group>";
@@ -252,8 +238,13 @@
 			buildRules = (
 			);
 			dependencies = (
+				1A0E00652A1825350019F534 /* PBXTargetDependency */,
 			);
 			name = AMTravelNotesTests;
+			packageProductDependencies = (
+				1A0E00662A1825B20019F534 /* AutomergeSwiftAdditions */,
+				1A0E00682A1825B60019F534 /* Automerge */,
+			);
 			productName = AMTravelNotesTests;
 			productReference = 1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -272,7 +263,6 @@
 			);
 			name = AMInspector;
 			packageProductDependencies = (
-				1AB6F20129EE1EFD003529D0 /* Automerge */,
 				1AB6F20629EE1F9B003529D0 /* ArgumentParser */,
 				1A23E26829F32B590008264F /* Rainbow */,
 			);
@@ -331,6 +321,7 @@
 				TargetAttributes = {
 					1A96CA2A2A181E230092163C = {
 						CreatedOnToolsVersion = 14.3;
+						LastSwiftMigration = 1430;
 					};
 					1AB6F1F829EE1EDF003529D0 = {
 						CreatedOnToolsVersion = 14.3;
@@ -402,7 +393,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A96CA2E2A181E230092163C /* AMTravelNotesTests.swift in Sources */,
+				1A0E00632A18248C0019F534 /* MirrorTests.swift in Sources */,
+				1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +437,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1A0E00652A1825350019F534 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AF0BD7029CA62140039EB8B /* AMTravelNotes */;
+			targetProxy = 1A0E00642A1825350019F534 /* PBXContainerItemProxy */;
+		};
 		1AF0BD9129CA62150039EB8B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1AF0BD7029CA62140039EB8B /* AMTravelNotes */;
@@ -456,6 +453,7 @@
 		1A96CA302A181E230092163C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
@@ -468,6 +466,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -476,6 +475,7 @@
 		1A96CA312A181E230092163C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
@@ -842,14 +842,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1A0E00662A1825B20019F534 /* AutomergeSwiftAdditions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1ABECBA02A1448C600C966BB /* XCRemoteSwiftPackageReference "AutomergeSwiftAdditions" */;
+			productName = AutomergeSwiftAdditions;
+		};
+		1A0E00682A1825B60019F534 /* Automerge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AF0BDA229CA62720039EB8B /* XCRemoteSwiftPackageReference "automerge-swifter" */;
+			productName = Automerge;
+		};
 		1A23E26829F32B590008264F /* Rainbow */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1A23E26729F32B590008264F /* XCRemoteSwiftPackageReference "Rainbow" */;
 			productName = Rainbow;
-		};
-		1AB6F20129EE1EFD003529D0 /* Automerge */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Automerge;
 		};
 		1AB6F20629EE1F9B003529D0 /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
