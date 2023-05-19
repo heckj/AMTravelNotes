@@ -1,4 +1,5 @@
 import Automerge
+import AutomergeSwiftAdditions
 import Foundation
 #if os(iOS)
 import UIKit

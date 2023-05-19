@@ -13,6 +13,7 @@ import enum Automerge.Value
 import Combine
 import Foundation
 import SwiftUI
+import AutomergeSwiftAdditions
 
 enum LoadItemError: Error {
     case automerge
