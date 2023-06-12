@@ -6,6 +6,7 @@
 //
 
 import Automerge
+import AutomergeSwiftAdditions
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -24,14 +25,23 @@ class AMTravelNotesDocument: ReferenceFileDocument {
     // stream from "core" Automerge with a simple wrapper (CBOR) and tacking
     // on an automatically generated UUID() as that identifier.
 
+    let enc: AutomergeEncoder
+    let dec: AutomergeDecoder
     var doc: Document
-    var model: TravelNotesModel?
+    var model: RootModel?
 
     static var readableContentTypes: [UTType] { [.automerge] }
 
     init() {
         doc = Document()
-        model = TravelNotesModel(doc: doc)
+        enc = AutomergeEncoder(doc: doc, strategy: .createWhenNeeded)
+        dec = AutomergeDecoder(doc: doc)
+        model = RootModel(id: UUID(), title: "Untitled", summary: Text(""), images: [])
+        do {
+            try enc.encode(model)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
     }
 
     required init(configuration: ReadConfiguration) throws {
@@ -41,7 +51,9 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         }
 
         doc = try! Document(data)
-        model = TravelNotesModel(doc: doc)
+        enc = AutomergeEncoder(doc: doc, strategy: .createWhenNeeded)
+        dec = AutomergeDecoder(doc: doc)
+        model = try dec.decode(RootModel.self)
     }
 
     func snapshot(contentType _: UTType) throws -> Document {
