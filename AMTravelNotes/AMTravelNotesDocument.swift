@@ -28,7 +28,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
     let enc: AutomergeEncoder
     let dec: AutomergeDecoder
     var doc: Document
-    var model: RootModel?
+    var model: RootModel
 
     static var readableContentTypes: [UTType] { [.automerge] }
 
@@ -36,7 +36,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         doc = Document()
         enc = AutomergeEncoder(doc: doc, strategy: .createWhenNeeded)
         dec = AutomergeDecoder(doc: doc)
-        model = RootModel(id: UUID(), title: "Untitled", summary: Text(""), images: [])
+        model = RootModel(id: UUID(), title: "Untitled", summary: AutomergeSwiftAdditions.Text(""), images: [])
         do {
             try enc.encode(model)
         } catch {
