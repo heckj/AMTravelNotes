@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 extension NSImage {
-    func pngData(
+    public func pngData(
         size: CGSize? = nil,
         imageInterpolation: NSImageInterpolation = .high
     ) -> Data? {

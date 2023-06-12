@@ -12,7 +12,7 @@ import UIKit
 import AppKit
 #endif
 
-struct CodableImage: Codable {
+public struct CodableImage: Codable {
     enum CodingKeys: CodingKey {
         case data
         case scale
