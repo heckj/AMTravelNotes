@@ -12,6 +12,7 @@
 		1A0E00692A1825B60019F534 /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00682A1825B60019F534 /* Automerge */; };
 		1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
 		1A23E26929F32B590008264F /* Rainbow in Frameworks */ = {isa = PBXBuildFile; productRef = 1A23E26829F32B590008264F /* Rainbow */; };
+		1A59B6E82A37B2FC003FF290 /* NSImage+pngData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */; };
 		1A61B2892A379F3C00DF51B0 /* EncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A61B2882A379F3C00DF51B0 /* EncoderTests.swift */; };
 		1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */; };
 		1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
@@ -327,7 +328,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					1A96CA2A2A181E230092163C = {
 						CreatedOnToolsVersion = 14.3;
@@ -406,6 +407,7 @@
 				1A61B2892A379F3C00DF51B0 /* EncoderTests.swift in Sources */,
 				1A0E00632A18248C0019F534 /* MirrorTests.swift in Sources */,
 				1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */,
+				1A59B6E82A37B2FC003FF290 /* NSImage+pngData.swift in Sources */,
 				1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -470,6 +472,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -492,6 +495,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -511,6 +515,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
@@ -525,6 +530,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
@@ -568,9 +574,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -626,9 +634,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -652,6 +662,7 @@
 				CODE_SIGN_ENTITLEMENTS = AMTravelNotes/AMTravelNotes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"AMTravelNotes/Preview Content\"";
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -693,6 +704,7 @@
 				CODE_SIGN_ENTITLEMENTS = AMTravelNotes/AMTravelNotes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"AMTravelNotes/Preview Content\"";
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -732,6 +744,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
@@ -754,6 +767,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = BDV4VC27D3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
