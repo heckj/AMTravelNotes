@@ -9,6 +9,18 @@ import AppKit
 
 // What I'd like to have as my "travel notes" schema:
 
+struct ImageSet: Codable {
+    var image: CodableImage
+    var notes: Text
+}
+
+struct RootModel: Codable {
+    let id: UUID
+    let title: String
+    let summary: Text
+    let images: [ImageSet]
+}
+
 // - ROOT {
 //     "id" - UUID (Scalar) // for comparing origins for sync
 //     "title" - String (scalar)

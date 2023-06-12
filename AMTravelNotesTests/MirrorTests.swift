@@ -5,12 +5,11 @@
 //  Created by Joseph Heck on 5/19/23.
 //
 
-import XCTest
-import Automerge
 @testable import AMTravelNotes
+import Automerge
+import XCTest
 
 final class MirrorTests: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -18,7 +17,6 @@ final class MirrorTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
 
     func testCheckMirror() throws {
         // Establish Document

@@ -10,10 +10,10 @@ import struct Automerge.ObjId
 import enum Automerge.ObjType
 import enum Automerge.ScalarValue
 import enum Automerge.Value
+import AutomergeSwiftAdditions
 import Combine
 import Foundation
 import SwiftUI
-import AutomergeSwiftAdditions
 
 enum LoadItemError: Error {
     case automerge
