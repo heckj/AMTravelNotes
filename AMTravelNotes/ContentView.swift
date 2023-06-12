@@ -11,8 +11,17 @@ struct ContentView: View {
     @ObservedObject var document: AMTravelNotesDocument
 
     var body: some View {
-        Text("Placeholder")
-        // TextEditor(text: $document.text)
+        VStack {
+            HStack {
+                Spacer()
+                Text("Document ID: \(document.model.id)")
+                    .font(.caption)
+                Spacer()
+            }
+            Form {
+                TextField("Title", text: $document.model.title)
+            }
+        }
     }
 }
 

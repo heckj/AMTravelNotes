@@ -28,7 +28,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
     let enc: AutomergeEncoder
     let dec: AutomergeDecoder
     var doc: Document
-    var model: RootModel
+    var model: TravelNotesModel
 
     static var readableContentTypes: [UTType] { [.automerge] }
 
@@ -36,7 +36,7 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         doc = Document()
         enc = AutomergeEncoder(doc: doc, strategy: .createWhenNeeded)
         dec = AutomergeDecoder(doc: doc)
-        model = RootModel(id: UUID(), title: "Untitled", summary: AutomergeSwiftAdditions.Text(""), images: [])
+        model = TravelNotesModel(title: "Untitled", summary: AutomergeSwiftAdditions.Text(""), images: [])
         do {
             try enc.encode(model)
         } catch {
@@ -53,11 +53,12 @@ class AMTravelNotesDocument: ReferenceFileDocument {
         doc = try! Document(data)
         enc = AutomergeEncoder(doc: doc, strategy: .createWhenNeeded)
         dec = AutomergeDecoder(doc: doc)
-        model = try dec.decode(RootModel.self)
+        model = try dec.decode(TravelNotesModel.self)
     }
 
     func snapshot(contentType _: UTType) throws -> Document {
-        doc // Make a copy.
+        try enc.encode(model)
+        return doc
     }
 
     func fileWrapper(snapshot: Document, configuration _: WriteConfiguration) throws -> FileWrapper {

@@ -9,8 +9,8 @@ import Foundation
 #if os(macOS)
 import AppKit
 
-extension NSImage {
-    public func pngData(
+public extension NSImage {
+    func pngData(
         size: CGSize? = nil,
         imageInterpolation: NSImageInterpolation = .high
     ) -> Data? {
