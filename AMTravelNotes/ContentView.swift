@@ -20,6 +20,7 @@ struct ContentView: View {
             }
             Form {
                 TextField("Title", text: $document.model.title)
+                TextField("Summary", text: $document.model.summary.value)
             }
         }
     }

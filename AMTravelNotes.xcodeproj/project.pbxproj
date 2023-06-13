@@ -15,6 +15,7 @@
 		1A59B6E82A37B2FC003FF290 /* NSImage+pngData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */; };
 		1A61B2892A379F3C00DF51B0 /* EncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A61B2882A379F3C00DF51B0 /* EncoderTests.swift */; };
 		1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */; };
+		1A74FCD22A38D29A003F210C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A74FCD12A38D29A003F210C /* ImagePicker.swift */; };
 		1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
 		1AB6F20729EE1F9B003529D0 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1AB6F20629EE1F9B003529D0 /* ArgumentParser */; };
 		1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F20829EE202C003529D0 /* AMInspector.swift */; };
@@ -72,6 +73,7 @@
 		1A0E00622A18248C0019F534 /* MirrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorTests.swift; sourceTree = "<group>"; };
 		1A2C46402A1439C900A3BED6 /* AMTravelNotes.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AMTravelNotes.xctestplan; sourceTree = "<group>"; };
 		1A61B2882A379F3C00DF51B0 /* EncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncoderTests.swift; sourceTree = "<group>"; };
+		1A74FCD12A38D29A003F210C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesModel.swift; sourceTree = "<group>"; };
 		1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMTravelNotesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB6F1F929EE1EDF003529D0 /* AMInspector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AMInspector; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -196,6 +198,7 @@
 				1ACCBA2C29EDACB4005777B1 /* Networking */,
 				1AF0BD7429CA62140039EB8B /* AMTravelNotesApp.swift */,
 				1AF0BD7629CA62140039EB8B /* AMTravelNotesDocument.swift */,
+				1A74FCD12A38D29A003F210C /* ImagePicker.swift */,
 				1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */,
 				1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */,
 				1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */,
@@ -426,6 +429,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A74FCD22A38D29A003F210C /* ImagePicker.swift in Sources */,
 				1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */,
 				1ADF90D02A36B09200AA5A41 /* CodableImage.swift in Sources */,
 				1ACCBA4229EDB2BA005777B1 /* PeerListener.swift in Sources */,
