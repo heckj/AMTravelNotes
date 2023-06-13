@@ -11,16 +11,13 @@
 		1A0E00672A1825B20019F534 /* AutomergeSwiftAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00662A1825B20019F534 /* AutomergeSwiftAdditions */; };
 		1A0E00692A1825B60019F534 /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00682A1825B60019F534 /* Automerge */; };
 		1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
-		1A23E26929F32B590008264F /* Rainbow in Frameworks */ = {isa = PBXBuildFile; productRef = 1A23E26829F32B590008264F /* Rainbow */; };
 		1A59B6E82A37B2FC003FF290 /* NSImage+pngData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */; };
 		1A61B2892A379F3C00DF51B0 /* EncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A61B2882A379F3C00DF51B0 /* EncoderTests.swift */; };
 		1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */; };
 		1A74FCD22A38D29A003F210C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A74FCD12A38D29A003F210C /* ImagePicker.swift */; };
 		1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
-		1AB6F20729EE1F9B003529D0 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1AB6F20629EE1F9B003529D0 /* ArgumentParser */; };
 		1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F20829EE202C003529D0 /* AMInspector.swift */; };
 		1ABECBA22A1448C600C966BB /* AutomergeSwiftAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = 1ABECBA12A1448C600C966BB /* AutomergeSwiftAdditions */; };
-		1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */; };
 		1ACCBA4029EDB2BA005777B1 /* SyncProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3D29EDB2BA005777B1 /* SyncProtocol.swift */; };
 		1ACCBA4129EDB2BA005777B1 /* PeerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3C29EDB2BA005777B1 /* PeerConnection.swift */; };
 		1ACCBA4229EDB2BA005777B1 /* PeerListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3E29EDB2BA005777B1 /* PeerListener.swift */; };
@@ -78,7 +75,6 @@
 		1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMTravelNotesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB6F1F929EE1EDF003529D0 /* AMInspector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AMInspector; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AB6F20829EE202C003529D0 /* AMInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMInspector.swift; sourceTree = "<group>"; };
-		1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoCode.swift; sourceTree = "<group>"; };
 		1ACCBA3B29EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWParameters+InitWithPasscode.swift"; sourceTree = "<group>"; };
 		1ACCBA3C29EDB2BA005777B1 /* PeerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnection.swift; sourceTree = "<group>"; };
 		1ACCBA3D29EDB2BA005777B1 /* SyncProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncProtocol.swift; sourceTree = "<group>"; };
@@ -115,8 +111,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A23E26929F32B590008264F /* Rainbow in Frameworks */,
-				1AB6F20729EE1F9B003529D0 /* ArgumentParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,7 +196,6 @@
 				1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */,
 				1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */,
 				1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */,
-				1AC4EBAF29CA6F8E00814B1E /* ToDoCode.swift */,
 				1AF0BD7829CA62140039EB8B /* ContentView.swift */,
 				1AF0BD7A29CA62150039EB8B /* Assets.xcassets */,
 				1AF0BD7C29CA62150039EB8B /* Info.plist */,
@@ -277,8 +270,6 @@
 			);
 			name = AMInspector;
 			packageProductDependencies = (
-				1AB6F20629EE1F9B003529D0 /* ArgumentParser */,
-				1A23E26829F32B590008264F /* Rainbow */,
 			);
 			productName = AMInspector;
 			productReference = 1AB6F1F929EE1EDF003529D0 /* AMInspector */;
@@ -360,8 +351,6 @@
 			mainGroup = 1AF0BD6829CA62140039EB8B;
 			packageReferences = (
 				1AF0BDA229CA62720039EB8B /* XCRemoteSwiftPackageReference "automerge-swifter" */,
-				1AB6F20329EE1F83003529D0 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
-				1A23E26729F32B590008264F /* XCRemoteSwiftPackageReference "Rainbow" */,
 				1ABECBA02A1448C600C966BB /* XCRemoteSwiftPackageReference "AutomergeSwiftAdditions" */,
 			);
 			productRefGroup = 1AF0BD7229CA62140039EB8B /* Products */;
@@ -436,7 +425,6 @@
 				1AF0BD7729CA62140039EB8B /* AMTravelNotesDocument.swift in Sources */,
 				1AF0BD7529CA62140039EB8B /* AMTravelNotesApp.swift in Sources */,
 				1ACCBA4129EDB2BA005777B1 /* PeerConnection.swift in Sources */,
-				1AC4EBB029CA6F8E00814B1E /* ToDoCode.swift in Sources */,
 				1ACCBA4329EDB2BA005777B1 /* PeerBrowser.swift in Sources */,
 				1ACCBA4429EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift in Sources */,
 				1AF0BD7929CA62140039EB8B /* ContentView.swift in Sources */,
@@ -839,22 +827,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1A23E26729F32B590008264F /* XCRemoteSwiftPackageReference "Rainbow" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Rainbow";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
-			};
-		};
-		1AB6F20329EE1F83003529D0 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		1ABECBA02A1448C600C966BB /* XCRemoteSwiftPackageReference "AutomergeSwiftAdditions" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/heckj/AutomergeSwiftAdditions";
@@ -883,16 +855,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1AF0BDA229CA62720039EB8B /* XCRemoteSwiftPackageReference "automerge-swifter" */;
 			productName = Automerge;
-		};
-		1A23E26829F32B590008264F /* Rainbow */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1A23E26729F32B590008264F /* XCRemoteSwiftPackageReference "Rainbow" */;
-			productName = Rainbow;
-		};
-		1AB6F20629EE1F9B003529D0 /* ArgumentParser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1AB6F20329EE1F83003529D0 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
-			productName = ArgumentParser;
 		};
 		1ABECBA12A1448C600C966BB /* AutomergeSwiftAdditions */ = {
 			isa = XCSwiftPackageProductDependency;
