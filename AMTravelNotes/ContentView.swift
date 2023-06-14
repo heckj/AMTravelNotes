@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  AMTravelNotes
-//
-//  Created by Joseph Heck on 3/21/23.
-//
-
 import SwiftUI
 
 struct ContentView: View {

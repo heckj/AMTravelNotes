@@ -15,7 +15,7 @@ final class EncoderTests: XCTestCase {
     func testInitialDocSetupUsingEncode() throws {
         let doc = Document()
         let enc = AutomergeEncoder(doc: doc, strategy: .createWhenNeeded)
-        let model = RootModel(id: UUID(), title: "Untitled", summary: Text(""), images: [])
+        let model = TravelNotesModel(title: "Untitled", summary: Text(""), images: [])
 
         try enc.encode(model)
     }

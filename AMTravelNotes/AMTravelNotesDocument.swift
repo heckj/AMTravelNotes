@@ -1,10 +1,3 @@
-//
-//  AMTravelNotesDocument.swift
-//  AMTravelNotes
-//
-//  Created by Joseph Heck on 3/21/23.
-//
-
 import Automerge
 import AutomergeSwiftAdditions
 import SwiftUI

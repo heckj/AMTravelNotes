@@ -39,32 +39,3 @@ struct ImageSet: Codable {
     var image: CodableImage
     var notes: Text
 }
-
-// class TravelNotesModel: BaseAutomergeObject, Identifiable {
-//    @AmScalarProp("id") var id: UUID
-//    @AmScalarProp("title") var title: String
-//    @AmText("summary") var notes: String
-//    @AmObj("meta") var subObject: BaseAutomergeObject
-//
-//    #if os(iOS)
-//    @AmList("images") var images: AutomergeList<UIImage>
-//    #elseif os(macOS)
-//    @AmList("images") var images: AutomergeList<NSImage>
-//    #endif
-//
-//    required init(doc: Document, obj: ObjId? = ObjId.ROOT) {
-//        super.init(doc: doc, obj: obj)
-//
-//        // TODO: check to see if it exists, and create if not
-//        do {
-//            guard let obj = obj else {
-//                fatalError("initialized model not linked to an Automerge objectId.")
-//            }
-//            let _ = try! doc.putObject(obj: obj, key: "summary", ty: .Text)
-//            try doc.put(obj: obj, key: "id", value: .String(UUID().uuidString))
-//            let _ = try! doc.putObject(obj: obj, key: "images", ty: .List)
-//        } catch {
-//            fatalError("Error establishing model schema: \(error)")
-//        }
-//    }
-// }

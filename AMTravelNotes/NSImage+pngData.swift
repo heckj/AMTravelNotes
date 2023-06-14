@@ -1,10 +1,3 @@
-//
-//  NSImage+pngData.swift
-//  AMTravelNotes
-//
-//  Created by Joseph Heck on 6/11/23.
-//
-
 import Foundation
 #if os(macOS)
 import AppKit

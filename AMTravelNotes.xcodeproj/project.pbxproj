@@ -16,15 +16,12 @@
 		1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */; };
 		1A74FCD22A38D29A003F210C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A74FCD12A38D29A003F210C /* ImagePicker.swift */; };
 		1A823EF529E8B8A20054DFA4 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
-		1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB6F20829EE202C003529D0 /* AMInspector.swift */; };
 		1ABECBA22A1448C600C966BB /* AutomergeSwiftAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = 1ABECBA12A1448C600C966BB /* AutomergeSwiftAdditions */; };
 		1ACCBA4029EDB2BA005777B1 /* SyncProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3D29EDB2BA005777B1 /* SyncProtocol.swift */; };
 		1ACCBA4129EDB2BA005777B1 /* PeerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3C29EDB2BA005777B1 /* PeerConnection.swift */; };
 		1ACCBA4229EDB2BA005777B1 /* PeerListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3E29EDB2BA005777B1 /* PeerListener.swift */; };
 		1ACCBA4329EDB2BA005777B1 /* PeerBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3F29EDB2BA005777B1 /* PeerBrowser.swift */; };
 		1ACCBA4429EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACCBA3B29EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift */; };
-		1AD173B429F7435C00D29D0F /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD173B329F7435C00D29D0F /* Info.swift */; };
-		1AD173B629F7466300D29D0F /* Dump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD173B529F7466300D29D0F /* Dump.swift */; };
 		1ADF90D02A36B09200AA5A41 /* CodableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */; };
 		1ADF90D22A36B1B400AA5A41 /* NSImage+pngData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */; };
 		1AF0BD7529CA62140039EB8B /* AMTravelNotesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF0BD7429CA62140039EB8B /* AMTravelNotesApp.swift */; };
@@ -54,18 +51,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		1AB6F1F729EE1EDF003529D0 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		1A0E00622A18248C0019F534 /* MirrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorTests.swift; sourceTree = "<group>"; };
 		1A2C46402A1439C900A3BED6 /* AMTravelNotes.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AMTravelNotes.xctestplan; sourceTree = "<group>"; };
@@ -73,15 +58,11 @@
 		1A74FCD12A38D29A003F210C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMTravelNotesModel.swift; sourceTree = "<group>"; };
 		1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AMTravelNotesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1AB6F1F929EE1EDF003529D0 /* AMInspector */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AMInspector; sourceTree = BUILT_PRODUCTS_DIR; };
-		1AB6F20829EE202C003529D0 /* AMInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMInspector.swift; sourceTree = "<group>"; };
 		1ACCBA3B29EDB2BA005777B1 /* NWParameters+InitWithPasscode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWParameters+InitWithPasscode.swift"; sourceTree = "<group>"; };
 		1ACCBA3C29EDB2BA005777B1 /* PeerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnection.swift; sourceTree = "<group>"; };
 		1ACCBA3D29EDB2BA005777B1 /* SyncProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncProtocol.swift; sourceTree = "<group>"; };
 		1ACCBA3E29EDB2BA005777B1 /* PeerListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerListener.swift; sourceTree = "<group>"; };
 		1ACCBA3F29EDB2BA005777B1 /* PeerBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerBrowser.swift; sourceTree = "<group>"; };
-		1AD173B329F7435C00D29D0F /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
-		1AD173B529F7466300D29D0F /* Dump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dump.swift; sourceTree = "<group>"; };
 		1ADF90CF2A36B09200AA5A41 /* CodableImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableImage.swift; sourceTree = "<group>"; };
 		1ADF90D12A36B1B400AA5A41 /* NSImage+pngData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+pngData.swift"; sourceTree = "<group>"; };
 		1AF0BD7129CA62140039EB8B /* AMTravelNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AMTravelNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,13 +88,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1AB6F1F629EE1EDF003529D0 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1AF0BD6E29CA62140039EB8B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -133,16 +107,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1AB6F1FA29EE1EDF003529D0 /* AMInspector */ = {
-			isa = PBXGroup;
-			children = (
-				1AB6F20829EE202C003529D0 /* AMInspector.swift */,
-				1AD173B329F7435C00D29D0F /* Info.swift */,
-				1AD173B529F7466300D29D0F /* Dump.swift */,
-			);
-			path = AMInspector;
-			sourceTree = "<group>";
-		};
 		1AB6F20029EE1EFD003529D0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,7 +133,6 @@
 				1AF0BD7329CA62140039EB8B /* AMTravelNotes */,
 				1AF0BD8829CA62150039EB8B /* AMTravelNotesTests */,
 				1AF0BD9229CA62150039EB8B /* AMTravelNotesUITests */,
-				1AB6F1FA29EE1EDF003529D0 /* AMInspector */,
 				1AF0BD7229CA62140039EB8B /* Products */,
 				1AB6F20029EE1EFD003529D0 /* Frameworks */,
 			);
@@ -180,7 +143,6 @@
 			children = (
 				1AF0BD7129CA62140039EB8B /* AMTravelNotes.app */,
 				1AF0BD8F29CA62150039EB8B /* AMTravelNotesUITests.xctest */,
-				1AB6F1F929EE1EDF003529D0 /* AMInspector */,
 				1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */,
 			);
 			name = Products;
@@ -256,25 +218,6 @@
 			productReference = 1A96CA2B2A181E230092163C /* AMTravelNotesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		1AB6F1F829EE1EDF003529D0 /* AMInspector */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1AB6F1FD29EE1EDF003529D0 /* Build configuration list for PBXNativeTarget "AMInspector" */;
-			buildPhases = (
-				1AB6F1F529EE1EDF003529D0 /* Sources */,
-				1AB6F1F629EE1EDF003529D0 /* Frameworks */,
-				1AB6F1F729EE1EDF003529D0 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = AMInspector;
-			packageProductDependencies = (
-			);
-			productName = AMInspector;
-			productReference = 1AB6F1F929EE1EDF003529D0 /* AMInspector */;
-			productType = "com.apple.product-type.tool";
-		};
 		1AF0BD7029CA62140039EB8B /* AMTravelNotes */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AF0BD9929CA62150039EB8B /* Build configuration list for PBXNativeTarget "AMTravelNotes" */;
@@ -328,9 +271,6 @@
 						CreatedOnToolsVersion = 14.3;
 						LastSwiftMigration = 1430;
 					};
-					1AB6F1F829EE1EDF003529D0 = {
-						CreatedOnToolsVersion = 14.3;
-					};
 					1AF0BD7029CA62140039EB8B = {
 						CreatedOnToolsVersion = 14.3;
 					};
@@ -359,7 +299,6 @@
 			targets = (
 				1AF0BD7029CA62140039EB8B /* AMTravelNotes */,
 				1AF0BD8E29CA62150039EB8B /* AMTravelNotesUITests */,
-				1AB6F1F829EE1EDF003529D0 /* AMInspector */,
 				1A96CA2A2A181E230092163C /* AMTravelNotesTests */,
 			);
 		};
@@ -401,16 +340,6 @@
 				1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */,
 				1A59B6E82A37B2FC003FF290 /* NSImage+pngData.swift in Sources */,
 				1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1AB6F1F529EE1EDF003529D0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1AB6F20929EE202C003529D0 /* AMInspector.swift in Sources */,
-				1AD173B429F7435C00D29D0F /* Info.swift in Sources */,
-				1AD173B629F7466300D29D0F /* Dump.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,36 +429,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		1AB6F1FE29EE1EDF003529D0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = BDV4VC27D3;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.rhonabwy.AMInspector;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		1AB6F1FF29EE1EDF003529D0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = BDV4VC27D3;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.3;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.rhonabwy.AMInspector;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -784,15 +683,6 @@
 			buildConfigurations = (
 				1A96CA302A181E230092163C /* Debug */,
 				1A96CA312A181E230092163C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		1AB6F1FD29EE1EDF003529D0 /* Build configuration list for PBXNativeTarget "AMInspector" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1AB6F1FE29EE1EDF003529D0 /* Debug */,
-				1AB6F1FF29EE1EDF003529D0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

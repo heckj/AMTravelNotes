@@ -1,10 +1,3 @@
-//
-//  CodableImage.swift
-//  AMTravelNotes
-//
-//  Created by Joseph Heck on 6/11/23.
-//
-
 import Foundation
 #if os(iOS)
 import UIKit
