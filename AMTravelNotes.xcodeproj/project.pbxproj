@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A0E00632A18248C0019F534 /* MirrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0E00622A18248C0019F534 /* MirrorTests.swift */; };
 		1A0E00672A1825B20019F534 /* AutomergeSwiftAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00662A1825B20019F534 /* AutomergeSwiftAdditions */; };
 		1A0E00692A1825B60019F534 /* Automerge in Frameworks */ = {isa = PBXBuildFile; productRef = 1A0E00682A1825B60019F534 /* Automerge */; };
 		1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A823EF429E8B8A20054DFA4 /* AMTravelNotesModel.swift */; };
@@ -52,7 +51,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1A0E00622A18248C0019F534 /* MirrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorTests.swift; sourceTree = "<group>"; };
 		1A2C46402A1439C900A3BED6 /* AMTravelNotes.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AMTravelNotes.xctestplan; sourceTree = "<group>"; };
 		1A61B2882A379F3C00DF51B0 /* EncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncoderTests.swift; sourceTree = "<group>"; };
 		1A74FCD12A38D29A003F210C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -178,7 +176,6 @@
 		1AF0BD8829CA62150039EB8B /* AMTravelNotesTests */ = {
 			isa = PBXGroup;
 			children = (
-				1A0E00622A18248C0019F534 /* MirrorTests.swift */,
 				1A61B2882A379F3C00DF51B0 /* EncoderTests.swift */,
 			);
 			path = AMTravelNotesTests;
@@ -336,7 +333,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A61B2892A379F3C00DF51B0 /* EncoderTests.swift in Sources */,
-				1A0E00632A18248C0019F534 /* MirrorTests.swift in Sources */,
 				1A61B28A2A37A02400DF51B0 /* CodableImage.swift in Sources */,
 				1A59B6E82A37B2FC003FF290 /* NSImage+pngData.swift in Sources */,
 				1A0E006C2A1826330019F534 /* AMTravelNotesModel.swift in Sources */,
